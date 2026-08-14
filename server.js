@@ -1,640 +1,563 @@
+require('dotenv').config();
 const express = require('express');
+const admin = require('firebase-admin');
+const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const dotenv = require('dotenv');
-const jwt = require('jsonwebtoken');
 const path = require('path');
+const { FieldValue } = require('firebase-admin/firestore');
 
-dotenv.config();
+// ===== تهيئة Firebase Admin =====
+const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
+admin.initializeApp({
+  credential: admin.credential.cert(firebaseConfig),
+});
 
-const admin = require('firebase-admin');
-const { getFirestore, FieldValue } = require('firebase-admin/firestore');
+const db = admin.firestore();
 
-// ==================== FIREBASE ADMIN INITIALIZATION ====================
-let serviceAccount = null;
-let firebaseConfig = null;
-
-// Try to get service account from environment
-try {
-  // First: Try FIREBASE_SERVICE_ACCOUNT (full service account JSON)
-  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-    console.log('✅ Loaded FIREBASE_SERVICE_ACCOUNT');
-  }
-  // Second: Try FIREBASE_CONFIG
-  else if (process.env.FIREBASE_CONFIG) {
-    const config = JSON.parse(process.env.FIREBASE_CONFIG);
-    firebaseConfig = config;
-    
-    // Check if this is a service account (has private_key)
-    if (config.private_key && config.client_email) {
-      serviceAccount = config;
-      console.log('✅ Loaded FIREBASE_CONFIG as service account');
-    } else {
-      // Web app config - store for later use
-      console.log('ℹ️ FIREBASE_CONFIG is web app config');
-      serviceAccount = null;
-    }
-  }
-} catch (e) {
-  console.error('❌ Error parsing config:', e);
-  serviceAccount = null;
-}
-
-// Initialize Firebase Admin SDK
-if (!admin.apps.length) {
-  try {
-    if (serviceAccount && serviceAccount.private_key) {
-      // Use service account
-      admin.initializeApp({
-        credential: admin.credential.cert({
-          projectId: serviceAccount.project_id || serviceAccount.projectId || 'pointsdrmirna',
-          clientEmail: serviceAccount.client_email,
-          privateKey: serviceAccount.private_key
-        }),
-        projectId: serviceAccount.project_id || serviceAccount.projectId || 'pointsdrmirna'
-      });
-      console.log('✅ Firebase Admin initialized with Service Account');
-    } else {
-      // Use Application Default Credentials (for Vercel / Google Cloud)
-      try {
-        admin.initializeApp({
-          credential: admin.credential.applicationDefault(),
-          projectId: firebaseConfig?.projectId || 'pointsdrmirna'
-        });
-        console.log('✅ Firebase Admin initialized with Application Default Credentials');
-      } catch (adcError) {
-        // Fallback: Try with just project ID
-        console.log('⚠️ ADC failed, trying fallback...');
-        admin.initializeApp({
-          projectId: firebaseConfig?.projectId || 'pointsdrmirna'
-        });
-        console.log('✅ Firebase Admin initialized with fallback');
-      }
-    }
-  } catch (e) {
-    console.error('❌ Firebase Admin initialization error:', e);
-    // Final fallback
-    try {
-      admin.initializeApp({
-        projectId: firebaseConfig?.projectId || 'pointsdrmirna'
-      });
-      console.log('✅ Firebase Admin initialized with final fallback');
-    } catch (err) {
-      console.error('❌ Failed to initialize Firebase Admin:', err);
-    }
-  }
-}
-
-const db = getFirestore();
+// ===== تهيئة Express =====
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ==================== MIDDLEWARE ====================
+// ===== Middleware =====
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
-// تحديث CORS للسماح بـ credentials
 app.use(cors({
-  origin: ['https://points-dr-mirna.vercel.app', 'http://localhost:3000'],
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://your-domain.vercel.app'] 
+    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
-
-// Handle preflight requests
-app.options('*', cors());
-
-// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ==================== LOGGING MIDDLEWARE ====================
-app.use((req, res, next) => {
-  console.log(`📝 ${req.method} ${req.path}`);
-  console.log('🍪 Cookies:', req.cookies);
-  console.log('📨 Headers:', req.headers.authorization);
-  next();
-});
+// ===== التوثيق والصلاحيات =====
+const JWT_SECRET = process.env.JWT_SECRET;
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
-// ==================== AUTH MIDDLEWARE (محدث) ====================
-const authenticateAdmin = async (req, res, next) => {
+// ===== Middleware للتحقق من JWT =====
+const verifyAdminToken = async (req, res, next) => {
   try {
-    // First: Try to get token from cookies
-    let token = req.cookies.admin_token;
-    
-    // Second: Try to get token from Authorization header (Bearer)
+    const token = req.cookies.admin_token;
     if (!token) {
-      const authHeader = req.headers.authorization;
-      if (authHeader && authHeader.startsWith('Bearer ')) {
-        token = authHeader.split(' ')[1];
-        console.log('🔑 Token from Authorization header');
-      }
+      return res.status(401).json({ error: 'غير مصرح لك بالوصول' });
     }
 
-    if (!token) {
-      console.log('❌ No token found');
-      return res.status(401).json({ error: 'Unauthorized - No token provided' });
+    const decoded = jwt.verify(token, JWT_SECRET);
+    if (decoded.role !== 'admin') {
+      return res.status(403).json({ error: 'صلاحيات غير كافية' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    if (decoded.username !== process.env.ADMIN_USERNAME) {
-      console.log('❌ Invalid username');
-      return res.status(401).json({ error: 'Unauthorized - Invalid credentials' });
-    }
-
-    req.admin = decoded;
-    console.log('✅ Admin authenticated:', decoded.username);
+    req.adminUser = decoded;
     next();
   } catch (error) {
-    console.error('❌ Auth error:', error.message);
-    return res.status(401).json({ error: 'Unauthorized - Invalid token' });
+    return res.status(401).json({ error: 'جلسة غير صالحة' });
   }
 };
 
-// ==================== ADMIN AUTH ROUTES ====================
+// ===== مسارات التوثيق =====
 
-// Admin login (محدث)
+// تسجيل دخول الأدمن
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ error: 'Username and password are required' });
+      return res.status(400).json({ error: 'الرجاء إدخال اسم المستخدم وكلمة المرور' });
     }
 
-    if (username === process.env.ADMIN_USERNAME && password === process.env.ADMIN_PASSWORD) {
-      const token = jwt.sign(
-        { username, role: 'admin' },
-        process.env.JWT_SECRET,
-        { expiresIn: '24h' }
-      );
-
-      // Set cookie with updated settings
-      res.cookie('admin_token', token, {
-        httpOnly: true,
-        secure: false, // Changed to false for Vercel
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000,
-        path: '/'
-      });
-
-      // Also return token in response for localStorage fallback
-      return res.json({ 
-        success: true, 
-        message: 'Login successful',
-        token: token // For localStorage fallback
-      });
+    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+      return res.status(401).json({ error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
     }
 
-    return res.status(401).json({ error: 'Invalid username or password' });
+    const token = jwt.sign(
+      { username, role: 'admin' },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
+    res.cookie('admin_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
+    res.json({ success: true, message: 'تم تسجيل الدخول بنجاح' });
   } catch (error) {
-    console.error('Admin login error:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'حدث خطأ أثناء تسجيل الدخول' });
   }
 });
 
-// Admin logout
+// تسجيل خروج الأدمن
 app.post('/api/admin/logout', (req, res) => {
-  res.clearCookie('admin_token', { path: '/' });
-  res.json({ success: true, message: 'Logged out successfully' });
+  res.clearCookie('admin_token');
+  res.json({ success: true, message: 'تم تسجيل الخروج' });
 });
 
-// Admin session check
-app.get('/api/admin/me', authenticateAdmin, (req, res) => {
-  res.json({ username: req.admin.username, role: 'admin' });
+// الحصول على معلومات الأدمن الحالي
+app.get('/api/admin/me', verifyAdminToken, (req, res) => {
+  res.json({ username: req.adminUser.username });
 });
 
-// ==================== USER MANAGEMENT ROUTES ====================
+// ===== مسارات إدارة المستخدمين =====
 
-// Get all users (patients)
-app.get('/api/admin/users', authenticateAdmin, async (req, res) => {
+// الحصول على جميع المستخدمين (مع إمكانية البحث والترتيب)
+app.get('/api/admin/users', verifyAdminToken, async (req, res) => {
   try {
-    const { search, status, limit = 50, offset = 0 } = req.query;
+    const { search, page = 1, limit = 10 } = req.query;
+    const offset = (parseInt(page) - 1) * parseInt(limit);
 
     let query = db.collection('users').where('role', '==', 'patient');
+    let usersSnapshot;
 
-    if (status) {
-      query = query.where('status', '==', status);
-    }
-
-    const snapshot = await query
-      .orderBy('createdAt', 'desc')
-      .limit(parseInt(limit))
-      .offset(parseInt(offset))
-      .get();
-
-    let users = [];
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      users.push({
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
-        updatedAt: data.updatedAt ? data.updatedAt.toDate().toISOString() : null
-      });
-    });
-
-    // Apply search filter if provided
+    // إذا كان هناك بحث
     if (search) {
       const searchLower = search.toLowerCase();
-      users = users.filter(user =>
-        (user.name && user.name.toLowerCase().includes(searchLower)) ||
-        (user.phone && user.phone.includes(search)) ||
-        (user.email && user.email.toLowerCase().includes(searchLower))
-      );
+      // البحث في اسم المريض أو رقم الهاتف أو البريد الإلكتروني
+      const allUsers = await query.get();
+      const filteredUsers = [];
+      allUsers.forEach(doc => {
+        const data = doc.data();
+        if (data.name?.toLowerCase().includes(searchLower) ||
+            data.phone?.includes(search) ||
+            data.email?.toLowerCase().includes(searchLower)) {
+          filteredUsers.push({ id: doc.id, ...data });
+        }
+      });
+      // ترتيب النتائج حسب تاريخ الإنشاء (الأحدث أولاً)
+      filteredUsers.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
+      const total = filteredUsers.length;
+      const paginatedUsers = filteredUsers.slice(offset, offset + parseInt(limit));
+      
+      return res.json({
+        users: paginatedUsers,
+        total,
+        page: parseInt(page),
+        totalPages: Math.ceil(total / parseInt(limit)),
+      });
     }
 
-    // Get total count
-    const countSnapshot = await db.collection('users')
-      .where('role', '==', 'patient')
+    // إذا لم يكن هناك بحث، جلب جميع المرضى مع الترتيب
+    usersSnapshot = await query
+      .orderBy('createdAt', 'desc')
+      .offset(offset)
+      .limit(parseInt(limit))
       .get();
-    const total = countSnapshot.size;
+
+    const totalSnapshot = await query.count().get();
+    const total = totalSnapshot.data().count;
+
+    const users = [];
+    usersSnapshot.forEach(doc => {
+      users.push({ id: doc.id, ...doc.data() });
+    });
 
     res.json({
       users,
       total,
-      limit: parseInt(limit),
-      offset: parseInt(offset)
+      page: parseInt(page),
+      totalPages: Math.ceil(total / parseInt(limit)),
     });
   } catch (error) {
     console.error('Get users error:', error);
-    res.status(500).json({ error: 'Failed to fetch users' });
+    res.status(500).json({ error: 'حدث خطأ أثناء جلب المستخدمين' });
   }
 });
 
-// Create patient account
-app.post('/api/admin/users', authenticateAdmin, async (req, res) => {
+// إنشاء مستخدم جديد (عن طريق الأدمن)
+app.post('/api/admin/users', verifyAdminToken, async (req, res) => {
   try {
     const { name, phone, email, password, initialPoints = 0 } = req.body;
 
+    // التحقق من الحقول المطلوبة
     if (!name || !phone || !email || !password) {
-      return res.status(400).json({ error: 'All fields are required' });
+      return res.status(400).json({ error: 'جميع الحقول مطلوبة' });
     }
 
-    // Check if user exists
-    const existingUsers = await db.collection('users')
+    // التحقق من صحة البريد الإلكتروني
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ error: 'البريد الإلكتروني غير صحيح' });
+    }
+
+    // التحقق من قوة كلمة المرور
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' });
+    }
+
+    // التحقق من عدم وجود البريد الإلكتروني مسبقاً
+    const existingUser = await db.collection('users')
       .where('email', '==', email)
       .get();
 
-    if (!existingUsers.empty) {
-      return res.status(400).json({ error: 'User with this email already exists' });
+    if (!existingUser.empty) {
+      return res.status(400).json({ error: 'البريد الإلكتروني مستخدم بالفعل' });
     }
 
-    // Create Firebase Auth user
+    // إنشاء المستخدم في Firebase Authentication
     let userRecord;
     try {
       userRecord = await admin.auth().createUser({
         email,
         password,
-        displayName: name
+        displayName: name,
       });
     } catch (authError) {
-      console.error('Firebase Auth error:', authError);
-      return res.status(400).json({ error: authError.message || 'Failed to create user' });
+      console.error('Auth creation error:', authError);
+      if (authError.code === 'auth/email-already-exists') {
+        return res.status(400).json({ error: 'البريد الإلكتروني مستخدم بالفعل' });
+      }
+      throw authError;
     }
 
-    // Create Firestore document
+    // إنشاء وثيقة المستخدم في Firestore
+    const now = admin.firestore.Timestamp.now();
     const userData = {
-      uid: userRecord.uid,
       name,
       phone,
       email,
-      points: parseInt(initialPoints) || 0,
+      points: initialPoints || 0,
       role: 'patient',
       status: 'active',
-      createdAt: FieldValue.serverTimestamp(),
-      updatedAt: FieldValue.serverTimestamp()
+      createdAt: now,
+      updatedAt: now,
+      firebaseUid: userRecord.uid,
     };
 
-    const docRef = await db.collection('users').add(userData);
+    await db.collection('users').doc(userRecord.uid).set(userData);
 
-    // Create initial transaction if initialPoints > 0
-    if (parseInt(initialPoints) > 0) {
+    // إذا كانت النقاط الأولية أكبر من 0، إنشاء معاملة
+    if (initialPoints > 0) {
       await db.collection('transactions').add({
-        userId: docRef.id,
-        type: 'admin_add',
-        points: parseInt(initialPoints),
+        userId: userRecord.uid,
+        type: 'signup',
+        points: initialPoints,
         previousBalance: 0,
-        newBalance: parseInt(initialPoints),
-        reason: 'Initial points added by admin',
-        performedBy: req.admin.username,
-        createdAt: FieldValue.serverTimestamp()
+        newBalance: initialPoints,
+        reason: 'نقاط الترحيب',
+        performedBy: 'admin',
+        createdAt: now,
       });
     }
 
     res.status(201).json({
       success: true,
-      id: docRef.id,
-      message: 'Patient account created successfully'
+      message: 'تم إنشاء حساب المريض بنجاح',
+      userId: userRecord.uid,
     });
   } catch (error) {
     console.error('Create user error:', error);
-    res.status(500).json({ error: 'Failed to create patient account' });
+    res.status(500).json({ error: 'حدث خطأ أثناء إنشاء الحساب' });
   }
 });
 
-// Get single user
-app.get('/api/admin/users/:id', authenticateAdmin, async (req, res) => {
+// الحصول على مستخدم محدد
+app.get('/api/admin/users/:id', verifyAdminToken, async (req, res) => {
   try {
-    const doc = await db.collection('users').doc(req.params.id).get();
+    const { id } = req.params;
+    const userDoc = await db.collection('users').doc(id).get();
 
-    if (!doc.exists) {
-      return res.status(404).json({ error: 'User not found' });
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: 'المستخدم غير موجود' });
     }
 
-    const data = doc.data();
-    res.json({
-      id: doc.id,
-      ...data,
-      createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null,
-      updatedAt: data.updatedAt ? data.updatedAt.toDate().toISOString() : null
-    });
+    const userData = userDoc.data();
+    if (userData.role !== 'patient') {
+      return res.status(403).json({ error: 'هذا المستخدم ليس مريضاً' });
+    }
+
+    res.json({ id: userDoc.id, ...userData });
   } catch (error) {
     console.error('Get user error:', error);
-    res.status(500).json({ error: 'Failed to fetch user' });
+    res.status(500).json({ error: 'حدث خطأ أثناء جلب بيانات المستخدم' });
   }
 });
 
-// Update user points (add, remove, edit)
-app.patch('/api/admin/users/:id/points', authenticateAdmin, async (req, res) => {
+// ===== مسارات إدارة النقاط =====
+
+// تعديل نقاط المستخدم (إضافة/خصم)
+app.patch('/api/admin/users/:id/points', verifyAdminToken, async (req, res) => {
   try {
-    const { operation, amount, reason } = req.body;
+    const { id } = req.params;
+    const { operation, points, reason } = req.body;
 
-    if (!operation || amount === undefined) {
-      return res.status(400).json({ error: 'Operation and amount are required' });
+    // التحقق من الحقول المطلوبة
+    if (!operation || points === undefined || !reason) {
+      return res.status(400).json({ error: 'جميع الحقول مطلوبة (operation, points, reason)' });
     }
 
-    const amountNum = parseInt(amount);
-    if (isNaN(amountNum) || amountNum <= 0) {
-      return res.status(400).json({ error: 'Amount must be a positive number' });
+    // التحقق من صحة العملية
+    if (!['add', 'remove', 'edit'].includes(operation)) {
+      return res.status(400).json({ error: 'عملية غير صحيحة' });
     }
 
-    const doc = await db.collection('users').doc(req.params.id).get();
-
-    if (!doc.exists) {
-      return res.status(404).json({ error: 'User not found' });
+    // التحقق من أن النقاط عدد صحيح
+    const pointsInt = parseInt(points);
+    if (isNaN(pointsInt) || pointsInt < 0) {
+      return res.status(400).json({ error: 'يجب أن تكون النقاط عدداً صحيحاً غير سالب' });
     }
 
-    const currentData = doc.data();
-    const currentPoints = currentData.points || 0;
+    // جلب بيانات المستخدم الحالية
+    const userRef = db.collection('users').doc(id);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: 'المستخدم غير موجود' });
+    }
+
+    const userData = userDoc.data();
+    if (userData.role !== 'patient') {
+      return res.status(403).json({ error: 'هذا المستخدم ليس مريضاً' });
+    }
+
+    const currentPoints = userData.points || 0;
     let newPoints = currentPoints;
     let transactionType = '';
 
+    // تنفيذ العملية المطلوبة
     switch (operation) {
       case 'add':
-        newPoints = currentPoints + amountNum;
+        newPoints = currentPoints + pointsInt;
         transactionType = 'admin_add';
         break;
       case 'remove':
-        if (currentPoints - amountNum < 0) {
-          return res.status(400).json({ error: 'Cannot have negative points balance' });
+        if (currentPoints - pointsInt < 0) {
+          return res.status(400).json({ 
+            error: 'لا يمكن أن يصبح رصيد النقاط أقل من صفر',
+            currentPoints,
+            requestedRemove: pointsInt,
+          });
         }
-        newPoints = currentPoints - amountNum;
+        newPoints = currentPoints - pointsInt;
         transactionType = 'admin_remove';
         break;
-      case 'set':
-        newPoints = amountNum;
+      case 'edit':
+        if (pointsInt < 0) {
+          return res.status(400).json({ error: 'لا يمكن أن يكون الرصيد سالباً' });
+        }
+        newPoints = pointsInt;
         transactionType = 'manual_adjustment';
         break;
-      default:
-        return res.status(400).json({ error: 'Invalid operation' });
     }
 
-    // Update user points
-    await db.collection('users').doc(req.params.id).update({
+    // تحديث النقاط في Firestore
+    await userRef.update({
       points: newPoints,
-      updatedAt: FieldValue.serverTimestamp()
+      updatedAt: admin.firestore.Timestamp.now(),
     });
 
-    // Create transaction record
+    // إنشاء سجل المعاملة
+    const now = admin.firestore.Timestamp.now();
     await db.collection('transactions').add({
-      userId: req.params.id,
+      userId: id,
       type: transactionType,
-      points: Math.abs(newPoints - currentPoints),
+      points: Math.abs(pointsInt),
       previousBalance: currentPoints,
       newBalance: newPoints,
-      reason: reason || `${operation} operation`,
-      performedBy: req.admin.username,
-      createdAt: FieldValue.serverTimestamp()
+      reason: reason,
+      performedBy: 'admin',
+      createdAt: now,
     });
+
+    // جلب البيانات المحدثة
+    const updatedDoc = await userRef.get();
+    const updatedData = updatedDoc.data();
 
     res.json({
       success: true,
-      message: 'Points updated successfully',
-      previousBalance: currentPoints,
-      newBalance: newPoints
+      message: 'تم تحديث النقاط بنجاح',
+      currentPoints: updatedData.points,
+      previousPoints: currentPoints,
+      change: newPoints - currentPoints,
     });
   } catch (error) {
     console.error('Update points error:', error);
-    res.status(500).json({ error: 'Failed to update points' });
+    res.status(500).json({ error: 'حدث خطأ أثناء تحديث النقاط' });
   }
 });
 
-// Reset points to zero
-app.post('/api/admin/users/:id/reset-points', authenticateAdmin, async (req, res) => {
+// تصفير نقاط المستخدم
+app.post('/api/admin/users/:id/reset-points', verifyAdminToken, async (req, res) => {
   try {
-    const doc = await db.collection('users').doc(req.params.id).get();
+    const { id } = req.params;
+    const { reason = 'تم تصفير النقاط بواسطة الأدمن' } = req.body;
 
-    if (!doc.exists) {
-      return res.status(404).json({ error: 'User not found' });
+    // جلب بيانات المستخدم الحالية
+    const userRef = db.collection('users').doc(id);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: 'المستخدم غير موجود' });
     }
 
-    const currentData = doc.data();
-    const currentPoints = currentData.points || 0;
-
-    if (currentPoints === 0) {
-      return res.status(400).json({ error: 'Points are already zero' });
+    const userData = userDoc.data();
+    if (userData.role !== 'patient') {
+      return res.status(403).json({ error: 'هذا المستخدم ليس مريضاً' });
     }
 
-    // Update user points
-    await db.collection('users').doc(req.params.id).update({
+    const currentPoints = userData.points || 0;
+
+    // تصفير النقاط
+    await userRef.update({
       points: 0,
-      updatedAt: FieldValue.serverTimestamp()
+      updatedAt: admin.firestore.Timestamp.now(),
     });
 
-    // Create transaction record
+    // إنشاء سجل المعاملة
+    const now = admin.firestore.Timestamp.now();
     await db.collection('transactions').add({
-      userId: req.params.id,
+      userId: id,
       type: 'reset',
       points: currentPoints,
       previousBalance: currentPoints,
       newBalance: 0,
-      reason: 'Points reset by admin',
-      performedBy: req.admin.username,
-      createdAt: FieldValue.serverTimestamp()
+      reason: reason,
+      performedBy: 'admin',
+      createdAt: now,
     });
 
     res.json({
       success: true,
-      message: 'Points reset successfully',
-      previousBalance: currentPoints,
-      newBalance: 0
+      message: 'تم تصفير النقاط بنجاح',
+      previousPoints: currentPoints,
+      newPoints: 0,
     });
   } catch (error) {
     console.error('Reset points error:', error);
-    res.status(500).json({ error: 'Failed to reset points' });
+    res.status(500).json({ error: 'حدث خطأ أثناء تصفير النقاط' });
   }
 });
 
-// Get user transactions
-app.get('/api/admin/users/:id/transactions', authenticateAdmin, async (req, res) => {
+// الحصول على معاملات مستخدم معين
+app.get('/api/admin/users/:id/transactions', verifyAdminToken, async (req, res) => {
   try {
-    const { limit = 50 } = req.query;
+    const { id } = req.params;
+    const { limit = 20 } = req.query;
 
-    const snapshot = await db.collection('transactions')
-      .where('userId', '==', req.params.id)
+    const transactionsSnapshot = await db.collection('transactions')
+      .where('userId', '==', id)
       .orderBy('createdAt', 'desc')
       .limit(parseInt(limit))
       .get();
 
     const transactions = [];
-    snapshot.forEach(doc => {
-      const data = doc.data();
-      transactions.push({
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
-      });
+    transactionsSnapshot.forEach(doc => {
+      transactions.push({ id: doc.id, ...doc.data() });
     });
 
-    res.json({ transactions });
+    res.json(transactions);
   } catch (error) {
     console.error('Get transactions error:', error);
-    res.status(500).json({ error: 'Failed to fetch transactions' });
+    res.status(500).json({ error: 'حدث خطأ أثناء جلب المعاملات' });
   }
 });
 
-// Get dashboard statistics
-app.get('/api/admin/stats', authenticateAdmin, async (req, res) => {
+// ===== مسارات إحصاءات لوحة التحكم =====
+
+// الحصول على إحصاءات لوحة التحكم
+app.get('/api/admin/stats', verifyAdminToken, async (req, res) => {
   try {
-    // Total patients
+    // إجمالي المرضى
     const patientsSnapshot = await db.collection('users')
       .where('role', '==', 'patient')
+      .count()
       .get();
-    const totalPatients = patientsSnapshot.size;
+    const totalPatients = patientsSnapshot.data().count;
 
-    // Total points
+    // إجمالي النقاط
+    const allPatients = await db.collection('users')
+      .where('role', '==', 'patient')
+      .get();
     let totalPoints = 0;
-    patientsSnapshot.forEach(doc => {
-      const data = doc.data();
-      totalPoints += data.points || 0;
+    allPatients.forEach(doc => {
+      totalPoints += doc.data().points || 0;
     });
 
-    // Today's transactions
+    // عمليات اليوم (المعاملات التي تمت اليوم)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+    const todayTimestamp = admin.firestore.Timestamp.fromDate(today);
 
-    const todayTransactionsSnapshot = await db.collection('transactions')
-      .where('createdAt', '>=', today)
-      .where('createdAt', '<', tomorrow)
+    const todayTransactions = await db.collection('transactions')
+      .where('createdAt', '>=', todayTimestamp)
+      .count()
       .get();
-    const todayTransactions = todayTransactionsSnapshot.size;
+    const todayOperations = todayTransactions.data().count;
 
-    // New patients today
-    const newPatientsSnapshot = await db.collection('users')
+    // العملاء الجدد (اليوم)
+    const newPatientsToday = await db.collection('users')
       .where('role', '==', 'patient')
-      .where('createdAt', '>=', today)
-      .where('createdAt', '<', tomorrow)
+      .where('createdAt', '>=', todayTimestamp)
+      .count()
       .get();
-    const newPatients = newPatientsSnapshot.size;
+    const newPatients = newPatientsToday.data().count;
 
     res.json({
       totalPatients,
       totalPoints,
-      todayTransactions,
-      newPatients
+      todayOperations,
+      newPatients,
     });
   } catch (error) {
     console.error('Get stats error:', error);
-    res.status(500).json({ error: 'Failed to fetch statistics' });
+    res.status(500).json({ error: 'حدث خطأ أثناء جلب الإحصاءات' });
   }
 });
 
-// ==================== PATIENT ROUTES ====================
+// ===== مسار إضافي للمريض (للحصول على بياناته) =====
 
-// Get patient profile (using Firebase Auth UID)
-app.get('/api/patient/profile', async (req, res) => {
+// الحصول على بيانات المريض عن طريق Firebase UID (للعميل)
+app.get('/api/patient/profile/:uid', async (req, res) => {
   try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Unauthorized' });
+    const { uid } = req.params;
+    const userDoc = await db.collection('users').doc(uid).get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: 'المستخدم غير موجود' });
     }
 
-    const token = authHeader.split('Bearer ')[1];
-    let decodedToken;
-    try {
-      decodedToken = await admin.auth().verifyIdToken(token);
-    } catch (error) {
-      return res.status(401).json({ error: 'Invalid token' });
+    const userData = userDoc.data();
+    if (userData.role !== 'patient') {
+      return res.status(403).json({ error: 'هذا المستخدم ليس مريضاً' });
     }
 
-    const uid = decodedToken.uid;
-    const snapshot = await db.collection('users')
-      .where('uid', '==', uid)
-      .limit(1)
-      .get();
-
-    if (snapshot.empty) {
-      return res.status(404).json({ error: 'User not found' });
-    }
-
-    let userData = null;
-    let userId = null;
-    snapshot.forEach(doc => {
-      userId = doc.id;
-      userData = doc.data();
-    });
-
-    // Get transactions
+    // جلب آخر 10 معاملات
     const transactionsSnapshot = await db.collection('transactions')
-      .where('userId', '==', userId)
+      .where('userId', '==', uid)
       .orderBy('createdAt', 'desc')
-      .limit(20)
+      .limit(10)
       .get();
 
     const transactions = [];
     transactionsSnapshot.forEach(doc => {
-      const data = doc.data();
-      transactions.push({
-        id: doc.id,
-        ...data,
-        createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
-      });
+      transactions.push({ id: doc.id, ...doc.data() });
     });
 
     res.json({
-      id: userId,
-      ...userData,
+      profile: { id: uid, ...userData },
       transactions,
-      createdAt: userData.createdAt ? userData.createdAt.toDate().toISOString() : null,
-      updatedAt: userData.updatedAt ? userData.updatedAt.toDate().toISOString() : null
     });
   } catch (error) {
     console.error('Get patient profile error:', error);
-    res.status(500).json({ error: 'Failed to fetch profile' });
+    res.status(500).json({ error: 'حدث خطأ أثناء جلب بيانات المريض' });
   }
 });
 
-// ==================== FALLBACK ROUTE ====================
+// ===== معالجة الأخطاء =====
 
-// Handle all other routes - serve index.html for SPA
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  res.status(500).json({ error: 'حدث خطأ غير متوقع في الخادم' });
 });
 
-// ==================== START SERVER ====================
+// ===== تشغيل الخادم =====
 
-// For Vercel serverless, we don't need to listen
-if (require.main === module) {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`📁 Serving static files from: ${path.join(__dirname, 'public')}`);
-    console.log(`🔑 Admin username: ${process.env.ADMIN_USERNAME || 'not set'}`);
-    console.log(`📊 Firebase Project: ${firebaseConfig?.projectId || 'pointsdrmirna'}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
 
+// تصدير التطبيق لـ Vercel
 module.exports = app;
