@@ -94,37 +94,67 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// تحديث CORS للسماح بـ credentials
 app.use(cors({
-  origin: true,
-  credentials: true
+  origin: ['https://points-dr-mirna.vercel.app', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Cookie']
 }));
+
+// Handle preflight requests
+app.options('*', cors());
 
 // Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ==================== AUTH MIDDLEWARE ====================
+// ==================== LOGGING MIDDLEWARE ====================
+app.use((req, res, next) => {
+  console.log(`📝 ${req.method} ${req.path}`);
+  console.log('🍪 Cookies:', req.cookies);
+  console.log('📨 Headers:', req.headers.authorization);
+  next();
+});
+
+// ==================== AUTH MIDDLEWARE (محدث) ====================
 const authenticateAdmin = async (req, res, next) => {
   try {
-    const token = req.cookies.admin_token;
+    // First: Try to get token from cookies
+    let token = req.cookies.admin_token;
+    
+    // Second: Try to get token from Authorization header (Bearer)
     if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.split(' ')[1];
+        console.log('🔑 Token from Authorization header');
+      }
+    }
+
+    if (!token) {
+      console.log('❌ No token found');
       return res.status(401).json({ error: 'Unauthorized - No token provided' });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (decoded.username !== process.env.ADMIN_USERNAME) {
+      console.log('❌ Invalid username');
       return res.status(401).json({ error: 'Unauthorized - Invalid credentials' });
     }
 
     req.admin = decoded;
+    console.log('✅ Admin authenticated:', decoded.username);
     next();
   } catch (error) {
+    console.error('❌ Auth error:', error.message);
     return res.status(401).json({ error: 'Unauthorized - Invalid token' });
   }
 };
 
 // ==================== ADMIN AUTH ROUTES ====================
 
-// Admin login
+// Admin login (محدث)
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -140,14 +170,21 @@ app.post('/api/admin/login', async (req, res) => {
         { expiresIn: '24h' }
       );
 
+      // Set cookie with updated settings
       res.cookie('admin_token', token, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
+        secure: false, // Changed to false for Vercel
         sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000
+        maxAge: 24 * 60 * 60 * 1000,
+        path: '/'
       });
 
-      return res.json({ success: true, message: 'Login successful' });
+      // Also return token in response for localStorage fallback
+      return res.json({ 
+        success: true, 
+        message: 'Login successful',
+        token: token // For localStorage fallback
+      });
     }
 
     return res.status(401).json({ error: 'Invalid username or password' });
@@ -159,7 +196,7 @@ app.post('/api/admin/login', async (req, res) => {
 
 // Admin logout
 app.post('/api/admin/logout', (req, res) => {
-  res.clearCookie('admin_token');
+  res.clearCookie('admin_token', { path: '/' });
   res.json({ success: true, message: 'Logged out successfully' });
 });
 
