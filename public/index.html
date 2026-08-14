@@ -30,7 +30,6 @@
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* ===== إعادة تعيين ===== */
         * {
             margin: 0;
             padding: 0;
@@ -57,14 +56,12 @@
             outline: none;
         }
 
-        /* ===== الحاوية الرئيسية ===== */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 24px;
         }
 
-        /* ===== الهيدر ===== */
         .header {
             background: var(--white);
             box-shadow: var(--shadow-sm);
@@ -175,7 +172,6 @@
             box-shadow: var(--shadow-md);
         }
 
-        /* ===== الهيرو ===== */
         .hero {
             padding: 80px 0 60px;
             background: linear-gradient(135deg, var(--mint-light) 0%, var(--white) 100%);
@@ -234,7 +230,6 @@
             box-shadow: var(--shadow-lg);
         }
 
-        /* ===== المميزات ===== */
         .features {
             padding: 80px 0;
             background: var(--white);
@@ -300,7 +295,6 @@
             font-size: 15px;
         }
 
-        /* ===== كيف يعمل ===== */
         .how-it-works {
             padding: 80px 0;
             background: var(--gray-50);
@@ -343,7 +337,6 @@
             font-size: 14px;
         }
 
-        /* ===== الفوتر ===== */
         .footer {
             background: var(--gray-900);
             color: var(--gray-300);
@@ -361,7 +354,6 @@
             font-size: 14px;
         }
 
-        /* ===== مستجيبة ===== */
         @media (max-width: 992px) {
             .hero .container {
                 grid-template-columns: 1fr;
@@ -447,7 +439,6 @@
     </style>
 </head>
 <body>
-    <!-- ===== الهيدر ===== -->
     <header class="header">
         <div class="container">
             <a href="/" class="logo">
@@ -457,11 +448,13 @@
             <nav class="nav">
                 <a href="#features">المميزات</a>
                 <a href="#how-it-works">كيف يعمل</a>
+                <a href="/admin/login" class="btn btn-admin">
+                    <i class="fas fa-user-shield"></i> دخول الإدارة
+                </a>
             </nav>
         </div>
     </header>
 
-    <!-- ===== الهيرو ===== -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
@@ -482,7 +475,6 @@
         </div>
     </section>
 
-    <!-- ===== المميزات ===== -->
     <section class="features" id="features">
         <div class="container">
             <h2 class="section-title">لماذا نقاط د. ميرنا؟</h2>
@@ -512,7 +504,6 @@
         </div>
     </section>
 
-    <!-- ===== كيف يعمل ===== -->
     <section class="how-it-works" id="how-it-works">
         <div class="container">
             <h2 class="section-title">كيف يعمل النظام؟</h2>
@@ -537,7 +528,6 @@
         </div>
     </section>
 
-    <!-- ===== الفوتر ===== -->
     <footer class="footer">
         <div class="container">
             <div class="logo">
