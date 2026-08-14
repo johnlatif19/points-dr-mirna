@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل الدخول - Points Dr.Mirna</title>
+  <style>
+    /* ===== CSS Reset & Base ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f7f0;
+      color: #1a2e1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #0d7a3b;
+    }
+
+    /* ===== Auth Container ===== */
+    .auth-container {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 40, 0, 0.12);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid #e0ece0;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-header img {
+      height: 56px;
+      width: auto;
+      margin-bottom: 12px;
+    }
+
+    .auth-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0d3b0d;
+    }
+
+    .auth-header p {
+      color: #4a6a4a;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* ===== Form ===== */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a3a1a;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #dce8dc;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: border-color 0.2s ease;
+      background: #fafcfa;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #0d7a3b;
+      box-shadow: 0 0 0 3px rgba(13, 122, 59, 0.1);
+    }
+
+    .form-group input.error {
+      border-color: #d32f2f;
+    }
+
+    .form-group .error-msg {
+      color: #d32f2f;
+      font-size: 13px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .form-group .error-msg.show {
+      display: block;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #0d7a3b;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+      background: #0a5f2e;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(13, 122, 59, 0.25);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ===== Links ===== */
+    .auth-footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 14px;
+      color: #4a6a4a;
+    }
+
+    .auth-footer a {
+      font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #4a6a4a;
+    }
+
+    .back-link:hover {
+      color: #0d3b0d;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #d32f2f;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-align: center;
+      max-width: 90%;
+      font-size: 15px;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .toast.success {
+      background: #0d7a3b;
+    }
+
+    /* ===== Dashboard View (Patient) ===== */
+    #dashboardView {
+      display: none;
+    }
+
+    #loginView {
+      display: block;
+    }
+
+    .dashboard-card {
+      background: #f5faf5;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid #dce8dc;
+    }
+
+    .dashboard-card h3 {
+      color: #0d3b0d;
+      font-size: 16px;
+      margin-bottom: 4px;
+    }
+
+    .dashboard-card .value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0d7a3b;
+    }
+
+    .dashboard-card .label {
+      color: #4a6a4a;
+      font-size: 13px;
+    }
+
+    .points-progress {
+      background: #e0ece0;
+      border-radius: 20px;
+      height: 8px;
+      margin-top: 8px;
+      overflow: hidden;
+    }
+
+    .points-progress .bar {
+      height: 100%;
+      background: linear-gradient(90deg, #0d7a3b, #14a050);
+      border-radius: 20px;
+      transition: width 0.5s ease;
+    }
+
+    .transaction-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #e8f0e8;
+      font-size: 14px;
+    }
+
+    .transaction-item .points-positive {
+      color: #0d7a3b;
+      font-weight: 600;
+    }
+
+    .transaction-item .points-negative {
+      color: #d32f2f;
+      font-weight: 600;
+    }
+
+    .transaction-item .points-neutral {
+      color: #4a6a4a;
+    }
+
+    .logout-btn {
+      background: #d32f2f;
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #b71c1c;
+    }
+
+    .dashboard-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .dashboard-header .user-name {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0d3b0d;
+    }
+
+    .dashboard-header .user-email {
+      color: #4a6a4a;
+      font-size: 14px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 32px 20px;
+      }
+      .auth-header h1 {
+        font-size: 22px;
+      }
+      .dashboard-card .value {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast"></div>
+
+  <!-- ===== LOGIN VIEW ===== -->
+  <div id="loginView" class="auth-container">
+    <div class="auth-header">
+      <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="Points Dr.Mirna" />
+      <h1>تسجيل الدخول</h1>
+      <p>قم بتسجيل الدخول إلى حسابك في نقاط دكتور ميرنا</p>
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="loginEmail">البريد الإلكتروني</label>
+        <input type="email" id="loginEmail" placeholder="example@email.com" required />
+        <div class="error-msg" id="loginEmailError">يرجى إدخال بريد إلكتروني صحيح</div>
+      </div>
+
+      <div class="form-group">
+        <label for="loginPassword">كلمة المرور</label>
+        <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required />
+        <div class="error-msg" id="loginPasswordError">يرجى إدخال كلمة المرور</div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="loginBtn">دخول</button>
+    </form>
+
+    <div class="auth-footer">
+      ليس لديك حساب؟ <a href="sign-in">إنشاء حساب جديد</a><br />
+      <a href="index" class="back-link">← العودة للرئيسية</a>
+    </div>
+  </div>
+
+  <!-- ===== PATIENT DASHBOARD VIEW ===== -->
+  <div id="dashboardView" class="auth-container" style="max-width: 600px;">
+    <div class="dashboard-header">
+      <div>
+        <div class="user-name" id="patientName">---</div>
+        <div class="user-email" id="patientEmail">---</div>
+      </div>
+      <button class="logout-btn" id="patientLogoutBtn">تسجيل الخروج</button>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="label">رصيد النقاط الحالي</div>
+      <div class="value" id="patientPoints">0</div>
+    </div>
+
+    <div class="dashboard-card">
+      <div class="label">التقدم نحو المكافأة التالية</div>
+      <div class="points-progress">
+        <div class="bar" id="progressBar" style="width: 0%;"></div>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-size:13px; color:#4a6a4a; margin-top:4px;">
+        <span id="progressCurrent">0 نقطة</span>
+        <span id="progressTarget">1000 نقطة</span>
+      </div>
+    </div>
+
+    <div class="dashboard-card" style="max-height: 300px; overflow-y: auto;">
+      <h3>آخر المعاملات</h3>
+      <div id="transactionsList">
+        <div style="color: #4a6a4a; text-align: center; padding: 12px;">لا توجد معاملات حتى الآن</div>
+      </div>
+    </div>
+
+    <div class="dashboard-card">
+      <div style="display:flex; justify-content:space-between; font-size:14px;">
+        <span><strong>رقم الهاتف:</strong> <span id="patientPhone">---</span></span>
+        <span><strong>تاريخ التسجيل:</strong> <span id="patientDate">---</span></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== Firebase Configuration =====
+    const firebaseConfig = JSON.parse('{{FIREBASE_CONFIG}}' || '{}');
+
+    // ===== DOM Elements =====
+    const loginView = document.getElementById('loginView');
+    const dashboardView = document.getElementById('dashboardView');
+    const loginForm = document.getElementById('loginForm');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPassword = document.getElementById('loginPassword');
+    const loginBtn = document.getElementById('loginBtn');
+    const toast = document.getElementById('toast');
+
+    // Dashboard elements
+    const patientName = document.getElementById('patientName');
+    const patientEmail = document.getElementById('patientEmail');
+    const patientPoints = document.getElementById('patientPoints');
+    const patientPhone = document.getElementById('patientPhone');
+    const patientDate = document.getElementById('patientDate');
+    const progressBar = document.getElementById('progressBar');
+    const progressCurrent = document.getElementById('progressCurrent');
+    const progressTarget = document.getElementById('progressTarget');
+    const transactionsList = document.getElementById('transactionsList');
+    const patientLogoutBtn = document.getElementById('patientLogoutBtn');
+
+    // ===== Toast Functions =====
+    function showToast(message, type = 'error') {
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      clearTimeout(toast._hideTimer);
+      toast._hideTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+
+    function hideToast() {
+      toast.classList.remove('show');
+    }
+
+    // ===== Login =====
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideToast();
+
+      const emailVal = loginEmail.value.trim();
+      const passwordVal = loginPassword.value;
+
+      if (!emailVal || !passwordVal) {
+        showToast('يرجى إدخال البريد الإلكتروني وكلمة المرور');
+        return;
+      }
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'جاري تسجيل الدخول...';
+
+      try {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+        const { getAuth, signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
+        const { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy, limit } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const userCredential = await signInWithEmailAndPassword(auth, emailVal, passwordVal);
+        const user = userCredential.user;
+
+        // Get user data from Firestore
+        const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+        if (!userDoc.exists()) {
+          showToast('لم يتم العثور على بيانات المستخدم');
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'دخول';
+          return;
+        }
+
+        const userData = userDoc.data();
+
+        if (userData.role !== 'patient') {
+          showToast('هذا الحساب ليس حساب مريض');
+          loginBtn.disabled = false;
+          loginBtn.textContent = 'دخول';
+          return;
+        }
+
+        // Get transactions
+        const transactionsQuery = query(
+          collection(db, 'transactions'),
+          where('userId', '==', user.uid),
+          orderBy('createdAt', 'desc'),
+          limit(20)
+        );
+        const transactionsSnapshot = await getDocs(transactionsQuery);
+        const transactions = [];
+        transactionsSnapshot.forEach(doc => {
+          const data = doc.data();
+          transactions.push({
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
+          });
+        });
+
+        // Show dashboard
+        showPatientDashboard(userData, transactions);
+        loginView.style.display = 'none';
+        dashboardView.style.display = 'block';
+
+        // Store auth state
+        sessionStorage.setItem('patientAuth', JSON.stringify({
+          uid: user.uid,
+          email: emailVal
+        }));
+
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'دخول';
+
+      } catch (error) {
+        console.error('Login error:', error);
+        let message = 'فشل تسجيل الدخول. تحقق من البريد وكلمة المرور.';
+
+        if (error.code === 'auth/user-not-found') {
+          message = 'المستخدم غير موجود. يرجى إنشاء حساب أولاً.';
+        } else if (error.code === 'auth/wrong-password') {
+          message = 'كلمة المرور غير صحيحة.';
+        } else if (error.code === 'auth/invalid-email') {
+          message = 'البريد الإلكتروني غير صحيح.';
+        } else if (error.code === 'auth/too-many-requests') {
+          message = 'تم تجاوز عدد محاولات الدخول. حاول لاحقاً.';
+        }
+
+        showToast(message);
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'دخول';
+      }
+    });
+
+    // ===== Show Patient Dashboard =====
+    function showPatientDashboard(userData, transactions) {
+      patientName.textContent = userData.name || 'مريض';
+      patientEmail.textContent = userData.email || '';
+      patientPoints.textContent = userData.points || 0;
+      patientPhone.textContent = userData.phone || '---';
+
+      if (userData.createdAt) {
+        const date = new Date(userData.createdAt);
+        patientDate.textContent = date.toLocaleDateString('ar-EG');
+      } else {
+        patientDate.textContent = '---';
+      }
+
+      // Progress to next reward (target: 1000 points)
+      const currentPoints = userData.points || 0;
+      const targetPoints = 1000;
+      const progress = Math.min((currentPoints / targetPoints) * 100, 100);
+      progressBar.style.width = progress + '%';
+      progressCurrent.textContent = currentPoints + ' نقطة';
+      progressTarget.textContent = targetPoints + ' نقطة';
+
+      // Transactions
+      if (transactions && transactions.length > 0) {
+        let html = '';
+        transactions.forEach(tx => {
+          const pointsClass = tx.points > 0 ? 'points-positive' :
+                            tx.points < 0 ? 'points-negative' : 'points-neutral';
+          const sign = tx.points > 0 ? '+' : '';
+          const dateStr = tx.createdAt ? new Date(tx.createdAt).toLocaleDateString('ar-EG') : '';
+          const typeMap = {
+            'admin_add': 'إضافة نقاط',
+            'admin_remove': 'خصم نقاط',
+            'manual_adjustment': 'تعديل نقاط',
+            'reset': 'تصفير نقاط',
+            'redeem': 'استبدال نقاط',
+            'signup': 'إنشاء حساب'
+          };
+          const typeLabel = typeMap[tx.type] || tx.type;
+          html += `
+            <div class="transaction-item">
+              <span>${typeLabel}</span>
+              <span>
+                <span class="${pointsClass}">${sign}${tx.points}</span>
+                <span style="color:#4a6a4a; font-size:12px;">${dateStr}</span>
+              </span>
+            </div>
+          `;
+        });
+        transactionsList.innerHTML = html;
+      } else {
+        transactionsList.innerHTML = '<div style="color: #4a6a4a; text-align: center; padding: 12px;">لا توجد معاملات حتى الآن</div>';
+      }
+    }
+
+    // ===== Patient Logout =====
+    patientLogoutBtn.addEventListener('click', async () => {
+      try {
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+        const { getAuth, signOut } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        await signOut(auth);
+        sessionStorage.removeItem('patientAuth');
+
+        dashboardView.style.display = 'none';
+        loginView.style.display = 'block';
+        loginForm.reset();
+
+        showToast('تم تسجيل الخروج بنجاح', 'success');
+      } catch (error) {
+        console.error('Logout error:', error);
+        showToast('حدث خطأ أثناء تسجيل الخروج');
+      }
+    });
+
+    // ===== Check for existing session =====
+    (async function checkSession() {
+      const sessionData = sessionStorage.getItem('patientAuth');
+      if (sessionData) {
+        try {
+          const { uid, email } = JSON.parse(sessionData);
+          const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+          const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
+          const { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy, limit } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+
+          const app = initializeApp(firebaseConfig);
+          const auth = getAuth(app);
+          const db = getFirestore(app);
+
+          const currentUser = auth.currentUser;
+          if (currentUser && currentUser.uid === uid) {
+            const userDoc = await getDoc(doc(db, 'users', uid));
+            if (userDoc.exists()) {
+              const userData = userDoc.data();
+              if (userData.role === 'patient') {
+                const transactionsQuery = query(
+                  collection(db, 'transactions'),
+                  where('userId', '==', uid),
+                  orderBy('createdAt', 'desc'),
+                  limit(20)
+                );
+                const transactionsSnapshot = await getDocs(transactionsQuery);
+                const transactions = [];
+                transactionsSnapshot.forEach(doc => {
+                  const data = doc.data();
+                  transactions.push({
+                    id: doc.id,
+                    ...data,
+                    createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
+                  });
+                });
+
+                showPatientDashboard(userData, transactions);
+                loginView.style.display = 'none';
+                dashboardView.style.display = 'block';
+              }
+            }
+          }
+        } catch (e) {
+          console.error('Session check error:', e);
+          sessionStorage.removeItem('patientAuth');
+        }
+      }
+    })();
+
+    // ===== Validation for login =====
+    loginEmail.addEventListener('input', () => {
+      const errorEl = document.getElementById('loginEmailError');
+      if (loginEmail.classList.contains('error')) {
+        loginEmail.classList.remove('error');
+        errorEl.classList.remove('show');
+      }
+      hideToast();
+    });
+
+    loginPassword.addEventListener('input', () => {
+      const errorEl = document.getElementById('loginPasswordError');
+      if (loginPassword.classList.contains('error')) {
+        loginPassword.classList.remove('error');
+        errorEl.classList.remove('show');
+      }
+      hideToast();
+    });
+  </script>
+
+  <script>
+    // ===== Inject Firebase Config =====
+    (function() {
+      const config = JSON.parse('{{FIREBASE_CONFIG}}' || '{}');
+      const firebaseConfigStr = JSON.stringify(config);
+      const mainScript = document.querySelector('script:not([src])');
+      if (mainScript) {
+        const content = mainScript.textContent;
+        mainScript.textContent = content.replace(/JSON\.parse\('{{FIREBASE_CONFIG}}' \|\| '{}'\)/g, 'JSON.parse(\'' + firebaseConfigStr.replace(/'/g, "\\'") + '\')');
+      }
+    })();
+  </script>
+
+</body>
+</html>
