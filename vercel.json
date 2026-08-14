@@ -16,6 +16,26 @@
       "dest": "/server.js"
     },
     {
+      "src": "/login",
+      "dest": "/public/login.html"
+    },
+    {
+      "src": "/sign-in",
+      "dest": "/public/sign-in.html"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    },
+    {
+      "src": "/login-dashboard",
+      "dest": "/public/login-dashboard.html"
+    },
+    {
+      "src": "/dashboard",
+      "dest": "/public/dashboard.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/public/$1"
     }
