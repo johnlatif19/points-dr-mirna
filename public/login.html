@@ -1,687 +1,868 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>تسجيل الدخول - Points Dr.Mirna</title>
-  <style>
-    /* ===== CSS Reset & Base ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - نقاط د. ميرنا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d5c3e;
+            --primary-dark: #0a452e;
+            --primary-light: #1a7a55;
+            --emerald: #2ecc71;
+            --mint-light: #d5f5e3;
+            --white: #ffffff;
+            --gray-50: #f8faf9;
+            --gray-100: #f1f4f2;
+            --gray-200: #e8ece9;
+            --gray-300: #d1d8d4;
+            --gray-600: #6b7a73;
+            --gray-800: #2d3a33;
+            --gray-900: #1a241e;
+            --shadow-md: 0 4px 20px rgba(13, 92, 62, 0.12);
+            --shadow-lg: 0 8px 40px rgba(13, 92, 62, 0.16);
+            --radius: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f7f0;
-      color: #1a2e1a;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    a {
-      text-decoration: none;
-      color: #0d7a3b;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--mint-light) 0%, var(--white) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
 
-    /* ===== Auth Container ===== */
-    .auth-container {
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 40, 0, 0.12);
-      padding: 48px 40px;
-      width: 100%;
-      max-width: 480px;
-      border: 1px solid #e0ece0;
-    }
+        .auth-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 100%;
+        }
 
-    .auth-header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
 
-    .auth-header img {
-      height: 56px;
-      width: auto;
-      margin-bottom: 12px;
-    }
+        .auth-logo img {
+            height: 48px;
+            width: auto;
+            border-radius: 8px;
+        }
 
-    .auth-header h1 {
-      font-size: 26px;
-      font-weight: 700;
-      color: #0d3b0d;
-    }
+        .auth-logo span {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
 
-    .auth-header p {
-      color: #4a6a4a;
-      font-size: 14px;
-      margin-top: 4px;
-    }
+        .auth-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
 
-    /* ===== Form ===== */
-    .form-group {
-      margin-bottom: 18px;
-    }
+        .auth-subtitle {
+            text-align: center;
+            color: var(--gray-600);
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
 
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      font-size: 14px;
-      color: #1a3a1a;
-      margin-bottom: 5px;
-    }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .form-group input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #dce8dc;
-      border-radius: 10px;
-      font-size: 15px;
-      transition: border-color 0.2s ease;
-      background: #fafcfa;
-      font-family: inherit;
-    }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
 
-    .form-group input:focus {
-      outline: none;
-      border-color: #0d7a3b;
-      box-shadow: 0 0 0 3px rgba(13, 122, 59, 0.1);
-    }
+        .form-group .input-wrapper {
+            position: relative;
+        }
 
-    .form-group input.error {
-      border-color: #d32f2f;
-    }
+        .form-group .input-wrapper i {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-300);
+            font-size: 16px;
+            transition: var(--transition);
+        }
 
-    .form-group .error-msg {
-      color: #d32f2f;
-      font-size: 13px;
-      margin-top: 4px;
-      display: none;
-    }
+        .form-group input {
+            width: 100%;
+            padding: 12px 44px 12px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 15px;
+            transition: var(--transition);
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
 
-    .form-group .error-msg.show {
-      display: block;
-    }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
+            background: var(--white);
+        }
 
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: #0d7a3b;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 8px;
-    }
+        .form-group input.error {
+            border-color: #e74c3c;
+        }
 
-    .btn-submit:hover {
-      background: #0a5f2e;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(13, 122, 59, 0.25);
-    }
+        .form-group .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 4px;
+            display: none;
+        }
 
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+        .form-group .error-message.visible {
+            display: block;
+        }
 
-    /* ===== Links ===== */
-    .auth-footer {
-      text-align: center;
-      margin-top: 22px;
-      font-size: 14px;
-      color: #4a6a4a;
-    }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
 
-    .auth-footer a {
-      font-weight: 600;
-    }
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
-    .auth-footer a:hover {
-      text-decoration: underline;
-    }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-    .back-link {
-      display: inline-block;
-      margin-top: 10px;
-      color: #4a6a4a;
-    }
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--gray-600);
+            font-size: 14px;
+        }
 
-    .back-link:hover {
-      color: #0d3b0d;
-    }
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            transition: var(--transition);
+        }
 
-    /* ===== Toast ===== */
-    .toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #d32f2f;
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      text-align: center;
-      max-width: 90%;
-      font-size: 15px;
-    }
+        .auth-footer a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
 
-    .toast.show {
-      opacity: 1;
-    }
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 90%;
+        }
 
-    .toast.success {
-      background: #0d7a3b;
-    }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
 
-    /* ===== Dashboard View (Patient) ===== */
-    #dashboardView {
-      display: none;
-    }
+        .toast.error {
+            background: #c0392b;
+        }
 
-    #loginView {
-      display: block;
-    }
+        .toast.success {
+            background: var(--primary);
+        }
 
-    .dashboard-card {
-      background: #f5faf5;
-      border-radius: 12px;
-      padding: 20px;
-      margin-bottom: 16px;
-      border: 1px solid #dce8dc;
-    }
+        .toast i {
+            font-size: 20px;
+        }
 
-    .dashboard-card h3 {
-      color: #0d3b0d;
-      font-size: 16px;
-      margin-bottom: 4px;
-    }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 0.8s linear infinite;
+        }
 
-    .dashboard-card .value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #0d7a3b;
-    }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-    .dashboard-card .label {
-      color: #4a6a4a;
-      font-size: 13px;
-    }
+        /* ===== لوحة تحكم المريض ===== */
+        .dashboard-container {
+            display: none;
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 40px;
+            max-width: 720px;
+            width: 100%;
+        }
 
-    .points-progress {
-      background: #e0ece0;
-      border-radius: 20px;
-      height: 8px;
-      margin-top: 8px;
-      overflow: hidden;
-    }
+        .dashboard-container.active {
+            display: block;
+        }
 
-    .points-progress .bar {
-      height: 100%;
-      background: linear-gradient(90deg, #0d7a3b, #14a050);
-      border-radius: 20px;
-      transition: width 0.5s ease;
-    }
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-100);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
 
-    .transaction-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 8px 0;
-      border-bottom: 1px solid #e8f0e8;
-      font-size: 14px;
-    }
+        .dashboard-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-    .transaction-item .points-positive {
-      color: #0d7a3b;
-      font-weight: 600;
-    }
+        .dashboard-header .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 700;
+            font-size: 20px;
+        }
 
-    .transaction-item .points-negative {
-      color: #d32f2f;
-      font-weight: 600;
-    }
+        .dashboard-header .user-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--gray-800);
+        }
 
-    .transaction-item .points-neutral {
-      color: #4a6a4a;
-    }
+        .dashboard-header .user-email {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
 
-    .logout-btn {
-      background: #d32f2f;
-      color: #fff;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: background 0.2s;
-    }
+        .btn-logout {
+            padding: 8px 20px;
+            background: #e74c3c;
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .logout-btn:hover {
-      background: #b71c1c;
-    }
+        .btn-logout:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
 
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
+        .points-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius);
+            padding: 32px;
+            color: var(--white);
+            margin-bottom: 24px;
+            text-align: center;
+        }
 
-    .dashboard-header .user-name {
-      font-size: 20px;
-      font-weight: 700;
-      color: #0d3b0d;
-    }
+        .points-card .points-number {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1;
+            margin: 8px 0;
+        }
 
-    .dashboard-header .user-email {
-      color: #4a6a4a;
-      font-size: 14px;
-    }
+        .points-card .points-label {
+            font-size: 16px;
+            opacity: 0.8;
+        }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 480px) {
-      .auth-container {
-        padding: 32px 20px;
-      }
-      .auth-header h1 {
-        font-size: 22px;
-      }
-      .dashboard-card .value {
-        font-size: 22px;
-      }
-    }
-  </style>
+        .progress-section {
+            margin-bottom: 24px;
+        }
+
+        .progress-section .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: var(--emerald);
+            border-radius: 4px;
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+
+        .section-title-sm {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 16px;
+        }
+
+        .transaction-list {
+            list-style: none;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-100);
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item .type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .transaction-item .type .badge {
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-add { background: var(--mint-light); color: var(--primary); }
+        .badge-remove { background: #fde8e8; color: #c0392b; }
+        .badge-reset { background: #fff3cd; color: #856404; }
+        .badge-default { background: var(--gray-200); color: var(--gray-600); }
+
+        .transaction-item .points-change {
+            font-weight: 700;
+        }
+
+        .transaction-item .points-change.positive { color: var(--primary); }
+        .transaction-item .points-change.negative { color: #e74c3c; }
+
+        .transaction-item .date {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 32px 0;
+            color: var(--gray-600);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: var(--gray-300);
+            margin-bottom: 16px;
+        }
+
+        @media (max-width: 480px) {
+            .auth-container, .dashboard-container {
+                padding: 24px 16px;
+            }
+
+            .auth-title {
+                font-size: 22px;
+            }
+
+            .points-card .points-number {
+                font-size: 40px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .dashboard-header .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .btn-logout {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <!-- ===== TOAST ===== -->
-  <div id="toast" class="toast"></div>
-
-  <!-- ===== LOGIN VIEW ===== -->
-  <div id="loginView" class="auth-container">
-    <div class="auth-header">
-      <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="Points Dr.Mirna" />
-      <h1>تسجيل الدخول</h1>
-      <p>قم بتسجيل الدخول إلى حسابك في نقاط دكتور ميرنا</p>
+    <!-- ===== إشعار ===== -->
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage">الرسالة</span>
     </div>
 
-    <form id="loginForm" novalidate>
-      <div class="form-group">
-        <label for="loginEmail">البريد الإلكتروني</label>
-        <input type="email" id="loginEmail" placeholder="example@email.com" required />
-        <div class="error-msg" id="loginEmailError">يرجى إدخال بريد إلكتروني صحيح</div>
-      </div>
+    <!-- ===== نموذج الدخول ===== -->
+    <div class="auth-container" id="loginFormContainer">
+        <div class="auth-logo">
+            <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
+            <span>نقاط د. ميرنا</span>
+        </div>
 
-      <div class="form-group">
-        <label for="loginPassword">كلمة المرور</label>
-        <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required />
-        <div class="error-msg" id="loginPasswordError">يرجى إدخال كلمة المرور</div>
-      </div>
+        <h1 class="auth-title">تسجيل الدخول</h1>
+        <p class="auth-subtitle">مرحباً بك في نظام نقاط الولاء</p>
 
-      <button type="submit" class="btn-submit" id="loginBtn">دخول</button>
-    </form>
-
-    <div class="auth-footer">
-      ليس لديك حساب؟ <a href="sign-in">إنشاء حساب جديد</a><br />
-      <a href="index" class="back-link">← العودة للرئيسية</a>
-    </div>
-  </div>
-
-  <!-- ===== PATIENT DASHBOARD VIEW ===== -->
-  <div id="dashboardView" class="auth-container" style="max-width: 600px;">
-    <div class="dashboard-header">
-      <div>
-        <div class="user-name" id="patientName">---</div>
-        <div class="user-email" id="patientEmail">---</div>
-      </div>
-      <button class="logout-btn" id="patientLogoutBtn">تسجيل الخروج</button>
-    </div>
-
-    <div class="dashboard-card">
-      <div class="label">رصيد النقاط الحالي</div>
-      <div class="value" id="patientPoints">0</div>
-    </div>
-
-    <div class="dashboard-card">
-      <div class="label">التقدم نحو المكافأة التالية</div>
-      <div class="points-progress">
-        <div class="bar" id="progressBar" style="width: 0%;"></div>
-      </div>
-      <div style="display:flex; justify-content:space-between; font-size:13px; color:#4a6a4a; margin-top:4px;">
-        <span id="progressCurrent">0 نقطة</span>
-        <span id="progressTarget">1000 نقطة</span>
-      </div>
-    </div>
-
-    <div class="dashboard-card" style="max-height: 300px; overflow-y: auto;">
-      <h3>آخر المعاملات</h3>
-      <div id="transactionsList">
-        <div style="color: #4a6a4a; text-align: center; padding: 12px;">لا توجد معاملات حتى الآن</div>
-      </div>
-    </div>
-
-    <div class="dashboard-card">
-      <div style="display:flex; justify-content:space-between; font-size:14px;">
-        <span><strong>رقم الهاتف:</strong> <span id="patientPhone">---</span></span>
-        <span><strong>تاريخ التسجيل:</strong> <span id="patientDate">---</span></span>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // ===== Firebase Configuration =====
-    const firebaseConfig = JSON.parse('{{FIREBASE_CONFIG}}' || '{}');
-
-    // ===== DOM Elements =====
-    const loginView = document.getElementById('loginView');
-    const dashboardView = document.getElementById('dashboardView');
-    const loginForm = document.getElementById('loginForm');
-    const loginEmail = document.getElementById('loginEmail');
-    const loginPassword = document.getElementById('loginPassword');
-    const loginBtn = document.getElementById('loginBtn');
-    const toast = document.getElementById('toast');
-
-    // Dashboard elements
-    const patientName = document.getElementById('patientName');
-    const patientEmail = document.getElementById('patientEmail');
-    const patientPoints = document.getElementById('patientPoints');
-    const patientPhone = document.getElementById('patientPhone');
-    const patientDate = document.getElementById('patientDate');
-    const progressBar = document.getElementById('progressBar');
-    const progressCurrent = document.getElementById('progressCurrent');
-    const progressTarget = document.getElementById('progressTarget');
-    const transactionsList = document.getElementById('transactionsList');
-    const patientLogoutBtn = document.getElementById('patientLogoutBtn');
-
-    // ===== Toast Functions =====
-    function showToast(message, type = 'error') {
-      toast.textContent = message;
-      toast.className = 'toast show ' + type;
-      clearTimeout(toast._hideTimer);
-      toast._hideTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 4000);
-    }
-
-    function hideToast() {
-      toast.classList.remove('show');
-    }
-
-    // ===== Login =====
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      hideToast();
-
-      const emailVal = loginEmail.value.trim();
-      const passwordVal = loginPassword.value;
-
-      if (!emailVal || !passwordVal) {
-        showToast('يرجى إدخال البريد الإلكتروني وكلمة المرور');
-        return;
-      }
-
-      loginBtn.disabled = true;
-      loginBtn.textContent = 'جاري تسجيل الدخول...';
-
-      try {
-        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
-        const { getAuth, signInWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
-        const { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy, limit } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        const userCredential = await signInWithEmailAndPassword(auth, emailVal, passwordVal);
-        const user = userCredential.user;
-
-        // Get user data from Firestore
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-
-        if (!userDoc.exists()) {
-          showToast('لم يتم العثور على بيانات المستخدم');
-          loginBtn.disabled = false;
-          loginBtn.textContent = 'دخول';
-          return;
-        }
-
-        const userData = userDoc.data();
-
-        if (userData.role !== 'patient') {
-          showToast('هذا الحساب ليس حساب مريض');
-          loginBtn.disabled = false;
-          loginBtn.textContent = 'دخول';
-          return;
-        }
-
-        // Get transactions
-        const transactionsQuery = query(
-          collection(db, 'transactions'),
-          where('userId', '==', user.uid),
-          orderBy('createdAt', 'desc'),
-          limit(20)
-        );
-        const transactionsSnapshot = await getDocs(transactionsQuery);
-        const transactions = [];
-        transactionsSnapshot.forEach(doc => {
-          const data = doc.data();
-          transactions.push({
-            id: doc.id,
-            ...data,
-            createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
-          });
-        });
-
-        // Show dashboard
-        showPatientDashboard(userData, transactions);
-        loginView.style.display = 'none';
-        dashboardView.style.display = 'block';
-
-        // Store auth state
-        sessionStorage.setItem('patientAuth', JSON.stringify({
-          uid: user.uid,
-          email: emailVal
-        }));
-
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'دخول';
-
-      } catch (error) {
-        console.error('Login error:', error);
-        let message = 'فشل تسجيل الدخول. تحقق من البريد وكلمة المرور.';
-
-        if (error.code === 'auth/user-not-found') {
-          message = 'المستخدم غير موجود. يرجى إنشاء حساب أولاً.';
-        } else if (error.code === 'auth/wrong-password') {
-          message = 'كلمة المرور غير صحيحة.';
-        } else if (error.code === 'auth/invalid-email') {
-          message = 'البريد الإلكتروني غير صحيح.';
-        } else if (error.code === 'auth/too-many-requests') {
-          message = 'تم تجاوز عدد محاولات الدخول. حاول لاحقاً.';
-        }
-
-        showToast(message);
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'دخول';
-      }
-    });
-
-    // ===== Show Patient Dashboard =====
-    function showPatientDashboard(userData, transactions) {
-      patientName.textContent = userData.name || 'مريض';
-      patientEmail.textContent = userData.email || '';
-      patientPoints.textContent = userData.points || 0;
-      patientPhone.textContent = userData.phone || '---';
-
-      if (userData.createdAt) {
-        const date = new Date(userData.createdAt);
-        patientDate.textContent = date.toLocaleDateString('ar-EG');
-      } else {
-        patientDate.textContent = '---';
-      }
-
-      // Progress to next reward (target: 1000 points)
-      const currentPoints = userData.points || 0;
-      const targetPoints = 1000;
-      const progress = Math.min((currentPoints / targetPoints) * 100, 100);
-      progressBar.style.width = progress + '%';
-      progressCurrent.textContent = currentPoints + ' نقطة';
-      progressTarget.textContent = targetPoints + ' نقطة';
-
-      // Transactions
-      if (transactions && transactions.length > 0) {
-        let html = '';
-        transactions.forEach(tx => {
-          const pointsClass = tx.points > 0 ? 'points-positive' :
-                            tx.points < 0 ? 'points-negative' : 'points-neutral';
-          const sign = tx.points > 0 ? '+' : '';
-          const dateStr = tx.createdAt ? new Date(tx.createdAt).toLocaleDateString('ar-EG') : '';
-          const typeMap = {
-            'admin_add': 'إضافة نقاط',
-            'admin_remove': 'خصم نقاط',
-            'manual_adjustment': 'تعديل نقاط',
-            'reset': 'تصفير نقاط',
-            'redeem': 'استبدال نقاط',
-            'signup': 'إنشاء حساب'
-          };
-          const typeLabel = typeMap[tx.type] || tx.type;
-          html += `
-            <div class="transaction-item">
-              <span>${typeLabel}</span>
-              <span>
-                <span class="${pointsClass}">${sign}${tx.points}</span>
-                <span style="color:#4a6a4a; font-size:12px;">${dateStr}</span>
-              </span>
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <div class="input-wrapper">
+                    <input type="email" id="loginEmail" placeholder="example@email.com" required>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="error-message" id="loginEmailError">الرجاء إدخال بريد إلكتروني صحيح</div>
             </div>
-          `;
-        });
-        transactionsList.innerHTML = html;
-      } else {
-        transactionsList.innerHTML = '<div style="color: #4a6a4a; text-align: center; padding: 12px;">لا توجد معاملات حتى الآن</div>';
-      }
-    }
 
-    // ===== Patient Logout =====
-    patientLogoutBtn.addEventListener('click', async () => {
-      try {
-        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
-        const { getAuth, signOut } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <div class="input-wrapper">
+                    <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="error-message" id="loginPasswordError">الرجاء إدخال كلمة المرور</div>
+            </div>
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
+            <button type="submit" class="btn-submit" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>دخول</span>
+            </button>
+        </form>
 
-        await signOut(auth);
-        sessionStorage.removeItem('patientAuth');
+        <div class="auth-footer">
+            ليس لديك حساب؟ <a href="/sign-in">إنشاء حساب جديد</a>
+            <br>
+            <a href="/">العودة للرئيسية</a>
+        </div>
+    </div>
 
-        dashboardView.style.display = 'none';
-        loginView.style.display = 'block';
-        loginForm.reset();
+    <!-- ===== لوحة تحكم المريض ===== -->
+    <div class="dashboard-container" id="patientDashboard">
+        <div class="dashboard-header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">م</div>
+                <div>
+                    <div class="user-name" id="userName">مريض</div>
+                    <div class="user-email" id="userEmail">patient@email.com</div>
+                </div>
+            </div>
+            <button class="btn-logout" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+            </button>
+        </div>
 
-        showToast('تم تسجيل الخروج بنجاح', 'success');
-      } catch (error) {
-        console.error('Logout error:', error);
-        showToast('حدث خطأ أثناء تسجيل الخروج');
-      }
-    });
+        <div class="points-card">
+            <div class="points-label">رصيد نقاطك الحالي</div>
+            <div class="points-number" id="userPoints">0</div>
+            <div class="points-label">نقطة</div>
+        </div>
 
-    // ===== Check for existing session =====
-    (async function checkSession() {
-      const sessionData = sessionStorage.getItem('patientAuth');
-      if (sessionData) {
-        try {
-          const { uid, email } = JSON.parse(sessionData);
-          const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
-          const { getAuth } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
-          const { getFirestore, doc, getDoc, collection, query, where, getDocs, orderBy, limit } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>التقدم نحو المكافأة التالية</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="fill" id="progressFill"></div>
+            </div>
+        </div>
 
-          const app = initializeApp(firebaseConfig);
-          const auth = getAuth(app);
-          const db = getFirestore(app);
+        <div>
+            <h3 class="section-title-sm">آخر المعاملات</h3>
+            <ul class="transaction-list" id="transactionList">
+                <li class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>لا توجد معاملات حتى الآن</p>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-          const currentUser = auth.currentUser;
-          if (currentUser && currentUser.uid === uid) {
-            const userDoc = await getDoc(doc(db, 'users', uid));
-            if (userDoc.exists()) {
-              const userData = userDoc.data();
-              if (userData.role === 'patient') {
-                const transactionsQuery = query(
-                  collection(db, 'transactions'),
-                  where('userId', '==', uid),
-                  orderBy('createdAt', 'desc'),
-                  limit(20)
-                );
-                const transactionsSnapshot = await getDocs(transactionsQuery);
-                const transactions = [];
-                transactionsSnapshot.forEach(doc => {
-                  const data = doc.data();
-                  transactions.push({
-                    id: doc.id,
-                    ...data,
-                    createdAt: data.createdAt ? data.createdAt.toDate().toISOString() : null
-                  });
-                });
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
-                showPatientDashboard(userData, transactions);
-                loginView.style.display = 'none';
-                dashboardView.style.display = 'block';
-              }
-            }
-          }
-        } catch (e) {
-          console.error('Session check error:', e);
-          sessionStorage.removeItem('patientAuth');
+    <script>
+        // ===== تهيئة Firebase =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2eOxT5SNqWQK89ctAPNvyvWmo5ZvTTy8",
+            authDomain: "pointsdrmirna.firebaseapp.com",
+            projectId: "pointsdrmirna",
+            storageBucket: "pointsdrmirna.firebasestorage.app",
+            messagingSenderId: "68032281955",
+            appId: "1:68032281955:web:5ce818fdcc9ea65c576756",
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ===== عناصر DOM =====
+        const loginContainer = document.getElementById('loginFormContainer');
+        const dashboard = document.getElementById('patientDashboard');
+        const loginForm = document.getElementById('loginForm');
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const userAvatar = document.getElementById('userAvatar');
+        const userPoints = document.getElementById('userPoints');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const transactionList = document.getElementById('transactionList');
+
+        let currentUserData = null;
+
+        // ===== دالة عرض الإشعار =====
+        function showToast(message, type = 'info') {
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
         }
-      }
-    })();
 
-    // ===== Validation for login =====
-    loginEmail.addEventListener('input', () => {
-      const errorEl = document.getElementById('loginEmailError');
-      if (loginEmail.classList.contains('error')) {
-        loginEmail.classList.remove('error');
-        errorEl.classList.remove('show');
-      }
-      hideToast();
-    });
+        // ===== التحقق من صحة البريد =====
+        loginEmail.addEventListener('blur', () => {
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail.value.trim());
+            const errorEl = document.getElementById('loginEmailError');
+            if (!isValid && loginEmail.value.trim().length > 0) {
+                loginEmail.classList.add('error');
+                errorEl.classList.add('visible');
+            } else {
+                loginEmail.classList.remove('error');
+                errorEl.classList.remove('visible');
+            }
+        });
 
-    loginPassword.addEventListener('input', () => {
-      const errorEl = document.getElementById('loginPasswordError');
-      if (loginPassword.classList.contains('error')) {
-        loginPassword.classList.remove('error');
-        errorEl.classList.remove('show');
-      }
-      hideToast();
-    });
-  </script>
+        loginPassword.addEventListener('blur', () => {
+            const errorEl = document.getElementById('loginPasswordError');
+            if (loginPassword.value.length === 0) {
+                loginPassword.classList.add('error');
+                errorEl.classList.add('visible');
+            } else {
+                loginPassword.classList.remove('error');
+                errorEl.classList.remove('visible');
+            }
+        });
 
-  <script>
-    // ===== Inject Firebase Config =====
-    (function() {
-      const config = JSON.parse('{{FIREBASE_CONFIG}}' || '{}');
-      const firebaseConfigStr = JSON.stringify(config);
-      const mainScript = document.querySelector('script:not([src])');
-      if (mainScript) {
-        const content = mainScript.textContent;
-        mainScript.textContent = content.replace(/JSON\.parse\('{{FIREBASE_CONFIG}}' \|\| '{}'\)/g, 'JSON.parse(\'' + firebaseConfigStr.replace(/'/g, "\\'") + '\')');
-      }
-    })();
-  </script>
+        // ===== عرض لوحة تحكم المريض =====
+        function showPatientDashboard(user, userDoc) {
+            currentUserData = { ...userDoc, uid: user.uid };
+            
+            // إظهار اللوحة وإخفاء نموذج الدخول
+            loginContainer.style.display = 'none';
+            dashboard.classList.add('active');
 
+            // ملء البيانات
+            const name = userDoc.name || user.displayName || 'مريض';
+            userName.textContent = name;
+            userEmail.textContent = user.email;
+            userAvatar.textContent = name.charAt(0);
+
+            const points = userDoc.points || 0;
+            userPoints.textContent = points;
+
+            // تحديث شريط التقدم (نفترض أن المكافأة عند 1000 نقطة)
+            const target = 1000;
+            const percentage = Math.min((points / target) * 100, 100);
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = Math.round(percentage) + '%';
+
+            // جلب المعاملات
+            loadTransactions(user.uid);
+        }
+
+        // ===== جلب المعاملات =====
+        async function loadTransactions(uid) {
+            try {
+                const snapshot = await db.collection('transactions')
+                    .where('userId', '==', uid)
+                    .orderBy('createdAt', 'desc')
+                    .limit(20)
+                    .get();
+
+                transactionList.innerHTML = '';
+
+                if (snapshot.empty) {
+                    transactionList.innerHTML = `
+                        <li class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>لا توجد معاملات حتى الآن</p>
+                        </li>
+                    `;
+                    return;
+                }
+
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const li = document.createElement('li');
+                    li.className = 'transaction-item';
+
+                    const typeMap = {
+                        'admin_add': 'إضافة',
+                        'admin_remove': 'خصم',
+                        'manual_adjustment': 'تعديل',
+                        'reset': 'تصفير',
+                        'signup': 'ترحيب',
+                        'redeem': 'استبدال'
+                    };
+
+                    const typeClassMap = {
+                        'admin_add': 'badge-add',
+                        'signup': 'badge-add',
+                        'admin_remove': 'badge-remove',
+                        'reset': 'badge-reset',
+                        'manual_adjustment': 'badge-default',
+                        'redeem': 'badge-default'
+                    };
+
+                    const typeName = typeMap[data.type] || data.type;
+                    const typeClass = typeClassMap[data.type] || 'badge-default';
+                    const isPositive = data.type === 'admin_add' || data.type === 'signup';
+                    const change = data.newBalance - data.previousBalance;
+
+                    let dateStr = '';
+                    if (data.createdAt && data.createdAt.toDate) {
+                        const d = data.createdAt.toDate();
+                        dateStr = d.toLocaleDateString('ar-EG') + ' ' + d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                    }
+
+                    li.innerHTML = `
+                        <div class="type">
+                            <span class="badge ${typeClass}">${typeName}</span>
+                            <span>${data.reason || ''}</span>
+                        </div>
+                        <div>
+                            <span class="points-change ${isPositive ? 'positive' : 'negative'}">
+                                ${isPositive ? '+' : ''}${change}
+                            </span>
+                            <span class="date">${dateStr}</span>
+                        </div>
+                    `;
+
+                    transactionList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Load transactions error:', error);
+            }
+        }
+
+        // ===== تقديم نموذج الدخول =====
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value;
+
+            // التحقق
+            let isValid = true;
+            const emailError = document.getElementById('loginEmailError');
+            const passError = document.getElementById('loginPasswordError');
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                loginEmail.classList.add('error');
+                emailError.classList.add('visible');
+                isValid = false;
+            } else {
+                loginEmail.classList.remove('error');
+                emailError.classList.remove('visible');
+            }
+
+            if (password.length === 0) {
+                loginPassword.classList.add('error');
+                passError.classList.add('visible');
+                isValid = false;
+            } else {
+                loginPassword.classList.remove('error');
+                passError.classList.remove('visible');
+            }
+
+            if (!isValid) return;
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="spinner"></span> جاري الدخول...';
+
+            try {
+                // 1. تسجيل الدخول
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                // 2. جلب بيانات المستخدم من Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+
+                if (!userDoc.exists) {
+                    showToast('بيانات المستخدم غير موجودة', 'error');
+                    return;
+                }
+
+                const userData = userDoc.data();
+
+                // 3. التحقق من أن المستخدم مريض
+                if (userData.role !== 'patient') {
+                    showToast('هذا الحساب ليس حساب مريض', 'error');
+                    await auth.signOut();
+                    return;
+                }
+
+                if (userData.status !== 'active') {
+                    showToast('الحساب غير نشط، يرجى التواصل مع الإدارة', 'error');
+                    await auth.signOut();
+                    return;
+                }
+
+                // 4. عرض لوحة التحكم
+                showPatientDashboard(user, userData);
+                showToast('مرحباً بك ' + (userData.name || ''), 'success');
+
+            } catch (error) {
+                console.error('Login error:', error);
+                let message = 'حدث خطأ أثناء تسجيل الدخول';
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                        message = 'البريد الإلكتروني غير مسجل';
+                        break;
+                    case 'auth/wrong-password':
+                        message = 'كلمة المرور غير صحيحة';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'البريد الإلكتروني غير صحيح';
+                        break;
+                    case 'auth/too-many-requests':
+                        message = 'تم تعطيل الحساب مؤقتاً بسبب محاولات فاشلة كثيرة';
+                        break;
+                    case 'auth/network-request-failed':
+                        message = 'خطأ في الاتصال بالشبكة';
+                        break;
+                    default:
+                        message = error.message || 'حدث خطأ غير متوقع';
+                }
+                showToast(message, 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول';
+            }
+        });
+
+        // ===== تسجيل الخروج =====
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await auth.signOut();
+                dashboard.classList.remove('active');
+                loginContainer.style.display = 'block';
+                loginEmail.value = '';
+                loginPassword.value = '';
+                showToast('تم تسجيل الخروج بنجاح', 'success');
+            } catch (error) {
+                console.error('Logout error:', error);
+                showToast('حدث خطأ أثناء تسجيل الخروج', 'error');
+            }
+        });
+
+        // ===== التحقق من حالة المستخدم عند التحميل =====
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        if (userData.role === 'patient' && userData.status === 'active') {
+                            showPatientDashboard(user, userData);
+                            return;
+                        }
+                    }
+                    // إذا لم يكن مريضاً أو غير نشط، سجل الخروج
+                    await auth.signOut();
+                } catch (error) {
+                    console.error('Auth state check error:', error);
+                }
+            }
+            // إذا لم يكن هناك مستخدم، أظهر نموذج الدخول
+            loginContainer.style.display = 'block';
+            dashboard.classList.remove('active');
+        });
+    </script>
 </body>
 </html>
