@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إنشاء حساب - Points Dr.Mirna</title>
+  <style>
+    /* ===== CSS Reset & Base ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f7f0;
+      color: #1a2e1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #0d7a3b;
+    }
+
+    /* ===== Auth Container ===== */
+    .auth-container {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 40, 0, 0.12);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 480px;
+      border: 1px solid #e0ece0;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-header img {
+      height: 56px;
+      width: auto;
+      margin-bottom: 12px;
+    }
+
+    .auth-header h1 {
+      font-size: 26px;
+      font-weight: 700;
+      color: #0d3b0d;
+    }
+
+    .auth-header p {
+      color: #4a6a4a;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* ===== Form ===== */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a3a1a;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #dce8dc;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: border-color 0.2s ease;
+      background: #fafcfa;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #0d7a3b;
+      box-shadow: 0 0 0 3px rgba(13, 122, 59, 0.1);
+    }
+
+    .form-group input.error {
+      border-color: #d32f2f;
+    }
+
+    .form-group .error-msg {
+      color: #d32f2f;
+      font-size: 13px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .form-group .error-msg.show {
+      display: block;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #0d7a3b;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+      background: #0a5f2e;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(13, 122, 59, 0.25);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ===== Links ===== */
+    .auth-footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 14px;
+      color: #4a6a4a;
+    }
+
+    .auth-footer a {
+      font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #4a6a4a;
+    }
+
+    .back-link:hover {
+      color: #0d3b0d;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #d32f2f;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-align: center;
+      max-width: 90%;
+      font-size: 15px;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .toast.success {
+      background: #0d7a3b;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 32px 20px;
+      }
+      .auth-header h1 {
+        font-size: 22px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast"></div>
+
+  <!-- ===== AUTH FORM ===== -->
+  <div class="auth-container">
+    <div class="auth-header">
+      <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="Points Dr.Mirna" />
+      <h1>إنشاء حساب</h1>
+      <p>سجل حسابك في نقاط دكتور ميرنا</p>
+    </div>
+
+    <form id="signupForm" novalidate>
+      <div class="form-group">
+        <label for="fullName">الاسم الكامل</label>
+        <input type="text" id="fullName" placeholder="أدخل اسمك الكامل" required />
+        <div class="error-msg" id="fullNameError">يرجى إدخال الاسم الكامل</div>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">رقم الهاتف</label>
+        <input type="tel" id="phone" placeholder="مثال: 01000000000" required />
+        <div class="error-msg" id="phoneError">يرجى إدخال رقم هاتف صحيح</div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">البريد الإلكتروني</label>
+        <input type="email" id="email" placeholder="example@email.com" required />
+        <div class="error-msg" id="emailError">يرجى إدخال بريد إلكتروني صحيح</div>
+      </div>
+
+      <div class="form-group">
+        <label for="password">كلمة المرور</label>
+        <input type="password" id="password" placeholder="أدخل كلمة المرور" required minlength="6" />
+        <div class="error-msg" id="passwordError">كلمة المرور يجب أن تكون 6 أحرف على الأقل</div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">تأكيد كلمة المرور</label>
+        <input type="password" id="confirmPassword" placeholder="أعد إدخال كلمة المرور" required />
+        <div class="error-msg" id="confirmPasswordError">كلمة المرور غير متطابقة</div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">إنشاء الحساب</button>
+    </form>
+
+    <div class="auth-footer">
+      لديك حساب بالفعل؟ <a href="login">تسجيل الدخول</a><br />
+      <a href="index" class="back-link">← العودة للرئيسية</a>
+    </div>
+  </div>
+
+  <script>
+    // ===== Firebase Configuration =====
+    const firebaseConfig = JSON.parse('{{FIREBASE_CONFIG}}' || '{}');
+
+    // ===== DOM Elements =====
+    const form = document.getElementById('signupForm');
+    const fullName = document.getElementById('fullName');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const submitBtn = document.getElementById('submitBtn');
+    const toast = document.getElementById('toast');
+
+    // ===== Toast Functions =====
+    function showToast(message, type = 'error') {
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      clearTimeout(toast._hideTimer);
+      toast._hideTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+
+    function hideToast() {
+      toast.classList.remove('show');
+    }
+
+    // ===== Validation =====
+    function validateField(input, errorId, condition, message) {
+      const errorEl = document.getElementById(errorId);
+      if (!condition) {
+        input.classList.add('error');
+        errorEl.textContent = message;
+        errorEl.classList.add('show');
+        return false;
+      } else {
+        input.classList.remove('error');
+        errorEl.classList.remove('show');
+        return true;
+      }
+    }
+
+    function validateForm() {
+      let isValid = true;
+
+      // Full Name
+      if (!validateField(fullName, 'fullNameError', fullName.value.trim().length >= 2, 'يرجى إدخال الاسم الكامل')) {
+        isValid = false;
+      }
+
+      // Phone
+      const phoneRegex = /^01[0-9]{9}$/;
+      if (!validateField(phone, 'phoneError', phoneRegex.test(phone.value.trim()), 'يرجى إدخال رقم هاتف صحيح (11 رقم)')) {
+        isValid = false;
+      }
+
+      // Email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!validateField(email, 'emailError', emailRegex.test(email.value.trim()), 'يرجى إدخال بريد إلكتروني صحيح')) {
+        isValid = false;
+      }
+
+      // Password
+      if (!validateField(password, 'passwordError', password.value.length >= 6, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل')) {
+        isValid = false;
+      }
+
+      // Confirm Password
+      if (!validateField(confirmPassword, 'confirmPasswordError', confirmPassword.value === password.value && password.value.length >= 6, 'كلمة المرور غير متطابقة')) {
+        isValid = false;
+      }
+
+      return isValid;
+    }
+
+    // ===== Real-time validation =====
+    [fullName, phone, email, password, confirmPassword].forEach(input => {
+      input.addEventListener('input', () => {
+        const errorId = input.id + 'Error';
+        const errorEl = document.getElementById(errorId);
+        if (input.classList.contains('error')) {
+          input.classList.remove('error');
+          errorEl.classList.remove('show');
+        }
+        hideToast();
+      });
+    });
+
+    // ===== Sign Up =====
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideToast();
+
+      if (!validateForm()) {
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'جاري إنشاء الحساب...';
+
+      const name = fullName.value.trim();
+      const phoneVal = phone.value.trim();
+      const emailVal = email.value.trim();
+      const passwordVal = password.value;
+
+      try {
+        // Import Firebase modules
+        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
+        const { getAuth, createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
+        const { getFirestore, doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Create user in Firebase Auth
+        const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
+        const user = userCredential.user;
+
+        // Create patient document in Firestore
+        await setDoc(doc(db, 'users', user.uid), {
+          uid: user.uid,
+          name: name,
+          phone: phoneVal,
+          email: emailVal,
+          points: 0,
+          role: 'patient',
+          status: 'active',
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp()
+        });
+
+        // Create signup transaction
+        await setDoc(doc(db, 'transactions', user.uid + '_signup'), {
+          userId: user.uid,
+          type: 'signup',
+          points: 0,
+          previousBalance: 0,
+          newBalance: 0,
+          reason: 'Account created',
+          performedBy: 'system',
+          createdAt: serverTimestamp()
+        });
+
+        showToast('تم إنشاء الحساب بنجاح! جاري التوجيه...', 'success');
+
+        setTimeout(() => {
+          window.location.href = 'login.html';
+        }, 1500);
+
+      } catch (error) {
+        console.error('Signup error:', error);
+        let message = 'حدث خطأ أثناء إنشاء الحساب. حاول مرة أخرى.';
+
+        if (error.code === 'auth/email-already-in-use') {
+          message = 'البريد الإلكتروني مستخدم بالفعل. يرجى استخدام بريد آخر.';
+        } else if (error.code === 'auth/weak-password') {
+          message = 'كلمة المرور ضعيفة. يرجى استخدام كلمة مرور أقوى.';
+        } else if (error.code === 'auth/invalid-email') {
+          message = 'البريد الإلكتروني غير صحيح.';
+        } else if (error.message) {
+          message = error.message;
+        }
+
+        showToast(message);
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'إنشاء الحساب';
+      }
+    });
+  </script>
+
+  <script>
+    // ===== Inject Firebase Config =====
+    (function() {
+      const script = document.currentScript;
+      const config = JSON.parse('{{FIREBASE_CONFIG}}' || '{}');
+      const firebaseConfigStr = JSON.stringify(config);
+      // Replace placeholder in the main script
+      const mainScript = document.querySelector('script:not([src])');
+      if (mainScript) {
+        const content = mainScript.textContent;
+        mainScript.textContent = content.replace(/JSON\.parse\('{{FIREBASE_CONFIG}}' \|\| '{}'\)/g, 'JSON.parse(\'' + firebaseConfigStr.replace(/'/g, "\\'") + '\')');
+      }
+    })();
+  </script>
+
+</body>
+</html>
