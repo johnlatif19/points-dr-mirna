@@ -10,24 +10,48 @@ dotenv.config();
 const admin = require('firebase-admin');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 
-// Initialize Firebase Admin
+// ==================== FIREBASE ADMIN INITIALIZATION ====================
 let serviceAccount;
+let firebaseConfig;
+
 try {
-  const config = JSON.parse(process.env.FIREBASE_CONFIG);
-  serviceAccount = config;
+  // Parse FIREBASE_CONFIG from environment
+  firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
+  serviceAccount = firebaseConfig;
 } catch (e) {
   console.error('Error parsing FIREBASE_CONFIG:', e);
   serviceAccount = {};
+  firebaseConfig = {};
 }
 
+// Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   try {
-    admin.initializeApp({
-      credential: admin.credential.cert(serviceAccount),
-      projectId: serviceAccount.projectId || 'your-project-id'
-    });
+    // Try to initialize with service account
+    if (serviceAccount.client_email && serviceAccount.private_key) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccount),
+        projectId: serviceAccount.projectId || firebaseConfig.projectId
+      });
+    } else {
+      // Fallback: Use application default credentials
+      admin.initializeApp({
+        credential: admin.credential.applicationDefault(),
+        projectId: firebaseConfig.projectId || 'pointsdrmirna'
+      });
+    }
+    console.log('✅ Firebase Admin initialized successfully');
   } catch (e) {
-    console.error('Firebase Admin initialization error:', e);
+    console.error('❌ Firebase Admin initialization error:', e);
+    // Try one more time with just project ID
+    try {
+      admin.initializeApp({
+        projectId: firebaseConfig.projectId || 'pointsdrmirna'
+      });
+      console.log('✅ Firebase Admin initialized with default credentials');
+    } catch (err) {
+      console.error('❌ Failed to initialize Firebase Admin:', err);
+    }
   }
 }
 
@@ -35,7 +59,7 @@ const db = getFirestore();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+// ==================== MIDDLEWARE ====================
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -528,14 +552,21 @@ app.get('/api/patient/profile', async (req, res) => {
 
 // ==================== FALLBACK ROUTE ====================
 
+// Handle all other routes - serve index.html for SPA
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // ==================== START SERVER ====================
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// For Vercel serverless, we don't need to listen
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📁 Serving static files from: ${path.join(__dirname, 'public')}`);
+    console.log(`🔑 Admin username: ${process.env.ADMIN_USERNAME || 'not set'}`);
+    console.log(`📊 Firebase Project: ${firebaseConfig.projectId || 'not set'}`);
+  });
+}
 
 module.exports = app;
