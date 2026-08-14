@@ -11,44 +11,75 @@ const admin = require('firebase-admin');
 const { getFirestore, FieldValue } = require('firebase-admin/firestore');
 
 // ==================== FIREBASE ADMIN INITIALIZATION ====================
-let serviceAccount;
-let firebaseConfig;
+let serviceAccount = null;
+let firebaseConfig = null;
 
+// Try to get service account from environment
 try {
-  // Parse FIREBASE_CONFIG from environment
-  firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
-  serviceAccount = firebaseConfig;
+  // First: Try FIREBASE_SERVICE_ACCOUNT (full service account JSON)
+  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+    serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+    console.log('✅ Loaded FIREBASE_SERVICE_ACCOUNT');
+  }
+  // Second: Try FIREBASE_CONFIG
+  else if (process.env.FIREBASE_CONFIG) {
+    const config = JSON.parse(process.env.FIREBASE_CONFIG);
+    firebaseConfig = config;
+    
+    // Check if this is a service account (has private_key)
+    if (config.private_key && config.client_email) {
+      serviceAccount = config;
+      console.log('✅ Loaded FIREBASE_CONFIG as service account');
+    } else {
+      // Web app config - store for later use
+      console.log('ℹ️ FIREBASE_CONFIG is web app config');
+      serviceAccount = null;
+    }
+  }
 } catch (e) {
-  console.error('Error parsing FIREBASE_CONFIG:', e);
-  serviceAccount = {};
-  firebaseConfig = {};
+  console.error('❌ Error parsing config:', e);
+  serviceAccount = null;
 }
 
 // Initialize Firebase Admin SDK
 if (!admin.apps.length) {
   try {
-    // Try to initialize with service account
-    if (serviceAccount.client_email && serviceAccount.private_key) {
+    if (serviceAccount && serviceAccount.private_key) {
+      // Use service account
       admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount),
-        projectId: serviceAccount.projectId || firebaseConfig.projectId
+        credential: admin.credential.cert({
+          projectId: serviceAccount.project_id || serviceAccount.projectId || 'pointsdrmirna',
+          clientEmail: serviceAccount.client_email,
+          privateKey: serviceAccount.private_key
+        }),
+        projectId: serviceAccount.project_id || serviceAccount.projectId || 'pointsdrmirna'
       });
+      console.log('✅ Firebase Admin initialized with Service Account');
     } else {
-      // Fallback: Use application default credentials
-      admin.initializeApp({
-        credential: admin.credential.applicationDefault(),
-        projectId: firebaseConfig.projectId || 'pointsdrmirna'
-      });
+      // Use Application Default Credentials (for Vercel / Google Cloud)
+      try {
+        admin.initializeApp({
+          credential: admin.credential.applicationDefault(),
+          projectId: firebaseConfig?.projectId || 'pointsdrmirna'
+        });
+        console.log('✅ Firebase Admin initialized with Application Default Credentials');
+      } catch (adcError) {
+        // Fallback: Try with just project ID
+        console.log('⚠️ ADC failed, trying fallback...');
+        admin.initializeApp({
+          projectId: firebaseConfig?.projectId || 'pointsdrmirna'
+        });
+        console.log('✅ Firebase Admin initialized with fallback');
+      }
     }
-    console.log('✅ Firebase Admin initialized successfully');
   } catch (e) {
     console.error('❌ Firebase Admin initialization error:', e);
-    // Try one more time with just project ID
+    // Final fallback
     try {
       admin.initializeApp({
-        projectId: firebaseConfig.projectId || 'pointsdrmirna'
+        projectId: firebaseConfig?.projectId || 'pointsdrmirna'
       });
-      console.log('✅ Firebase Admin initialized with default credentials');
+      console.log('✅ Firebase Admin initialized with final fallback');
     } catch (err) {
       console.error('❌ Failed to initialize Firebase Admin:', err);
     }
@@ -565,7 +596,7 @@ if (require.main === module) {
     console.log(`🚀 Server running on port ${PORT}`);
     console.log(`📁 Serving static files from: ${path.join(__dirname, 'public')}`);
     console.log(`🔑 Admin username: ${process.env.ADMIN_USERNAME || 'not set'}`);
-    console.log(`📊 Firebase Project: ${firebaseConfig.projectId || 'not set'}`);
+    console.log(`📊 Firebase Project: ${firebaseConfig?.projectId || 'pointsdrmirna'}`);
   });
 }
 
