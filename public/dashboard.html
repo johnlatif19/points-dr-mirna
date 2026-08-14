@@ -41,7 +41,6 @@
             min-height: 100vh;
         }
 
-        /* ===== الهيدر ===== */
         .header {
             background: var(--white);
             box-shadow: var(--shadow-sm);
@@ -109,7 +108,6 @@
             transform: translateY(-1px);
         }
 
-        /* ===== المحتوى ===== */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -123,7 +121,6 @@
             margin-bottom: 24px;
         }
 
-        /* ===== الإحصاءات ===== */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -164,7 +161,6 @@
             color: var(--gray-300);
         }
 
-        /* ===== الأدوات ===== */
         .toolbar {
             display: flex;
             flex-wrap: wrap;
@@ -241,7 +237,6 @@
             background: var(--mint-light);
         }
 
-        /* ===== الجدول ===== */
         .table-container {
             background: var(--white);
             border-radius: var(--radius);
@@ -335,7 +330,6 @@
             margin-left: 4px;
         }
 
-        /* ===== الترقيم ===== */
         .pagination {
             display: flex;
             justify-content: space-between;
@@ -383,7 +377,6 @@
             cursor: not-allowed;
         }
 
-        /* ===== المودال ===== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -545,7 +538,6 @@
             min-width: 100px;
         }
 
-        /* ===== عرض المريض ===== */
         .patient-detail-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -571,7 +563,6 @@
             color: var(--gray-800);
         }
 
-        /* ===== الإشعار ===== */
         .toast {
             position: fixed;
             top: 24px;
@@ -627,7 +618,6 @@
             color: var(--gray-600);
         }
 
-        /* ===== مستجيبة ===== */
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr 1fr;
@@ -695,16 +685,14 @@
     </style>
 </head>
 <body>
-    <!-- ===== إشعار ===== -->
     <div id="toast" class="toast">
         <i class="fas fa-info-circle"></i>
         <span id="toastMessage">الرسالة</span>
     </div>
 
-    <!-- ===== الهيدر ===== -->
     <header class="header">
         <div class="container">
-            <a href="/dashboard.html" class="logo">
+            <a href="/dashboard" class="logo">
                 <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
                 <span>نقاط د. ميرنا</span>
             </a>
@@ -717,11 +705,9 @@
         </div>
     </header>
 
-    <!-- ===== المحتوى الرئيسي ===== -->
     <div class="main-content">
         <h1 class="page-title">لوحة التحكم</h1>
 
-        <!-- ===== الإحصاءات ===== -->
         <div class="stats-grid" id="statsGrid">
             <div class="stat-card">
                 <span class="stat-icon"><i class="fas fa-users"></i></span>
@@ -745,7 +731,6 @@
             </div>
         </div>
 
-        <!-- ===== الأدوات ===== -->
         <div class="toolbar">
             <div class="search-wrapper">
                 <input type="text" id="searchInput" placeholder="ابحث بالاسم أو الهاتف أو البريد الإلكتروني...">
@@ -759,7 +744,6 @@
             </button>
         </div>
 
-        <!-- ===== الجدول ===== -->
         <div class="table-container">
             <div class="table-wrapper">
                 <table>
@@ -792,7 +776,6 @@
         </div>
     </div>
 
-    <!-- ===== مودال إضافة مريض ===== -->
     <div class="modal-overlay" id="addPatientModal">
         <div class="modal">
             <div class="modal-header">
@@ -831,7 +814,6 @@
         </div>
     </div>
 
-    <!-- ===== مودال عرض المريض ===== -->
     <div class="modal-overlay" id="viewPatientModal">
         <div class="modal">
             <div class="modal-header">
@@ -885,7 +867,6 @@
         </div>
     </div>
 
-    <!-- ===== مودال إدارة النقاط ===== -->
     <div class="modal-overlay" id="pointsModal">
         <div class="modal">
             <div class="modal-header">
@@ -909,7 +890,6 @@
         </div>
     </div>
 
-    <!-- ===== مودال تأكيد التصفير ===== -->
     <div class="modal-overlay" id="resetModal">
         <div class="modal">
             <div class="modal-header">
@@ -930,14 +910,12 @@
     </div>
 
     <script>
-        // ===== متغيرات الحالة =====
         let currentPage = 1;
         let currentSearch = '';
         let selectedUserId = null;
         let currentUserData = null;
         const limit = 10;
 
-        // ===== عناصر DOM =====
         const patientsBody = document.getElementById('patientsTableBody');
         const paginationInfo = document.getElementById('paginationInfo');
         const prevPageBtn = document.getElementById('prevPage');
@@ -949,7 +927,6 @@
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
 
-        // ===== دالة عرض الإشعار =====
         function showToast(message, type = 'info') {
             toast.className = 'toast ' + type;
             toastMessage.textContent = message;
@@ -960,7 +937,6 @@
             }, 4000);
         }
 
-        // ===== دالة فتح وإغلاق المودال =====
         function openModal(id) {
             document.getElementById(id).classList.add('active');
         }
@@ -969,12 +945,9 @@
             document.getElementById(id).classList.remove('active');
         }
 
-        // ===== جلب الإحصاءات =====
         async function fetchStats() {
             try {
-                const response = await fetch('/api/admin/stats', {
-                    credentials: 'include'
-                });
+                const response = await fetch('/api/admin/stats', { credentials: 'include' });
                 if (!response.ok) throw new Error('Failed to fetch stats');
                 const data = await response.json();
                 document.getElementById('totalPatients').textContent = data.totalPatients || 0;
@@ -986,7 +959,6 @@
             }
         }
 
-        // ===== جلب المرضى =====
         async function fetchPatients(page = 1, search = '') {
             try {
                 patientsBody.innerHTML = `
@@ -1005,7 +977,7 @@
                 const response = await fetch(url, { credentials: 'include' });
                 if (!response.ok) {
                     if (response.status === 401) {
-                        window.location.href = '/login-dashboard.html';
+                        window.location.href = '/login-dashboard';
                         return;
                     }
                     throw new Error('Failed to fetch patients');
@@ -1028,7 +1000,6 @@
             }
         }
 
-        // ===== عرض المرضى في الجدول =====
         function renderPatients(patients) {
             if (!patients || patients.length === 0) {
                 patientsBody.innerHTML = `
@@ -1067,7 +1038,6 @@
             `).join('');
         }
 
-        // ===== تحديث الترقيم =====
         function updatePagination(page, totalPages, total) {
             paginationInfo.textContent = `عرض ${(page - 1) * limit + 1} - ${Math.min(page * limit, total)} من ${total}`;
             prevPageBtn.disabled = page <= 1;
@@ -1075,7 +1045,6 @@
             currentPage = page;
         }
 
-        // ===== عرض بيانات المريض =====
         async function viewPatient(userId) {
             selectedUserId = userId;
             try {
@@ -1086,7 +1055,6 @@
                 document.getElementById('viewPoints').textContent = '...';
                 document.getElementById('viewTransactions').innerHTML = '<p style="color:var(--gray-600); text-align:center; padding:16px 0;"><span class="spinner"></span> جاري التحميل...</p>';
 
-                // جلب بيانات المريض
                 const userResponse = await fetch(`/api/admin/users/${userId}`, { credentials: 'include' });
                 if (!userResponse.ok) throw new Error('Failed to fetch user');
                 const userData = await userResponse.json();
@@ -1097,7 +1065,6 @@
                 document.getElementById('viewEmail').textContent = userData.email || '-';
                 document.getElementById('viewPoints').textContent = userData.points || 0;
 
-                // جلب المعاملات
                 const transResponse = await fetch(`/api/admin/users/${userId}/transactions`, { credentials: 'include' });
                 if (!transResponse.ok) throw new Error('Failed to fetch transactions');
                 const transactions = await transResponse.json();
@@ -1138,7 +1105,6 @@
             }
         }
 
-        // ===== فتح مودال النقاط =====
         function openPointsModal(operation) {
             if (!selectedUserId) {
                 showToast('الرجاء اختيار مريض أولاً', 'error');
@@ -1163,7 +1129,6 @@
             openModal('pointsModal');
         }
 
-        // ===== فتح مودال التصفير =====
         function openResetModal() {
             if (!selectedUserId) {
                 showToast('الرجاء اختيار مريض أولاً', 'error');
@@ -1173,7 +1138,6 @@
             openModal('resetModal');
         }
 
-        // ===== إدارة النقاط =====
         document.getElementById('pointsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const operation = document.getElementById('pointsOperation').value;
@@ -1210,7 +1174,6 @@
                 closeModal('pointsModal');
                 await fetchPatients(currentPage, currentSearch);
                 await fetchStats();
-                // إعادة فتح عرض المريض
                 viewPatient(selectedUserId);
 
             } catch (error) {
@@ -1222,7 +1185,6 @@
             }
         });
 
-        // ===== تصفير النقاط =====
         document.getElementById('resetConfirmBtn').addEventListener('click', async () => {
             const btn = document.getElementById('resetConfirmBtn');
             btn.disabled = true;
@@ -1256,7 +1218,6 @@
             }
         });
 
-        // ===== إضافة مريض =====
         document.getElementById('addPatientForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -1311,7 +1272,6 @@
             }
         });
 
-        // ===== أحداث الصفحة =====
         document.getElementById('addPatientBtn').addEventListener('click', () => {
             document.getElementById('addPatientForm').reset();
             openModal('addPatientModal');
@@ -1338,7 +1298,6 @@
             fetchPatients(currentPage + 1, currentSearch);
         });
 
-        // ===== تسجيل الخروج =====
         logoutBtn.addEventListener('click', async () => {
             try {
                 await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
@@ -1349,7 +1308,6 @@
             }
         });
 
-        // ===== التحقق من صلاحية الأدمن =====
         async function checkAdminAuth() {
             try {
                 const response = await fetch('/api/admin/me', { credentials: 'include' });
@@ -1365,7 +1323,6 @@
             }
         }
 
-        // ===== تحميل الصفحة =====
         async function init() {
             await checkAdminAuth();
             await fetchStats();
@@ -1374,7 +1331,6 @@
 
         init();
 
-        // إغلاق المودال بالنقر خارجها
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
