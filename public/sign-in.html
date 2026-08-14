@@ -1,442 +1,517 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>إنشاء حساب - Points Dr.Mirna</title>
-  <style>
-    /* ===== CSS Reset & Base ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إنشاء حساب - نقاط د. ميرنا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d5c3e;
+            --primary-dark: #0a452e;
+            --primary-light: #1a7a55;
+            --emerald: #2ecc71;
+            --mint-light: #d5f5e3;
+            --white: #ffffff;
+            --gray-50: #f8faf9;
+            --gray-100: #f1f4f2;
+            --gray-200: #e8ece9;
+            --gray-300: #d1d8d4;
+            --gray-600: #6b7a73;
+            --gray-800: #2d3a33;
+            --gray-900: #1a241e;
+            --shadow-md: 0 4px 20px rgba(13, 92, 62, 0.12);
+            --shadow-lg: 0 8px 40px rgba(13, 92, 62, 0.16);
+            --radius: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f7f0;
-      color: #1a2e1a;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    a {
-      text-decoration: none;
-      color: #0d7a3b;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--mint-light) 0%, var(--white) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
 
-    /* ===== Auth Container ===== */
-    .auth-container {
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 40, 0, 0.12);
-      padding: 48px 40px;
-      width: 100%;
-      max-width: 480px;
-      border: 1px solid #e0ece0;
-    }
+        .auth-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 100%;
+        }
 
-    .auth-header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
 
-    .auth-header img {
-      height: 56px;
-      width: auto;
-      margin-bottom: 12px;
-    }
+        .auth-logo img {
+            height: 48px;
+            width: auto;
+            border-radius: 8px;
+        }
 
-    .auth-header h1 {
-      font-size: 26px;
-      font-weight: 700;
-      color: #0d3b0d;
-    }
+        .auth-logo span {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
 
-    .auth-header p {
-      color: #4a6a4a;
-      font-size: 14px;
-      margin-top: 4px;
-    }
+        .auth-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+        }
 
-    /* ===== Form ===== */
-    .form-group {
-      margin-bottom: 18px;
-    }
+        .auth-subtitle {
+            text-align: center;
+            color: var(--gray-600);
+            margin-bottom: 32px;
+            font-size: 15px;
+        }
 
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      font-size: 14px;
-      color: #1a3a1a;
-      margin-bottom: 5px;
-    }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .form-group input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #dce8dc;
-      border-radius: 10px;
-      font-size: 15px;
-      transition: border-color 0.2s ease;
-      background: #fafcfa;
-      font-family: inherit;
-    }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
 
-    .form-group input:focus {
-      outline: none;
-      border-color: #0d7a3b;
-      box-shadow: 0 0 0 3px rgba(13, 122, 59, 0.1);
-    }
+        .form-group label .required {
+            color: #e74c3c;
+        }
 
-    .form-group input.error {
-      border-color: #d32f2f;
-    }
+        .form-group .input-wrapper {
+            position: relative;
+        }
 
-    .form-group .error-msg {
-      color: #d32f2f;
-      font-size: 13px;
-      margin-top: 4px;
-      display: none;
-    }
+        .form-group .input-wrapper i {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-300);
+            font-size: 16px;
+            transition: var(--transition);
+        }
 
-    .form-group .error-msg.show {
-      display: block;
-    }
+        .form-group input {
+            width: 100%;
+            padding: 12px 44px 12px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 15px;
+            transition: var(--transition);
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
 
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: #0d7a3b;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 8px;
-    }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
+            background: var(--white);
+        }
 
-    .btn-submit:hover {
-      background: #0a5f2e;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(13, 122, 59, 0.25);
-    }
+        .form-group input:focus + i {
+            color: var(--primary);
+        }
 
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+        .form-group input.error {
+            border-color: #e74c3c;
+        }
 
-    /* ===== Links ===== */
-    .auth-footer {
-      text-align: center;
-      margin-top: 22px;
-      font-size: 14px;
-      color: #4a6a4a;
-    }
+        .form-group .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 4px;
+            display: none;
+        }
 
-    .auth-footer a {
-      font-weight: 600;
-    }
+        .form-group .error-message.visible {
+            display: block;
+        }
 
-    .auth-footer a:hover {
-      text-decoration: underline;
-    }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
 
-    .back-link {
-      display: inline-block;
-      margin-top: 10px;
-      color: #4a6a4a;
-    }
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
-    .back-link:hover {
-      color: #0d3b0d;
-    }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-    /* ===== Toast ===== */
-    .toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #d32f2f;
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      text-align: center;
-      max-width: 90%;
-      font-size: 15px;
-    }
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--gray-600);
+            font-size: 14px;
+        }
 
-    .toast.show {
-      opacity: 1;
-    }
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            transition: var(--transition);
+        }
 
-    .toast.success {
-      background: #0d7a3b;
-    }
+        .auth-footer a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 480px) {
-      .auth-container {
-        padding: 32px 20px;
-      }
-      .auth-header h1 {
-        font-size: 22px;
-      }
-    }
-  </style>
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: #c0392b;
+        }
+
+        .toast.success {
+            background: var(--primary);
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 32px 20px;
+            }
+
+            .auth-title {
+                font-size: 24px;
+            }
+
+            .auth-logo span {
+                font-size: 18px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <!-- ===== TOAST ===== -->
-  <div id="toast" class="toast"></div>
-
-  <!-- ===== AUTH FORM ===== -->
-  <div class="auth-container">
-    <div class="auth-header">
-      <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="Points Dr.Mirna" />
-      <h1>إنشاء حساب</h1>
-      <p>سجل حسابك في نقاط دكتور ميرنا</p>
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage">الرسالة</span>
     </div>
 
-    <form id="signupForm" novalidate>
-      <div class="form-group">
-        <label for="fullName">الاسم الكامل</label>
-        <input type="text" id="fullName" placeholder="أدخل اسمك الكامل" required />
-        <div class="error-msg" id="fullNameError">يرجى إدخال الاسم الكامل</div>
-      </div>
+    <div class="auth-container">
+        <div class="auth-logo">
+            <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
+            <span>نقاط د. ميرنا</span>
+        </div>
 
-      <div class="form-group">
-        <label for="phone">رقم الهاتف</label>
-        <input type="tel" id="phone" placeholder="مثال: 01000000000" required />
-        <div class="error-msg" id="phoneError">يرجى إدخال رقم هاتف صحيح</div>
-      </div>
+        <h1 class="auth-title">إنشاء حساب</h1>
+        <p class="auth-subtitle">سجل الآن للاستفادة من نقاط الولاء</p>
 
-      <div class="form-group">
-        <label for="email">البريد الإلكتروني</label>
-        <input type="email" id="email" placeholder="example@email.com" required />
-        <div class="error-msg" id="emailError">يرجى إدخال بريد إلكتروني صحيح</div>
-      </div>
+        <form id="signupForm" novalidate>
+            <div class="form-group">
+                <label>الاسم الكامل <span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="text" id="fullName" placeholder="أدخل الاسم الكامل" required>
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="error-message" id="fullNameError">الرجاء إدخال الاسم الكامل</div>
+            </div>
 
-      <div class="form-group">
-        <label for="password">كلمة المرور</label>
-        <input type="password" id="password" placeholder="أدخل كلمة المرور" required minlength="6" />
-        <div class="error-msg" id="passwordError">كلمة المرور يجب أن تكون 6 أحرف على الأقل</div>
-      </div>
+            <div class="form-group">
+                <label>رقم الهاتف <span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="tel" id="phone" placeholder="أدخل رقم الهاتف" required>
+                    <i class="fas fa-phone"></i>
+                </div>
+                <div class="error-message" id="phoneError">الرجاء إدخال رقم الهاتف</div>
+            </div>
 
-      <div class="form-group">
-        <label for="confirmPassword">تأكيد كلمة المرور</label>
-        <input type="password" id="confirmPassword" placeholder="أعد إدخال كلمة المرور" required />
-        <div class="error-msg" id="confirmPasswordError">كلمة المرور غير متطابقة</div>
-      </div>
+            <div class="form-group">
+                <label>البريد الإلكتروني <span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="email" id="email" placeholder="example@email.com" required>
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <div class="error-message" id="emailError">الرجاء إدخال بريد إلكتروني صحيح</div>
+            </div>
 
-      <button type="submit" class="btn-submit" id="submitBtn">إنشاء الحساب</button>
-    </form>
+            <div class="form-group">
+                <label>كلمة المرور <span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="password" id="password" placeholder="أدخل كلمة المرور" required minlength="6">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="error-message" id="passwordError">كلمة المرور يجب أن تكون 6 أحرف على الأقل</div>
+            </div>
 
-    <div class="auth-footer">
-      لديك حساب بالفعل؟ <a href="login">تسجيل الدخول</a><br />
-      <a href="index" class="back-link">← العودة للرئيسية</a>
+            <div class="form-group">
+                <label>تأكيد كلمة المرور <span class="required">*</span></label>
+                <div class="input-wrapper">
+                    <input type="password" id="confirmPassword" placeholder="أعد إدخال كلمة المرور" required>
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="error-message" id="confirmPasswordError">كلمة المرور غير متطابقة</div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="submitBtn">
+                <i class="fas fa-user-plus"></i>
+                <span>إنشاء الحساب</span>
+            </button>
+        </form>
+
+        <div class="auth-footer">
+            لديك حساب بالفعل؟ <a href="/login.html">تسجيل الدخول</a>
+            <br>
+            <a href="/">العودة للرئيسية</a>
+        </div>
     </div>
-  </div>
 
-  <script>
-    // ===== Firebase Configuration =====
-    const firebaseConfig = JSON.parse('{{FIREBASE_CONFIG}}' || '{}');
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
-    // ===== DOM Elements =====
-    const form = document.getElementById('signupForm');
-    const fullName = document.getElementById('fullName');
-    const phone = document.getElementById('phone');
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirmPassword');
-    const submitBtn = document.getElementById('submitBtn');
-    const toast = document.getElementById('toast');
+    <script>
+        // ===== تهيئة Firebase =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyKeyPleaseReplaceWithYourOwn",
+            authDomain: "your-project.firebaseapp.com",
+            projectId: "your-project",
+            storageBucket: "your-project.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef123456"
+        };
 
-    // ===== Toast Functions =====
-    function showToast(message, type = 'error') {
-      toast.textContent = message;
-      toast.className = 'toast show ' + type;
-      clearTimeout(toast._hideTimer);
-      toast._hideTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 4000);
-    }
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-    function hideToast() {
-      toast.classList.remove('show');
-    }
+        // ===== عناصر DOM =====
+        const form = document.getElementById('signupForm');
+        const fullName = document.getElementById('fullName');
+        const phone = document.getElementById('phone');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const confirmPassword = document.getElementById('confirmPassword');
+        const submitBtn = document.getElementById('submitBtn');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
 
-    // ===== Validation =====
-    function validateField(input, errorId, condition, message) {
-      const errorEl = document.getElementById(errorId);
-      if (!condition) {
-        input.classList.add('error');
-        errorEl.textContent = message;
-        errorEl.classList.add('show');
-        return false;
-      } else {
-        input.classList.remove('error');
-        errorEl.classList.remove('show');
-        return true;
-      }
-    }
-
-    function validateForm() {
-      let isValid = true;
-
-      // Full Name
-      if (!validateField(fullName, 'fullNameError', fullName.value.trim().length >= 2, 'يرجى إدخال الاسم الكامل')) {
-        isValid = false;
-      }
-
-      // Phone
-      const phoneRegex = /^01[0-9]{9}$/;
-      if (!validateField(phone, 'phoneError', phoneRegex.test(phone.value.trim()), 'يرجى إدخال رقم هاتف صحيح (11 رقم)')) {
-        isValid = false;
-      }
-
-      // Email
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!validateField(email, 'emailError', emailRegex.test(email.value.trim()), 'يرجى إدخال بريد إلكتروني صحيح')) {
-        isValid = false;
-      }
-
-      // Password
-      if (!validateField(password, 'passwordError', password.value.length >= 6, 'كلمة المرور يجب أن تكون 6 أحرف على الأقل')) {
-        isValid = false;
-      }
-
-      // Confirm Password
-      if (!validateField(confirmPassword, 'confirmPasswordError', confirmPassword.value === password.value && password.value.length >= 6, 'كلمة المرور غير متطابقة')) {
-        isValid = false;
-      }
-
-      return isValid;
-    }
-
-    // ===== Real-time validation =====
-    [fullName, phone, email, password, confirmPassword].forEach(input => {
-      input.addEventListener('input', () => {
-        const errorId = input.id + 'Error';
-        const errorEl = document.getElementById(errorId);
-        if (input.classList.contains('error')) {
-          input.classList.remove('error');
-          errorEl.classList.remove('show');
-        }
-        hideToast();
-      });
-    });
-
-    // ===== Sign Up =====
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      hideToast();
-
-      if (!validateForm()) {
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'جاري إنشاء الحساب...';
-
-      const name = fullName.value.trim();
-      const phoneVal = phone.value.trim();
-      const emailVal = email.value.trim();
-      const passwordVal = password.value;
-
-      try {
-        // Import Firebase modules
-        const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js');
-        const { getAuth, createUserWithEmailAndPassword } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js');
-        const { getFirestore, doc, setDoc, serverTimestamp } = await import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js');
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Create user in Firebase Auth
-        const userCredential = await createUserWithEmailAndPassword(auth, emailVal, passwordVal);
-        const user = userCredential.user;
-
-        // Create patient document in Firestore
-        await setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          name: name,
-          phone: phoneVal,
-          email: emailVal,
-          points: 0,
-          role: 'patient',
-          status: 'active',
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
-        });
-
-        // Create signup transaction
-        await setDoc(doc(db, 'transactions', user.uid + '_signup'), {
-          userId: user.uid,
-          type: 'signup',
-          points: 0,
-          previousBalance: 0,
-          newBalance: 0,
-          reason: 'Account created',
-          performedBy: 'system',
-          createdAt: serverTimestamp()
-        });
-
-        showToast('تم إنشاء الحساب بنجاح! جاري التوجيه...', 'success');
-
-        setTimeout(() => {
-          window.location.href = 'login.html';
-        }, 1500);
-
-      } catch (error) {
-        console.error('Signup error:', error);
-        let message = 'حدث خطأ أثناء إنشاء الحساب. حاول مرة أخرى.';
-
-        if (error.code === 'auth/email-already-in-use') {
-          message = 'البريد الإلكتروني مستخدم بالفعل. يرجى استخدام بريد آخر.';
-        } else if (error.code === 'auth/weak-password') {
-          message = 'كلمة المرور ضعيفة. يرجى استخدام كلمة مرور أقوى.';
-        } else if (error.code === 'auth/invalid-email') {
-          message = 'البريد الإلكتروني غير صحيح.';
-        } else if (error.message) {
-          message = error.message;
+        // ===== دالة عرض الإشعار =====
+        function showToast(message, type = 'info') {
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
         }
 
-        showToast(message);
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'إنشاء الحساب';
-      }
-    });
-  </script>
+        // ===== التحقق من الحقول =====
+        function validateField(input, errorId, condition) {
+            const errorEl = document.getElementById(errorId);
+            if (!condition) {
+                input.classList.add('error');
+                errorEl.classList.add('visible');
+                return false;
+            } else {
+                input.classList.remove('error');
+                errorEl.classList.remove('visible');
+                return true;
+            }
+        }
 
-  <script>
-    // ===== Inject Firebase Config =====
-    (function() {
-      const script = document.currentScript;
-      const config = JSON.parse('{{FIREBASE_CONFIG}}' || '{}');
-      const firebaseConfigStr = JSON.stringify(config);
-      // Replace placeholder in the main script
-      const mainScript = document.querySelector('script:not([src])');
-      if (mainScript) {
-        const content = mainScript.textContent;
-        mainScript.textContent = content.replace(/JSON\.parse\('{{FIREBASE_CONFIG}}' \|\| '{}'\)/g, 'JSON.parse(\'' + firebaseConfigStr.replace(/'/g, "\\'") + '\')');
-      }
-    })();
-  </script>
+        // ===== التحقق المباشر =====
+        fullName.addEventListener('blur', () => {
+            validateField(fullName, 'fullNameError', fullName.value.trim().length >= 2);
+        });
 
+        phone.addEventListener('blur', () => {
+            validateField(phone, 'phoneError', phone.value.trim().length >= 8);
+        });
+
+        email.addEventListener('blur', () => {
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim());
+            validateField(email, 'emailError', isValid);
+        });
+
+        password.addEventListener('blur', () => {
+            validateField(password, 'passwordError', password.value.length >= 6);
+        });
+
+        confirmPassword.addEventListener('blur', () => {
+            validateField(confirmPassword, 'confirmPasswordError', 
+                confirmPassword.value === password.value && confirmPassword.value.length > 0);
+        });
+
+        // ===== تقديم النموذج =====
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // التحقق من جميع الحقول
+            const isNameValid = validateField(fullName, 'fullNameError', fullName.value.trim().length >= 2);
+            const isPhoneValid = validateField(phone, 'phoneError', phone.value.trim().length >= 8);
+            const isEmailValid = validateField(email, 'emailError', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()));
+            const isPasswordValid = validateField(password, 'passwordError', password.value.length >= 6);
+            const isConfirmValid = validateField(confirmPassword, 'confirmPasswordError', 
+                confirmPassword.value === password.value && confirmPassword.value.length > 0);
+
+            if (!isNameValid || !isPhoneValid || !isEmailValid || !isPasswordValid || !isConfirmValid) {
+                showToast('الرجاء تصحيح الأخطاء في النموذج', 'error');
+                return;
+            }
+
+            // تعطيل الزر
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> جاري إنشاء الحساب...';
+
+            try {
+                // 1. إنشاء حساب في Firebase Authentication
+                const userCredential = await auth.createUserWithEmailAndPassword(
+                    email.value.trim(),
+                    password.value
+                );
+
+                const uid = userCredential.user.uid;
+
+                // 2. تحديث الملف الشخصي
+                await userCredential.user.updateProfile({
+                    displayName: fullName.value.trim()
+                });
+
+                // 3. إنشاء وثيقة المستخدم في Firestore
+                const now = firebase.firestore.FieldValue.serverTimestamp();
+                await db.collection('users').doc(uid).set({
+                    name: fullName.value.trim(),
+                    phone: phone.value.trim(),
+                    email: email.value.trim(),
+                    points: 0,
+                    role: 'patient',
+                    status: 'active',
+                    firebaseUid: uid,
+                    createdAt: now,
+                    updatedAt: now
+                });
+
+                // 4. إنشاء سجل ترحيبي
+                await db.collection('transactions').add({
+                    userId: uid,
+                    type: 'signup',
+                    points: 0,
+                    previousBalance: 0,
+                    newBalance: 0,
+                    reason: 'مرحباً بك في نقاط د. ميرنا',
+                    performedBy: 'system',
+                    createdAt: now
+                });
+
+                showToast('تم إنشاء الحساب بنجاح! جارٍ التحويل...', 'success');
+                
+                // 5. تسجيل الخروج وتوجيه المستخدم
+                setTimeout(() => {
+                    auth.signOut();
+                    window.location.href = '/login.html';
+                }, 1500);
+
+            } catch (error) {
+                console.error('Signup error:', error);
+                let message = 'حدث خطأ أثناء إنشاء الحساب';
+                
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        message = 'البريد الإلكتروني مستخدم بالفعل';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'البريد الإلكتروني غير صحيح';
+                        break;
+                    case 'auth/weak-password':
+                        message = 'كلمة المرور ضعيفة جداً';
+                        break;
+                    case 'auth/network-request-failed':
+                        message = 'خطأ في الاتصال بالشبكة، تأكد من اتصالك بالإنترنت';
+                        break;
+                    default:
+                        message = error.message || 'حدث خطأ غير متوقع';
+                }
+                
+                showToast(message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-user-plus"></i> إنشاء الحساب';
+            }
+        });
+    </script>
 </body>
 </html>
