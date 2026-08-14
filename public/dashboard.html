@@ -1,1323 +1,1387 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>لوحة التحكم - Points Dr.Mirna</title>
-  <style>
-    /* ===== CSS Reset & Base ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f7f0;
-      color: #1a2e1a;
-    }
-
-    /* ===== Navigation ===== */
-    .navbar {
-      background: #ffffff;
-      padding: 12px 0;
-      box-shadow: 0 2px 12px rgba(0, 40, 0, 0.08);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .navbar .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 0 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .nav-brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .nav-brand img {
-      height: 40px;
-      width: auto;
-    }
-
-    .nav-brand span {
-      font-size: 18px;
-      font-weight: 700;
-      color: #0d3b0d;
-    }
-
-    .nav-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
-    .nav-right .admin-name {
-      font-weight: 600;
-      color: #0d3b0d;
-    }
-
-    .nav-right .admin-badge {
-      background: #1a3a2a;
-      color: #e8f0e8;
-      font-size: 11px;
-      padding: 2px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-    }
-
-    .logout-btn {
-      background: #d32f2f;
-      color: #fff;
-      border: none;
-      padding: 8px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 14px;
-      transition: background 0.2s;
-    }
-
-    .logout-btn:hover {
-      background: #b71c1c;
-    }
-
-    /* ===== Main Layout ===== */
-    .main-container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 24px 20px;
-    }
-
-    .page-title {
-      font-size: 24px;
-      font-weight: 700;
-      color: #0d3b0d;
-      margin-bottom: 24px;
-    }
-
-    /* ===== Stats ===== */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 32px;
-    }
-
-    .stat-card {
-      background: #ffffff;
-      padding: 20px 24px;
-      border-radius: 14px;
-      box-shadow: 0 2px 8px rgba(0, 40, 0, 0.06);
-      border: 1px solid #e0ece0;
-    }
-
-    .stat-card .stat-value {
-      font-size: 28px;
-      font-weight: 700;
-      color: #0d7a3b;
-    }
-
-    .stat-card .stat-label {
-      color: #4a6a4a;
-      font-size: 14px;
-      margin-top: 2px;
-    }
-
-    /* ===== Toolbar ===== */
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 20px;
-      align-items: center;
-    }
-
-    .toolbar .search-input {
-      flex: 1;
-      min-width: 200px;
-      padding: 10px 16px;
-      border: 2px solid #dce8dc;
-      border-radius: 10px;
-      font-size: 14px;
-      background: #ffffff;
-      font-family: inherit;
-    }
-
-    .toolbar .search-input:focus {
-      outline: none;
-      border-color: #0d7a3b;
-    }
-
-    .toolbar .btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      font-size: 14px;
-    }
-
-    .btn-primary {
-      background: #0d7a3b;
-      color: #fff;
-    }
-
-    .btn-primary:hover {
-      background: #0a5f2e;
-    }
-
-    .btn-secondary {
-      background: #e0ece0;
-      color: #1a3a1a;
-    }
-
-    .btn-secondary:hover {
-      background: #d0e0d0;
-    }
-
-    .btn-danger {
-      background: #d32f2f;
-      color: #fff;
-    }
-
-    .btn-danger:hover {
-      background: #b71c1c;
-    }
-
-    .btn-outline {
-      background: transparent;
-      border: 2px solid #0d7a3b;
-      color: #0d7a3b;
-    }
-
-    .btn-outline:hover {
-      background: #0d7a3b;
-      color: #fff;
-    }
-
-    /* ===== Table ===== */
-    .table-container {
-      background: #ffffff;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px rgba(0, 40, 0, 0.06);
-      border: 1px solid #e0ece0;
-      overflow-x: auto;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-
-    thead {
-      background: #f5faf5;
-      border-bottom: 2px solid #dce8dc;
-    }
-
-    th {
-      padding: 14px 16px;
-      text-align: right;
-      font-weight: 600;
-      color: #1a3a1a;
-      white-space: nowrap;
-    }
-
-    td {
-      padding: 12px 16px;
-      border-bottom: 1px solid #e8f0e8;
-      vertical-align: middle;
-    }
-
-    tr:hover td {
-      background: #f8fcf8;
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 3px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-    }
-
-    .status-active {
-      background: #d4edda;
-      color: #0d7a3b;
-    }
-
-    .status-inactive {
-      background: #f8d7da;
-      color: #721c24;
-    }
-
-    .action-btn {
-      padding: 4px 12px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 12px;
-      transition: all 0.2s;
-      margin: 0 2px;
-    }
-
-    .action-btn.view {
-      background: #d4edda;
-      color: #0d7a3b;
-    }
-
-    .action-btn.view:hover {
-      background: #c3e6cb;
-    }
-
-    .action-btn.add {
-      background: #cce5ff;
-      color: #004085;
-    }
-
-    .action-btn.add:hover {
-      background: #b8d4f0;
-    }
-
-    .action-btn.remove {
-      background: #f8d7da;
-      color: #721c24;
-    }
-
-    .action-btn.remove:hover {
-      background: #f1c0c5;
-    }
-
-    .action-btn.reset {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .action-btn.reset:hover {
-      background: #f0e3b0;
-    }
-
-    /* ===== Pagination ===== */
-    .pagination {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 16px 20px;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .pagination .info {
-      color: #4a6a4a;
-      font-size: 14px;
-    }
-
-    .pagination .controls {
-      display: flex;
-      gap: 8px;
-    }
-
-    .pagination .controls button {
-      padding: 6px 14px;
-      border: 1px solid #dce8dc;
-      border-radius: 6px;
-      background: #ffffff;
-      cursor: pointer;
-      transition: all 0.2s;
-      font-weight: 500;
-    }
-
-    .pagination .controls button:hover {
-      background: #f0f7f0;
-    }
-
-    .pagination .controls button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    /* ===== Modal ===== */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 20, 0, 0.5);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal {
-      background: #ffffff;
-      border-radius: 16px;
-      padding: 32px;
-      max-width: 520px;
-      width: 100%;
-      max-height: 90vh;
-      overflow-y: auto;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    }
-
-    .modal h2 {
-      font-size: 22px;
-      color: #0d3b0d;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .modal .close-btn {
-      background: none;
-      border: none;
-      font-size: 24px;
-      cursor: pointer;
-      color: #4a6a4a;
-      margin-right: auto;
-    }
-
-    .modal .form-group {
-      margin-bottom: 16px;
-    }
-
-    .modal .form-group label {
-      display: block;
-      font-weight: 600;
-      font-size: 14px;
-      color: #1a3a1a;
-      margin-bottom: 4px;
-    }
-
-    .modal .form-group input,
-    .modal .form-group select,
-    .modal .form-group textarea {
-      width: 100%;
-      padding: 10px 14px;
-      border: 2px solid #dce8dc;
-      border-radius: 8px;
-      font-size: 14px;
-      font-family: inherit;
-      background: #fafcfa;
-    }
-
-    .modal .form-group input:focus,
-    .modal .form-group select:focus,
-    .modal .form-group textarea:focus {
-      outline: none;
-      border-color: #0d7a3b;
-    }
-
-    .modal .form-actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 20px;
-    }
-
-    .modal .form-actions .btn {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 15px;
-      transition: all 0.2s;
-    }
-
-    .modal .form-actions .btn-cancel {
-      background: #e0ece0;
-      color: #1a3a1a;
-    }
-
-    .modal .form-actions .btn-cancel:hover {
-      background: #d0e0d0;
-    }
-
-    .modal .form-actions .btn-confirm {
-      background: #0d7a3b;
-      color: #fff;
-    }
-
-    .modal .form-actions .btn-confirm:hover {
-      background: #0a5f2e;
-    }
-
-    .modal .form-actions .btn-danger {
-      background: #d32f2f;
-      color: #fff;
-    }
-
-    .modal .form-actions .btn-danger:hover {
-      background: #b71c1c;
-    }
-
-    /* ===== Toast ===== */
-    .toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #d32f2f;
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      z-index: 2000;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      text-align: center;
-      max-width: 90%;
-      font-size: 15px;
-    }
-
-    .toast.show {
-      opacity: 1;
-    }
-
-    .toast.success {
-      background: #0d7a3b;
-    }
-
-    /* ===== Loading ===== */
-    .loading-spinner {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid #e0ece0;
-      border-top-color: #0d7a3b;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* ===== Empty State ===== */
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: #4a6a4a;
-    }
-
-    .empty-state .icon {
-      font-size: 48px;
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    /* ===== Responsive ===== */
-    @media (max-width: 768px) {
-      .navbar .container {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .nav-right {
-        justify-content: space-between;
-        flex-wrap: wrap;
-      }
-      .stats-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-      .stat-card .stat-value {
-        font-size: 22px;
-      }
-      .toolbar {
-        flex-direction: column;
-      }
-      .toolbar .search-input {
-        width: 100%;
-      }
-      th,
-      td {
-        padding: 8px 10px;
-        font-size: 12px;
-      }
-      .modal {
-        padding: 24px 16px;
-      }
-      .pagination {
-        flex-direction: column;
-        align-items: stretch;
-        text-align: center;
-      }
-      .pagination .controls {
-        justify-content: center;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .stats-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-      .stat-card {
-        padding: 14px 16px;
-      }
-      .stat-card .stat-value {
-        font-size: 20px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - نقاط د. ميرنا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d5c3e;
+            --primary-dark: #0a452e;
+            --primary-light: #1a7a55;
+            --emerald: #2ecc71;
+            --mint-light: #d5f5e3;
+            --white: #ffffff;
+            --gray-50: #f8faf9;
+            --gray-100: #f1f4f2;
+            --gray-200: #e8ece9;
+            --gray-300: #d1d8d4;
+            --gray-600: #6b7a73;
+            --gray-800: #2d3a33;
+            --gray-900: #1a241e;
+            --shadow-sm: 0 2px 8px rgba(13, 92, 62, 0.08);
+            --shadow-md: 0 4px 20px rgba(13, 92, 62, 0.12);
+            --shadow-lg: 0 8px 40px rgba(13, 92, 62, 0.16);
+            --radius: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-900);
+            min-height: 100vh;
+        }
+
+        /* ===== الهيدر ===== */
+        .header {
+            background: var(--white);
+            box-shadow: var(--shadow-sm);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 12px 0;
+        }
+
+        .header .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+            border-radius: 6px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .header-actions .admin-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 14px;
+        }
+
+        .btn-logout {
+            padding: 8px 18px;
+            background: #e74c3c;
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 13px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        /* ===== المحتوى ===== */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 24px;
+        }
+
+        /* ===== الإحصاءات ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 20px 24px;
+            box-shadow: var(--shadow-sm);
+            border-right: 4px solid var(--primary);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card .stat-number {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            line-height: 1.2;
+        }
+
+        .stat-card .stat-label {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+
+        .stat-card .stat-icon {
+            float: left;
+            font-size: 28px;
+            color: var(--gray-300);
+        }
+
+        /* ===== الأدوات ===== */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: var(--white);
+            padding: 16px 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            align-items: center;
+        }
+
+        .toolbar .search-wrapper {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .toolbar .search-wrapper input {
+            width: 100%;
+            padding: 10px 16px 10px 40px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 14px;
+            transition: var(--transition);
+            background: var(--gray-50);
+        }
+
+        .toolbar .search-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
+        }
+
+        .toolbar .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-300);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--mint-light);
+        }
+
+        /* ===== الجدول ===== */
+        .table-container {
+            background: var(--white);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead {
+            background: var(--gray-50);
+        }
+
+        th {
+            padding: 14px 16px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--gray-600);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--gray-100);
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background: var(--gray-50);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: var(--mint-light);
+            color: var(--primary);
+        }
+
+        .status-inactive {
+            background: #fde8e8;
+            color: #c0392b;
+        }
+
+        .btn-action {
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+            margin: 0 2px;
+        }
+
+        .btn-action.view {
+            background: var(--gray-200);
+            color: var(--gray-600);
+        }
+
+        .btn-action.view:hover {
+            background: var(--gray-300);
+        }
+
+        .btn-action.edit {
+            background: var(--mint-light);
+            color: var(--primary);
+        }
+
+        .btn-action.edit:hover {
+            background: var(--mint);
+        }
+
+        .btn-action i {
+            margin-left: 4px;
+        }
+
+        /* ===== الترقيم ===== */
+        .pagination {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .pagination .info {
+            color: var(--gray-600);
+            font-size: 14px;
+        }
+
+        .pagination .buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .pagination .buttons button {
+            padding: 6px 14px;
+            border: 1px solid var(--gray-200);
+            border-radius: 6px;
+            background: var(--white);
+            color: var(--gray-600);
+            font-weight: 500;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .pagination .buttons button:hover:not(:disabled) {
+            background: var(--gray-50);
+            border-color: var(--primary);
+        }
+
+        .pagination .buttons button.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        .pagination .buttons button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ===== المودال ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+            box-shadow: var(--shadow-lg);
+            animation: modalIn 0.3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--gray-300);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--gray-600);
+        }
+
+        .modal .form-group {
+            margin-bottom: 16px;
+        }
+
+        .modal .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+
+        .modal .form-group input,
+        .modal .form-group select,
+        .modal .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 14px;
+            transition: var(--transition);
+            background: var(--gray-50);
+            font-family: inherit;
+        }
+
+        .modal .form-group input:focus,
+        .modal .form-group select:focus,
+        .modal .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
+            background: var(--white);
+        }
+
+        .modal .form-group textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .modal .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .modal .btn-submit:hover {
+            background: var(--primary-dark);
+        }
+
+        .modal .btn-danger {
+            background: #e74c3c;
+        }
+
+        .modal .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .modal .btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-800);
+        }
+
+        .modal .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        .modal .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .modal .modal-actions .btn {
+            flex: 1;
+            min-width: 100px;
+        }
+
+        /* ===== عرض المريض ===== */
+        .patient-detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .patient-detail-grid .detail-item {
+            padding: 12px 16px;
+            background: var(--gray-50);
+            border-radius: var(--radius);
+        }
+
+        .patient-detail-grid .detail-item .label {
+            font-size: 12px;
+            color: var(--gray-600);
+            font-weight: 600;
+        }
+
+        .patient-detail-grid .detail-item .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        /* ===== الإشعار ===== */
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: #c0392b;
+        }
+
+        .toast.success {
+            background: var(--primary);
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-row td {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--gray-600);
+        }
+
+        /* ===== مستجيبة ===== */
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .toolbar {
+                flex-direction: column;
+            }
+
+            .toolbar .search-wrapper {
+                width: 100%;
+            }
+
+            .modal {
+                padding: 20px;
+                margin: 12px;
+            }
+
+            .modal .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .patient-detail-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .page-title {
+                font-size: 22px;
+                text-align: center;
+            }
+
+            .pagination {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th, td {
+                padding: 10px 12px;
+            }
+
+            .btn-action {
+                padding: 2px 8px;
+                font-size: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stat-card .stat-number {
+                font-size: 24px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <!-- ===== TOAST ===== -->
-  <div id="toast" class="toast"></div>
-
-  <!-- ===== NAVBAR ===== -->
-  <nav class="navbar">
-    <div class="container">
-      <div class="nav-brand">
-        <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="Points Dr.Mirna" />
-        <span>Points Dr.Mirna</span>
-      </div>
-      <div class="nav-right">
-        <span class="admin-badge">إدارة</span>
-        <span class="admin-name" id="adminName">المدير</span>
-        <button class="logout-btn" id="logoutBtn">تسجيل الخروج</button>
-      </div>
-    </div>
-  </nav>
-
-  <!-- ===== MAIN CONTENT ===== -->
-  <div class="main-container">
-    <h1 class="page-title">لوحة التحكم</h1>
-
-    <!-- Stats -->
-    <div class="stats-grid" id="statsGrid">
-      <div class="stat-card">
-        <div class="stat-value" id="totalPatients">-</div>
-        <div class="stat-label">إجمالي المرضى</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="totalPoints">-</div>
-        <div class="stat-label">إجمالي النقاط</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="todayTransactions">-</div>
-        <div class="stat-label">عمليات اليوم</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-value" id="newPatients">-</div>
-        <div class="stat-label">العملاء الجدد</div>
-      </div>
+    <!-- ===== إشعار ===== -->
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage">الرسالة</span>
     </div>
 
-    <!-- Toolbar -->
-    <div class="toolbar">
-      <input type="text" class="search-input" id="searchInput" placeholder="بحث بالاسم، الهاتف، أو البريد الإلكتروني..." />
-      <button class="btn btn-primary" id="addPatientBtn">+ إضافة مريض</button>
-      <button class="btn btn-secondary" id="refreshBtn">تحديث</button>
-    </div>
-
-    <!-- Table -->
-    <div class="table-container">
-      <table>
-        <thead>
-          <tr>
-            <th>الاسم</th>
-            <th>الهاتف</th>
-            <th>البريد الإلكتروني</th>
-            <th>النقاط</th>
-            <th>تاريخ التسجيل</th>
-            <th>الحالة</th>
-            <th>الإجراءات</th>
-          </tr>
-        </thead>
-        <tbody id="patientsBody">
-          <tr>
-            <td colspan="7" style="text-align:center; padding:30px; color:#4a6a4a;">
-              <span class="loading-spinner"></span> جاري التحميل...
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="pagination">
-        <span class="info" id="paginationInfo">عرض 0 من 0</span>
-        <div class="controls">
-          <button id="prevPage" disabled>السابق</button>
-          <span style="padding:6px 12px; font-weight:600;" id="pageIndicator">1</span>
-          <button id="nextPage">التالي</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== MODAL: Add Patient ===== -->
-  <div class="modal-overlay" id="addPatientModal">
-    <div class="modal">
-      <h2>
-        إضافة مريض جديد
-        <button class="close-btn" id="closeAddModal">&times;</button>
-      </h2>
-      <form id="addPatientForm">
-        <div class="form-group">
-          <label>الاسم الكامل</label>
-          <input type="text" id="addName" required />
-        </div>
-        <div class="form-group">
-          <label>رقم الهاتف</label>
-          <input type="tel" id="addPhone" required />
-        </div>
-        <div class="form-group">
-          <label>البريد الإلكتروني</label>
-          <input type="email" id="addEmail" required />
-        </div>
-        <div class="form-group">
-          <label>كلمة المرور</label>
-          <input type="password" id="addPassword" required minlength="6" />
-        </div>
-        <div class="form-group">
-          <label>النقاط الابتدائية</label>
-          <input type="number" id="addPoints" value="0" min="0" />
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn btn-cancel" id="cancelAdd">إلغاء</button>
-          <button type="submit" class="btn btn-confirm">إنشاء الحساب</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ===== MODAL: Patient Details ===== -->
-  <div class="modal-overlay" id="patientDetailsModal">
-    <div class="modal" style="max-width: 680px;">
-      <h2>
-        تفاصيل المريض
-        <button class="close-btn" id="closeDetailsModal">&times;</button>
-      </h2>
-      <div id="patientDetailsContent">
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; margin-bottom:16px;">
-          <div><strong>الاسم:</strong> <span id="detailName">-</span></div>
-          <div><strong>الهاتف:</strong> <span id="detailPhone">-</span></div>
-          <div><strong>البريد الإلكتروني:</strong> <span id="detailEmail">-</span></div>
-          <div><strong>الحالة:</strong> <span id="detailStatus">-</span></div>
-          <div><strong>تاريخ التسجيل:</strong> <span id="detailDate">-</span></div>
-          <div><strong>النقاط الحالية:</strong> <span id="detailPoints" style="font-weight:700; color:#0d7a3b; font-size:20px;">0</span></div>
-        </div>
-
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:16px 0;">
-          <button class="action-btn add" id="detailAddPoints">+ إضافة نقاط</button>
-          <button class="action-btn remove" id="detailRemovePoints">- خصم نقاط</button>
-          <button class="action-btn view" id="detailEditPoints">تعديل النقاط</button>
-          <button class="action-btn reset" id="detailResetPoints">تصفير النقاط</button>
-        </div>
-
-        <h3 style="margin-top:20px; font-size:16px; color:#0d3b0d;">سجل المعاملات</h3>
-        <div id="detailTransactions" style="max-height:200px; overflow-y:auto; border:1px solid #e0ece0; border-radius:8px; padding:8px;">
-          <div style="color:#4a6a4a; text-align:center; padding:12px;">جاري التحميل...</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===== MODAL: Point Operation ===== -->
-  <div class="modal-overlay" id="pointModal">
-    <div class="modal">
-      <h2 id="pointModalTitle">إدارة النقاط</h2>
-      <form id="pointForm">
-        <input type="hidden" id="pointOperation" />
-        <div class="form-group">
-          <label id="pointLabel">عدد النقاط</label>
-          <input type="number" id="pointAmount" min="1" required />
-        </div>
-        <div class="form-group">
-          <label>السبب</label>
-          <input type="text" id="pointReason" placeholder="سبب العملية..." />
-        </div>
-        <div class="form-actions">
-          <button type="button" class="btn btn-cancel" id="cancelPoint">إلغاء</button>
-          <button type="submit" class="btn btn-confirm" id="pointSubmitBtn">تأكيد</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <!-- ===== MODAL: Confirmation ===== -->
-  <div class="modal-overlay" id="confirmModal">
-    <div class="modal">
-      <h2 id="confirmTitle">تأكيد العملية</h2>
-      <p id="confirmMessage" style="font-size:16px; color:#1a3a1a; margin:16px 0;"></p>
-      <div class="form-actions">
-        <button class="btn btn-cancel" id="confirmCancel">إلغاء</button>
-        <button class="btn btn-danger" id="confirmOk">تأكيد</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // ===== State =====
-    let currentPage = 1;
-    const limit = 20;
-    let totalPatients = 0;
-    let patients = [];
-    let selectedPatientId = null;
-    let pendingAction = null;
-
-    // ===== Toast =====
-    function showToast(message, type = 'error') {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.className = 'toast show ' + type;
-      clearTimeout(toast._hideTimer);
-      toast._hideTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 4000);
-    }
-
-    function hideToast() {
-      document.getElementById('toast').classList.remove('show');
-    }
-
-    // ===== API Helpers =====
-    async function apiFetch(url, options = {}) {
-      const response = await fetch(url, {
-        ...options,
-        headers: {
-          'Content-Type': 'application/json',
-          ...(options.headers || {})
-        },
-        credentials: 'include'
-      });
-
-      if (response.status === 401) {
-        window.location.href = 'login-dashboard.html';
-        throw new Error('Unauthorized');
-      }
-
-      return response;
-    }
-
-    // ===== Load Dashboard =====
-    async function loadDashboard() {
-      try {
-        await loadStats();
-        await loadPatients();
-      } catch (error) {
-        console.error('Load dashboard error:', error);
-        if (error.message !== 'Unauthorized') {
-          showToast('حدث خطأ في تحميل البيانات');
-        }
-      }
-    }
-
-    // ===== Load Stats =====
-    async function loadStats() {
-      try {
-        const response = await apiFetch('/api/admin/stats');
-        const data = await response.json();
-
-        document.getElementById('totalPatients').textContent = data.totalPatients || 0;
-        document.getElementById('totalPoints').textContent = data.totalPoints || 0;
-        document.getElementById('todayTransactions').textContent = data.todayTransactions || 0;
-        document.getElementById('newPatients').textContent = data.newPatients || 0;
-      } catch (error) {
-        console.error('Load stats error:', error);
-      }
-    }
-
-    // ===== Load Patients =====
-    async function loadPatients(search = '') {
-      const body = document.getElementById('patientsBody');
-      body.innerHTML = `
-        <tr>
-          <td colspan="7" style="text-align:center; padding:30px; color:#4a6a4a;">
-            <span class="loading-spinner"></span> جاري التحميل...
-          </td>
-        </tr>
-      `;
-
-      try {
-        const offset = (currentPage - 1) * limit;
-        let url = `/api/admin/users?limit=${limit}&offset=${offset}`;
-        if (search) {
-          url += `&search=${encodeURIComponent(search)}`;
-        }
-
-        const response = await apiFetch(url);
-        const data = await response.json();
-
-        patients = data.users || [];
-        totalPatients = data.total || 0;
-
-        renderPatients(patients);
-        updatePagination();
-      } catch (error) {
-        console.error('Load patients error:', error);
-        if (error.message !== 'Unauthorized') {
-          body.innerHTML = `
-            <tr>
-              <td colspan="7" style="text-align:center; padding:30px; color:#d32f2f;">
-                حدث خطأ في تحميل المرضى
-              </td>
-            </tr>
-          `;
-        }
-      }
-    }
-
-    // ===== Render Patients =====
-    function renderPatients(patientsList) {
-      const body = document.getElementById('patientsBody');
-
-      if (!patientsList || patientsList.length === 0) {
-        body.innerHTML = `
-          <tr>
-            <td colspan="7" style="text-align:center; padding:40px 20px; color:#4a6a4a;">
-              <span style="font-size:40px; display:block; margin-bottom:8px;">●</span>
-              لا يوجد مرضى مسجلين
-            </td>
-          </tr>
-        `;
-        return;
-      }
-
-      let html = '';
-      patientsList.forEach(p => {
-        const statusClass = p.status === 'active' ? 'status-active' : 'status-inactive';
-        const statusLabel = p.status === 'active' ? 'نشط' : 'غير نشط';
-        const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleDateString('ar-EG') : '-';
-
-        html += `
-          <tr>
-            <td><strong>${p.name || '-'}</strong></td>
-            <td>${p.phone || '-'}</td>
-            <td>${p.email || '-'}</td>
-            <td style="font-weight:700; color:#0d7a3b;">${p.points || 0}</td>
-            <td>${dateStr}</td>
-            <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
-            <td>
-              <button class="action-btn view" onclick="viewPatient('${p.id}')">عرض</button>
-            </td>
-          </tr>
-        `;
-      });
-
-      body.innerHTML = html;
-    }
-
-    // ===== Pagination =====
-    function updatePagination() {
-      const totalPages = Math.ceil(totalPatients / limit);
-      document.getElementById('paginationInfo').textContent =
-        `عرض ${patients.length} من ${totalPatients}`;
-      document.getElementById('pageIndicator').textContent = currentPage;
-      document.getElementById('prevPage').disabled = currentPage <= 1;
-      document.getElementById('nextPage').disabled = currentPage >= totalPages;
-    }
-
-    document.getElementById('prevPage').addEventListener('click', () => {
-      if (currentPage > 1) {
-        currentPage--;
-        const search = document.getElementById('searchInput').value.trim();
-        loadPatients(search);
-      }
-    });
-
-    document.getElementById('nextPage').addEventListener('click', () => {
-      const totalPages = Math.ceil(totalPatients / limit);
-      if (currentPage < totalPages) {
-        currentPage++;
-        const search = document.getElementById('searchInput').value.trim();
-        loadPatients(search);
-      }
-    });
-
-    // ===== Search =====
-    let searchTimeout;
-    document.getElementById('searchInput').addEventListener('input', (e) => {
-      clearTimeout(searchTimeout);
-      searchTimeout = setTimeout(() => {
-        currentPage = 1;
-        loadPatients(e.target.value.trim());
-      }, 400);
-    });
-
-    // ===== Refresh =====
-    document.getElementById('refreshBtn').addEventListener('click', () => {
-      const search = document.getElementById('searchInput').value.trim();
-      loadPatients(search);
-      loadStats();
-      showToast('تم تحديث البيانات', 'success');
-    });
-
-    // ===== View Patient =====
-    async function viewPatient(id) {
-      selectedPatientId = id;
-      const modal = document.getElementById('patientDetailsModal');
-      modal.classList.add('active');
-
-      document.getElementById('detailName').textContent = '-';
-      document.getElementById('detailPhone').textContent = '-';
-      document.getElementById('detailEmail').textContent = '-';
-      document.getElementById('detailStatus').textContent = '-';
-      document.getElementById('detailDate').textContent = '-';
-      document.getElementById('detailPoints').textContent = '0';
-      document.getElementById('detailTransactions').innerHTML = '<div style="color:#4a6a4a; text-align:center; padding:12px;">جاري التحميل...</div>';
-
-      try {
-        const response = await apiFetch(`/api/admin/users/${id}`);
-        const user = await response.json();
-
-        document.getElementById('detailName').textContent = user.name || '-';
-        document.getElementById('detailPhone').textContent = user.phone || '-';
-        document.getElementById('detailEmail').textContent = user.email || '-';
-        document.getElementById('detailStatus').textContent = user.status === 'active' ? 'نشط' : 'غير نشط';
-        document.getElementById('detailDate').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString('ar-EG') : '-';
-        document.getElementById('detailPoints').textContent = user.points || 0;
-
-        // Load transactions
-        await loadTransactions(id);
-      } catch (error) {
-        console.error('View patient error:', error);
-        document.getElementById('detailTransactions').innerHTML =
-          '<div style="color:#d32f2f; text-align:center; padding:12px;">حدث خطأ في تحميل المعاملات</div>';
-      }
-    }
-
-    // ===== Load Transactions =====
-    async function loadTransactions(id) {
-      try {
-        const response = await apiFetch(`/api/admin/users/${id}/transactions?limit=30`);
-        const data = await response.json();
-
-        const container = document.getElementById('detailTransactions');
-
-        if (!data.transactions || data.transactions.length === 0) {
-          container.innerHTML = '<div style="color:#4a6a4a; text-align:center; padding:12px;">لا توجد معاملات</div>';
-          return;
-        }
-
-        let html = '';
-        const typeMap = {
-          'admin_add': 'إضافة نقاط',
-          'admin_remove': 'خصم نقاط',
-          'manual_adjustment': 'تعديل نقاط',
-          'reset': 'تصفير نقاط',
-          'redeem': 'استبدال نقاط',
-          'signup': 'إنشاء حساب'
-        };
-
-        data.transactions.forEach(tx => {
-          const typeLabel = typeMap[tx.type] || tx.type;
-          const dateStr = tx.createdAt ? new Date(tx.createdAt).toLocaleString('ar-EG') : '';
-          const pointsClass = tx.points > 0 ? 'points-positive' : (tx.points < 0 ? 'points-negative' : 'points-neutral');
-          const sign = tx.points > 0 ? '+' : '';
-
-          html += `
-            <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #e8f0e8; font-size:13px;">
-              <span>${typeLabel}</span>
-              <span>
-                <span style="font-weight:600; color:${tx.points > 0 ? '#0d7a3b' : (tx.points < 0 ? '#d32f2f' : '#4a6a4a')}">
-                  ${sign}${tx.points}
-                </span>
-                <span style="color:#4a6a4a; font-size:11px;">${dateStr}</span>
-              </span>
+    <!-- ===== الهيدر ===== -->
+    <header class="header">
+        <div class="container">
+            <a href="/dashboard.html" class="logo">
+                <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
+                <span>نقاط د. ميرنا</span>
+            </a>
+            <div class="header-actions">
+                <span class="admin-name" id="adminName"><i class="fas fa-user-shield"></i> الأدمن</span>
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
             </div>
-          `;
+        </div>
+    </header>
+
+    <!-- ===== المحتوى الرئيسي ===== -->
+    <div class="main-content">
+        <h1 class="page-title">لوحة التحكم</h1>
+
+        <!-- ===== الإحصاءات ===== -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <span class="stat-icon"><i class="fas fa-users"></i></span>
+                <div class="stat-number" id="totalPatients">-</div>
+                <div class="stat-label">إجمالي المرضى</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon"><i class="fas fa-star"></i></span>
+                <div class="stat-number" id="totalPoints">-</div>
+                <div class="stat-label">إجمالي النقاط</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon"><i class="fas fa-exchange-alt"></i></span>
+                <div class="stat-number" id="todayOperations">-</div>
+                <div class="stat-label">عمليات اليوم</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon"><i class="fas fa-user-plus"></i></span>
+                <div class="stat-number" id="newPatients">-</div>
+                <div class="stat-label">العملاء الجدد</div>
+            </div>
+        </div>
+
+        <!-- ===== الأدوات ===== -->
+        <div class="toolbar">
+            <div class="search-wrapper">
+                <input type="text" id="searchInput" placeholder="ابحث بالاسم أو الهاتف أو البريد الإلكتروني...">
+                <i class="fas fa-search"></i>
+            </div>
+            <button class="btn btn-primary" id="addPatientBtn">
+                <i class="fas fa-user-plus"></i> إضافة مريض
+            </button>
+            <button class="btn btn-outline" id="refreshBtn">
+                <i class="fas fa-sync-alt"></i> تحديث
+            </button>
+        </div>
+
+        <!-- ===== الجدول ===== -->
+        <div class="table-container">
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الاسم</th>
+                            <th>الهاتف</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>النقاط</th>
+                            <th>تاريخ التسجيل</th>
+                            <th>الحالة</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientsTableBody">
+                        <tr class="loading-row">
+                            <td colspan="8"><span class="spinner"></span> جاري التحميل...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <div class="info" id="paginationInfo">عرض 0 من 0</div>
+                <div class="buttons" id="paginationButtons">
+                    <button id="prevPage" disabled><i class="fas fa-chevron-right"></i> السابق</button>
+                    <button id="nextPage">التالي <i class="fas fa-chevron-left"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== مودال إضافة مريض ===== -->
+    <div class="modal-overlay" id="addPatientModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-plus"></i> إضافة مريض جديد</h2>
+                <button class="modal-close" onclick="closeModal('addPatientModal')">&times;</button>
+            </div>
+            <form id="addPatientForm">
+                <div class="form-group">
+                    <label>الاسم الكامل <span style="color:#e74c3c;">*</span></label>
+                    <input type="text" id="newName" placeholder="أدخل الاسم الكامل" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم الهاتف <span style="color:#e74c3c;">*</span></label>
+                        <input type="tel" id="newPhone" placeholder="رقم الهاتف" required>
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني <span style="color:#e74c3c;">*</span></label>
+                        <input type="email" id="newEmail" placeholder="example@email.com" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>كلمة المرور <span style="color:#e74c3c;">*</span></label>
+                        <input type="password" id="newPassword" placeholder="أدخل كلمة المرور" required minlength="6">
+                    </div>
+                    <div class="form-group">
+                        <label>النقاط الأولية</label>
+                        <input type="number" id="newPoints" placeholder="0" value="0" min="0">
+                    </div>
+                </div>
+                <button type="submit" class="btn-submit" id="addPatientSubmit">
+                    <i class="fas fa-save"></i> إنشاء الحساب
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== مودال عرض المريض ===== -->
+    <div class="modal-overlay" id="viewPatientModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-user"></i> بيانات المريض</h2>
+                <button class="modal-close" onclick="closeModal('viewPatientModal')">&times;</button>
+            </div>
+            <div id="viewPatientContent">
+                <div class="patient-detail-grid">
+                    <div class="detail-item">
+                        <div class="label">الاسم</div>
+                        <div class="value" id="viewName">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">الهاتف</div>
+                        <div class="value" id="viewPhone">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">البريد الإلكتروني</div>
+                        <div class="value" id="viewEmail">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">النقاط الحالية</div>
+                        <div class="value" id="viewPoints">-</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+                    <button class="btn btn-primary" onclick="openPointsModal('add')" style="flex:1;">
+                        <i class="fas fa-plus-circle"></i> إضافة نقاط
+                    </button>
+                    <button class="btn btn-outline" onclick="openPointsModal('remove')" style="flex:1;">
+                        <i class="fas fa-minus-circle"></i> خصم نقاط
+                    </button>
+                    <button class="btn btn-outline" onclick="openPointsModal('edit')" style="flex:1;">
+                        <i class="fas fa-edit"></i> تعديل النقاط
+                    </button>
+                    <button class="btn" onclick="openResetModal()" style="flex:1; background:#e67e22; color:white;">
+                        <i class="fas fa-undo"></i> تصفير النقاط
+                    </button>
+                </div>
+
+                <h3 style="font-size:16px; margin-bottom:12px; color:var(--gray-800);">
+                    <i class="fas fa-history"></i> سجل المعاملات
+                </h3>
+                <div id="viewTransactions" style="max-height:200px; overflow-y:auto;">
+                    <p style="color:var(--gray-600); text-align:center; padding:16px 0;">
+                        <span class="spinner"></span> جاري التحميل...
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== مودال إدارة النقاط ===== -->
+    <div class="modal-overlay" id="pointsModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="pointsModalTitle"><i class="fas fa-plus-circle"></i> إضافة نقاط</h2>
+                <button class="modal-close" onclick="closeModal('pointsModal')">&times;</button>
+            </div>
+            <form id="pointsForm">
+                <input type="hidden" id="pointsOperation">
+                <div class="form-group">
+                    <label>عدد النقاط <span style="color:#e74c3c;">*</span></label>
+                    <input type="number" id="pointsAmount" placeholder="أدخل عدد النقاط" required min="1">
+                </div>
+                <div class="form-group">
+                    <label>السبب <span style="color:#e74c3c;">*</span></label>
+                    <textarea id="pointsReason" placeholder="سبب العملية" required></textarea>
+                </div>
+                <button type="submit" class="btn-submit" id="pointsSubmit">
+                    <i class="fas fa-check"></i> تأكيد
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ===== مودال تأكيد التصفير ===== -->
+    <div class="modal-overlay" id="resetModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> تأكيد التصفير</h2>
+                <button class="modal-close" onclick="closeModal('resetModal')">&times;</button>
+            </div>
+            <div style="padding:16px 0; text-align:center;">
+                <p style="font-size:18px; margin-bottom:8px;">هل أنت متأكد من تصفير نقاط هذا العميل؟</p>
+                <p style="color:var(--gray-600);">سيتم حذف جميع النقاط وسيبدأ الرصيد من الصفر.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeModal('resetModal')">إلغاء</button>
+                <button class="btn btn-danger" id="resetConfirmBtn">
+                    <i class="fas fa-undo"></i> تصفير النقاط
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== متغيرات الحالة =====
+        let currentPage = 1;
+        let currentSearch = '';
+        let selectedUserId = null;
+        let currentUserData = null;
+        const limit = 10;
+
+        // ===== عناصر DOM =====
+        const patientsBody = document.getElementById('patientsTableBody');
+        const paginationInfo = document.getElementById('paginationInfo');
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const searchInput = document.getElementById('searchInput');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminName = document.getElementById('adminName');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        // ===== دالة عرض الإشعار =====
+        function showToast(message, type = 'info') {
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ===== دالة فتح وإغلاق المودال =====
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+        // ===== جلب الإحصاءات =====
+        async function fetchStats() {
+            try {
+                const response = await fetch('/api/admin/stats', {
+                    credentials: 'include'
+                });
+                if (!response.ok) throw new Error('Failed to fetch stats');
+                const data = await response.json();
+                document.getElementById('totalPatients').textContent = data.totalPatients || 0;
+                document.getElementById('totalPoints').textContent = data.totalPoints || 0;
+                document.getElementById('todayOperations').textContent = data.todayOperations || 0;
+                document.getElementById('newPatients').textContent = data.newPatients || 0;
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+
+        // ===== جلب المرضى =====
+        async function fetchPatients(page = 1, search = '') {
+            try {
+                patientsBody.innerHTML = `
+                    <tr class="loading-row">
+                        <td colspan="8"><span class="spinner"></span> جاري التحميل...</td>
+                    </tr>
+                `;
+
+                const url = new URL('/api/admin/users', window.location.origin);
+                url.searchParams.set('page', page);
+                url.searchParams.set('limit', limit);
+                if (search.trim()) {
+                    url.searchParams.set('search', search.trim());
+                }
+
+                const response = await fetch(url, { credentials: 'include' });
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        window.location.href = '/login-dashboard.html';
+                        return;
+                    }
+                    throw new Error('Failed to fetch patients');
+                }
+
+                const data = await response.json();
+                renderPatients(data.users || []);
+                updatePagination(data.page, data.totalPages, data.total);
+
+            } catch (error) {
+                console.error('Fetch patients error:', error);
+                patientsBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding:40px; color:var(--gray-600);">
+                            <i class="fas fa-exclamation-triangle" style="font-size:24px; display:block; margin-bottom:8px;"></i>
+                            حدث خطأ أثناء تحميل البيانات
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // ===== عرض المرضى في الجدول =====
+        function renderPatients(patients) {
+            if (!patients || patients.length === 0) {
+                patientsBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align:center; padding:40px; color:var(--gray-600);">
+                            <i class="fas fa-inbox" style="font-size:32px; display:block; margin-bottom:8px;"></i>
+                            لا يوجد مرضى
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            patientsBody.innerHTML = patients.map((patient, index) => `
+                <tr>
+                    <td>${(currentPage - 1) * limit + index + 1}</td>
+                    <td><strong>${patient.name || 'غير محدد'}</strong></td>
+                    <td>${patient.phone || '-'}</td>
+                    <td>${patient.email || '-'}</td>
+                    <td><strong style="color:var(--primary);">${patient.points || 0}</strong></td>
+                    <td>${patient.createdAt ? new Date(patient.createdAt.seconds * 1000).toLocaleDateString('ar-EG') : '-'}</td>
+                    <td>
+                        <span class="status-badge ${patient.status === 'active' ? 'status-active' : 'status-inactive'}">
+                            ${patient.status === 'active' ? 'نشط' : 'غير نشط'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-action view" onclick="viewPatient('${patient.id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn-action edit" onclick="viewPatient('${patient.id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // ===== تحديث الترقيم =====
+        function updatePagination(page, totalPages, total) {
+            paginationInfo.textContent = `عرض ${(page - 1) * limit + 1} - ${Math.min(page * limit, total)} من ${total}`;
+            prevPageBtn.disabled = page <= 1;
+            nextPageBtn.disabled = page >= totalPages;
+            currentPage = page;
+        }
+
+        // ===== عرض بيانات المريض =====
+        async function viewPatient(userId) {
+            selectedUserId = userId;
+            try {
+                openModal('viewPatientModal');
+                document.getElementById('viewName').textContent = 'جاري التحميل...';
+                document.getElementById('viewPhone').textContent = '...';
+                document.getElementById('viewEmail').textContent = '...';
+                document.getElementById('viewPoints').textContent = '...';
+                document.getElementById('viewTransactions').innerHTML = '<p style="color:var(--gray-600); text-align:center; padding:16px 0;"><span class="spinner"></span> جاري التحميل...</p>';
+
+                // جلب بيانات المريض
+                const userResponse = await fetch(`/api/admin/users/${userId}`, { credentials: 'include' });
+                if (!userResponse.ok) throw new Error('Failed to fetch user');
+                const userData = await userResponse.json();
+                currentUserData = userData;
+
+                document.getElementById('viewName').textContent = userData.name || 'غير محدد';
+                document.getElementById('viewPhone').textContent = userData.phone || '-';
+                document.getElementById('viewEmail').textContent = userData.email || '-';
+                document.getElementById('viewPoints').textContent = userData.points || 0;
+
+                // جلب المعاملات
+                const transResponse = await fetch(`/api/admin/users/${userId}/transactions`, { credentials: 'include' });
+                if (!transResponse.ok) throw new Error('Failed to fetch transactions');
+                const transactions = await transResponse.json();
+
+                const transContainer = document.getElementById('viewTransactions');
+                if (!transactions || transactions.length === 0) {
+                    transContainer.innerHTML = '<p style="color:var(--gray-600); text-align:center; padding:16px 0;">لا توجد معاملات</p>';
+                    return;
+                }
+
+                const typeMap = {
+                    'admin_add': 'إضافة',
+                    'admin_remove': 'خصم',
+                    'manual_adjustment': 'تعديل',
+                    'reset': 'تصفير',
+                    'signup': 'ترحيب'
+                };
+
+                transContainer.innerHTML = transactions.map(t => {
+                    const typeName = typeMap[t.type] || t.type;
+                    const date = t.createdAt ? new Date(t.createdAt.seconds * 1000).toLocaleString('ar-EG') : '-';
+                    return `
+                        <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--gray-100); font-size:14px;">
+                            <span><strong>${typeName}</strong> ${t.reason || ''}</span>
+                            <span>
+                                <span style="color:${t.newBalance > t.previousBalance ? 'var(--primary)' : '#e74c3c'}">
+                                    ${t.newBalance > t.previousBalance ? '+' : ''}${t.newBalance - t.previousBalance}
+                                </span>
+                                <span style="color:var(--gray-600); font-size:12px; margin-right:8px;">${date}</span>
+                            </span>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('View patient error:', error);
+                showToast('حدث خطأ أثناء جلب بيانات المريض', 'error');
+            }
+        }
+
+        // ===== فتح مودال النقاط =====
+        function openPointsModal(operation) {
+            if (!selectedUserId) {
+                showToast('الرجاء اختيار مريض أولاً', 'error');
+                return;
+            }
+            const titles = {
+                'add': 'إضافة نقاط',
+                'remove': 'خصم نقاط',
+                'edit': 'تعديل النقاط'
+            };
+            const icons = {
+                'add': 'fa-plus-circle',
+                'remove': 'fa-minus-circle',
+                'edit': 'fa-edit'
+            };
+            document.getElementById('pointsModalTitle').innerHTML = `<i class="fas ${icons[operation]}"></i> ${titles[operation]}`;
+            document.getElementById('pointsOperation').value = operation;
+            document.getElementById('pointsAmount').value = '';
+            document.getElementById('pointsReason').value = '';
+            document.getElementById('pointsAmount').placeholder = operation === 'edit' ? 'أدخل الرصيد الجديد' : 'أدخل عدد النقاط';
+            closeModal('viewPatientModal');
+            openModal('pointsModal');
+        }
+
+        // ===== فتح مودال التصفير =====
+        function openResetModal() {
+            if (!selectedUserId) {
+                showToast('الرجاء اختيار مريض أولاً', 'error');
+                return;
+            }
+            closeModal('viewPatientModal');
+            openModal('resetModal');
+        }
+
+        // ===== إدارة النقاط =====
+        document.getElementById('pointsForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const operation = document.getElementById('pointsOperation').value;
+            const points = parseInt(document.getElementById('pointsAmount').value);
+            const reason = document.getElementById('pointsReason').value.trim();
+
+            if (!points || points <= 0) {
+                showToast('الرجاء إدخال عدد نقاط صحيح', 'error');
+                return;
+            }
+            if (!reason) {
+                showToast('الرجاء إدخال سبب العملية', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('pointsSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> جاري التنفيذ...';
+
+            try {
+                const response = await fetch(`/api/admin/users/${selectedUserId}/points`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ operation, points, reason })
+                });
+
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'حدث خطأ');
+                }
+
+                showToast(data.message || 'تم تحديث النقاط بنجاح', 'success');
+                closeModal('pointsModal');
+                await fetchPatients(currentPage, currentSearch);
+                await fetchStats();
+                // إعادة فتح عرض المريض
+                viewPatient(selectedUserId);
+
+            } catch (error) {
+                console.error('Points operation error:', error);
+                showToast(error.message || 'حدث خطأ أثناء تحديث النقاط', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> تأكيد';
+            }
         });
 
-        container.innerHTML = html;
-      } catch (error) {
-        console.error('Load transactions error:', error);
-        document.getElementById('detailTransactions').innerHTML =
-          '<div style="color:#d32f2f; text-align:center; padding:12px;">حدث خطأ في تحميل المعاملات</div>';
-      }
-    }
+        // ===== تصفير النقاط =====
+        document.getElementById('resetConfirmBtn').addEventListener('click', async () => {
+            const btn = document.getElementById('resetConfirmBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> جاري التصفير...';
 
-    // ===== Close Details Modal =====
-    document.getElementById('closeDetailsModal').addEventListener('click', () => {
-      document.getElementById('patientDetailsModal').classList.remove('active');
-    });
+            try {
+                const response = await fetch(`/api/admin/users/${selectedUserId}/reset-points`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ reason: 'تم تصفير النقاط بواسطة الأدمن' })
+                });
 
-    // Click outside modal to close
-    document.getElementById('patientDetailsModal').addEventListener('click', (e) => {
-      if (e.target === e.currentTarget) {
-        document.getElementById('patientDetailsModal').classList.remove('active');
-      }
-    });
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'حدث خطأ');
+                }
 
-    // ===== Point Operations =====
-    document.getElementById('detailAddPoints').addEventListener('click', () => {
-      document.getElementById('pointModalTitle').textContent = 'إضافة نقاط';
-      document.getElementById('pointLabel').textContent = 'عدد النقاط المراد إضافتها';
-      document.getElementById('pointOperation').value = 'add';
-      document.getElementById('pointAmount').value = '';
-      document.getElementById('pointReason').value = '';
-      document.getElementById('pointSubmitBtn').textContent = 'إضافة';
-      document.getElementById('pointModal').classList.add('active');
-    });
+                showToast('تم تصفير النقاط بنجاح', 'success');
+                closeModal('resetModal');
+                await fetchPatients(currentPage, currentSearch);
+                await fetchStats();
+                viewPatient(selectedUserId);
 
-    document.getElementById('detailRemovePoints').addEventListener('click', () => {
-      document.getElementById('pointModalTitle').textContent = 'خصم نقاط';
-      document.getElementById('pointLabel').textContent = 'عدد النقاط المراد خصمها';
-      document.getElementById('pointOperation').value = 'remove';
-      document.getElementById('pointAmount').value = '';
-      document.getElementById('pointReason').value = '';
-      document.getElementById('pointSubmitBtn').textContent = 'خصم';
-      document.getElementById('pointModal').classList.add('active');
-    });
-
-    document.getElementById('detailEditPoints').addEventListener('click', () => {
-      document.getElementById('pointModalTitle').textContent = 'تعديل النقاط';
-      document.getElementById('pointLabel').textContent = 'الرصيد الجديد';
-      document.getElementById('pointOperation').value = 'set';
-      document.getElementById('pointAmount').value = '';
-      document.getElementById('pointReason').value = '';
-      document.getElementById('pointSubmitBtn').textContent = 'تعديل';
-      document.getElementById('pointModal').classList.add('active');
-    });
-
-    document.getElementById('detailResetPoints').addEventListener('click', () => {
-      document.getElementById('confirmTitle').textContent = 'تصفير النقاط';
-      document.getElementById('confirmMessage').textContent = 'هل أنت متأكد من تصفير نقاط هذا العميل؟';
-      pendingAction = 'reset';
-      document.getElementById('confirmModal').classList.add('active');
-    });
-
-    // ===== Close Point Modal =====
-    document.getElementById('cancelPoint').addEventListener('click', () => {
-      document.getElementById('pointModal').classList.remove('active');
-    });
-
-    document.getElementById('pointModal').addEventListener('click', (e) => {
-      if (e.target === e.currentTarget) {
-        document.getElementById('pointModal').classList.remove('active');
-      }
-    });
-
-    // ===== Submit Point Operation =====
-    document.getElementById('pointForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const operation = document.getElementById('pointOperation').value;
-      const amount = parseInt(document.getElementById('pointAmount').value);
-      const reason = document.getElementById('pointReason').value.trim() || '';
-
-      if (!amount || amount <= 0) {
-        showToast('يرجى إدخال عدد نقاط صحيح');
-        return;
-      }
-
-      const submitBtn = document.getElementById('pointSubmitBtn');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'جاري...';
-
-      try {
-        const response = await apiFetch(`/api/admin/users/${selectedPatientId}/points`, {
-          method: 'PATCH',
-          body: JSON.stringify({
-            operation,
-            amount,
-            reason
-          })
+            } catch (error) {
+                console.error('Reset error:', error);
+                showToast(error.message || 'حدث خطأ أثناء التصفير', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-undo"></i> تصفير النقاط';
+            }
         });
 
-        const data = await response.json();
+        // ===== إضافة مريض =====
+        document.getElementById('addPatientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        if (response.ok) {
-          showToast(data.message || 'تم تحديث النقاط بنجاح', 'success');
-          document.getElementById('pointModal').classList.remove('active');
-          // Refresh patient details
-          await viewPatient(selectedPatientId);
-          // Refresh table and stats
-          const search = document.getElementById('searchInput').value.trim();
-          await loadPatients(search);
-          await loadStats();
-        } else {
-          showToast(data.error || 'حدث خطأ في تحديث النقاط');
-        }
-      } catch (error) {
-        console.error('Point operation error:', error);
-        showToast('حدث خطأ في تحديث النقاط');
-      }
+            const name = document.getElementById('newName').value.trim();
+            const phone = document.getElementById('newPhone').value.trim();
+            const email = document.getElementById('newEmail').value.trim();
+            const password = document.getElementById('newPassword').value;
+            const points = parseInt(document.getElementById('newPoints').value) || 0;
 
-      submitBtn.disabled = false;
-      submitBtn.textContent = operation === 'add' ? 'إضافة' : (operation === 'remove' ? 'خصم' : 'تعديل');
-    });
+            if (!name || !phone || !email || !password) {
+                showToast('جميع الحقول مطلوبة', 'error');
+                return;
+            }
+            if (password.length < 6) {
+                showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل', 'error');
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('البريد الإلكتروني غير صحيح', 'error');
+                return;
+            }
 
-    // ===== Confirm Modal =====
-    document.getElementById('confirmCancel').addEventListener('click', () => {
-      document.getElementById('confirmModal').classList.remove('active');
-      pendingAction = null;
-    });
+            const submitBtn = document.getElementById('addPatientSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> جاري الإنشاء...';
 
-    document.getElementById('confirmModal').addEventListener('click', (e) => {
-      if (e.target === e.currentTarget) {
-        document.getElementById('confirmModal').classList.remove('active');
-        pendingAction = null;
-      }
-    });
+            try {
+                const response = await fetch('/api/admin/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ name, phone, email, password, initialPoints: points })
+                });
 
-    document.getElementById('confirmOk').addEventListener('click', async () => {
-      if (pendingAction === 'reset') {
-        const confirmBtn = document.getElementById('confirmOk');
-        confirmBtn.disabled = true;
-        confirmBtn.textContent = 'جاري...';
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'حدث خطأ');
+                }
 
-        try {
-          const response = await apiFetch(`/api/admin/users/${selectedPatientId}/reset-points`, {
-            method: 'POST'
-          });
+                showToast('تم إنشاء حساب المريض بنجاح', 'success');
+                closeModal('addPatientModal');
+                document.getElementById('addPatientForm').reset();
+                await fetchPatients(currentPage, currentSearch);
+                await fetchStats();
 
-          const data = await response.json();
-
-          if (response.ok) {
-            showToast(data.message || 'تم تصفير النقاط بنجاح', 'success');
-            document.getElementById('confirmModal').classList.remove('active');
-            await viewPatient(selectedPatientId);
-            const search = document.getElementById('searchInput').value.trim();
-            await loadPatients(search);
-            await loadStats();
-          } else {
-            showToast(data.error || 'حدث خطأ في تصفير النقاط');
-          }
-        } catch (error) {
-          console.error('Reset error:', error);
-          showToast('حدث خطأ في تصفير النقاط');
-        }
-
-        confirmBtn.disabled = false;
-        confirmBtn.textContent = 'تأكيد';
-        pendingAction = null;
-      }
-    });
-
-    // ===== Add Patient =====
-    document.getElementById('addPatientBtn').addEventListener('click', () => {
-      document.getElementById('addPatientModal').classList.add('active');
-      document.getElementById('addPatientForm').reset();
-      document.getElementById('addPoints').value = 0;
-    });
-
-    document.getElementById('closeAddModal').addEventListener('click', () => {
-      document.getElementById('addPatientModal').classList.remove('active');
-    });
-
-    document.getElementById('cancelAdd').addEventListener('click', () => {
-      document.getElementById('addPatientModal').classList.remove('active');
-    });
-
-    document.getElementById('addPatientModal').addEventListener('click', (e) => {
-      if (e.target === e.currentTarget) {
-        document.getElementById('addPatientModal').classList.remove('active');
-      }
-    });
-
-    document.getElementById('addPatientForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const name = document.getElementById('addName').value.trim();
-      const phone = document.getElementById('addPhone').value.trim();
-      const email = document.getElementById('addEmail').value.trim();
-      const password = document.getElementById('addPassword').value;
-      const points = parseInt(document.getElementById('addPoints').value) || 0;
-
-      if (!name || !phone || !email || !password) {
-        showToast('يرجى ملء جميع الحقول');
-        return;
-      }
-
-      if (password.length < 6) {
-        showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
-        return;
-      }
-
-      const submitBtn = document.querySelector('#addPatientForm .btn-confirm');
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'جاري...';
-
-      try {
-        const response = await apiFetch('/api/admin/users', {
-          method: 'POST',
-          body: JSON.stringify({
-            name,
-            phone,
-            email,
-            password,
-            initialPoints: points
-          })
+            } catch (error) {
+                console.error('Add patient error:', error);
+                showToast(error.message || 'حدث خطأ أثناء إنشاء الحساب', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> إنشاء الحساب';
+            }
         });
 
-        const data = await response.json();
-
-        if (response.ok) {
-          showToast(data.message || 'تم إنشاء الحساب بنجاح', 'success');
-          document.getElementById('addPatientModal').classList.remove('active');
-          const search = document.getElementById('searchInput').value.trim();
-          await loadPatients(search);
-          await loadStats();
-        } else {
-          showToast(data.error || 'حدث خطأ في إنشاء الحساب');
-        }
-      } catch (error) {
-        console.error('Add patient error:', error);
-        showToast('حدث خطأ في إنشاء الحساب');
-      }
-
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'إنشاء الحساب';
-    });
-
-    // ===== Logout =====
-    document.getElementById('logoutBtn').addEventListener('click', async () => {
-      try {
-        const response = await apiFetch('/api/admin/logout', {
-          method: 'POST'
+        // ===== أحداث الصفحة =====
+        document.getElementById('addPatientBtn').addEventListener('click', () => {
+            document.getElementById('addPatientForm').reset();
+            openModal('addPatientModal');
         });
 
-        if (response.ok) {
-          window.location.href = 'login-dashboard.html';
-        } else {
-          showToast('حدث خطأ أثناء تسجيل الخروج');
-        }
-      } catch (error) {
-        console.error('Logout error:', error);
-        window.location.href = 'login-dashboard.html';
-      }
-    });
+        refreshBtn.addEventListener('click', () => {
+            fetchPatients(currentPage, currentSearch);
+            fetchStats();
+        });
 
-    // ===== Check Admin Session =====
-    (async function checkSession() {
-      try {
-        const response = await apiFetch('/api/admin/me');
-        if (response.ok) {
-          const data = await response.json();
-          document.getElementById('adminName').textContent = data.username || 'المدير';
-          loadDashboard();
-        }
-      } catch (error) {
-        console.error('Session check error:', error);
-        window.location.href = 'login-dashboard.html';
-      }
-    })();
-  </script>
+        searchInput.addEventListener('input', (e) => {
+            currentSearch = e.target.value;
+            currentPage = 1;
+            fetchPatients(currentPage, currentSearch);
+        });
 
+        prevPageBtn.addEventListener('click', () => {
+            if (currentPage > 1) {
+                fetchPatients(currentPage - 1, currentSearch);
+            }
+        });
+
+        nextPageBtn.addEventListener('click', () => {
+            fetchPatients(currentPage + 1, currentSearch);
+        });
+
+        // ===== تسجيل الخروج =====
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await fetch('/api/admin/logout', { method: 'POST', credentials: 'include' });
+                window.location.href = '/login-dashboard';
+            } catch (error) {
+                console.error('Logout error:', error);
+                window.location.href = '/login-dashboard';
+            }
+        });
+
+        // ===== التحقق من صلاحية الأدمن =====
+        async function checkAdminAuth() {
+            try {
+                const response = await fetch('/api/admin/me', { credentials: 'include' });
+                if (!response.ok) {
+                    window.location.href = '/login-dashboard';
+                    return;
+                }
+                const data = await response.json();
+                adminName.textContent = data.username || 'الأدمن';
+            } catch (error) {
+                console.error('Auth check error:', error);
+                window.location.href = '/login-dashboard';
+            }
+        }
+
+        // ===== تحميل الصفحة =====
+        async function init() {
+            await checkAdminAuth();
+            await fetchStats();
+            await fetchPatients(1, '');
+        }
+
+        init();
+
+        // إغلاق المودال بالنقر خارجها
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', (e) => {
+                if (e.target === overlay) {
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
