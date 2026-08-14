@@ -368,7 +368,6 @@
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
 
-        // ===== دالة عرض الإشعار =====
         function showToast(message, type = 'info') {
             toast.className = 'toast ' + type;
             toastMessage.textContent = message;
@@ -379,7 +378,6 @@
             }, 5000);
         }
 
-        // ===== التحقق من الحقول =====
         function validateField(input, errorId, condition) {
             const errorEl = document.getElementById(errorId);
             if (!condition) {
@@ -393,7 +391,6 @@
             }
         }
 
-        // ===== التحقق المباشر =====
         fullName.addEventListener('blur', () => {
             validateField(fullName, 'fullNameError', fullName.value.trim().length >= 2);
         });
@@ -416,11 +413,9 @@
                 confirmPassword.value === password.value && confirmPassword.value.length > 0);
         });
 
-        // ===== تقديم النموذج =====
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            // التحقق من جميع الحقول
             const isNameValid = validateField(fullName, 'fullNameError', fullName.value.trim().length >= 2);
             const isPhoneValid = validateField(phone, 'phoneError', phone.value.trim().length >= 8);
             const isEmailValid = validateField(email, 'emailError', /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim()));
@@ -433,12 +428,10 @@
                 return;
             }
 
-            // تعطيل الزر
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<span class="spinner"></span> جاري إنشاء الحساب...';
 
             try {
-                // 1. إنشاء حساب في Firebase Authentication
                 const userCredential = await auth.createUserWithEmailAndPassword(
                     email.value.trim(),
                     password.value
@@ -446,12 +439,10 @@
 
                 const uid = userCredential.user.uid;
 
-                // 2. تحديث الملف الشخصي
                 await userCredential.user.updateProfile({
                     displayName: fullName.value.trim()
                 });
 
-                // 3. إنشاء وثيقة المستخدم في Firestore
                 const now = firebase.firestore.FieldValue.serverTimestamp();
                 await db.collection('users').doc(uid).set({
                     name: fullName.value.trim(),
@@ -465,7 +456,6 @@
                     updatedAt: now
                 });
 
-                // 4. إنشاء سجل ترحيبي
                 await db.collection('transactions').add({
                     userId: uid,
                     type: 'signup',
@@ -479,10 +469,9 @@
 
                 showToast('تم إنشاء الحساب بنجاح! جارٍ التحويل...', 'success');
                 
-                // 5. تسجيل الخروج وتوجيه المستخدم
                 setTimeout(() => {
                     auth.signOut();
-                    window.location.href = '/login.html';
+                    window.location.href = '/login';
                 }, 1500);
 
             } catch (error) {
