@@ -115,7 +115,6 @@ app.get('/api/admin/users', verifyAdminToken, async (req, res) => {
     // إذا كان هناك بحث
     if (search) {
       const searchLower = search.toLowerCase();
-      // البحث في اسم المريض أو رقم الهاتف أو البريد الإلكتروني
       const allUsers = await query.get();
       const filteredUsers = [];
       allUsers.forEach(doc => {
@@ -126,7 +125,6 @@ app.get('/api/admin/users', verifyAdminToken, async (req, res) => {
           filteredUsers.push({ id: doc.id, ...data });
         }
       });
-      // ترتيب النتائج حسب تاريخ الإنشاء (الأحدث أولاً)
       filteredUsers.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
       const total = filteredUsers.length;
       const paginatedUsers = filteredUsers.slice(offset, offset + parseInt(limit));
@@ -139,7 +137,6 @@ app.get('/api/admin/users', verifyAdminToken, async (req, res) => {
       });
     }
 
-    // إذا لم يكن هناك بحث، جلب جميع المرضى مع الترتيب
     usersSnapshot = await query
       .orderBy('createdAt', 'desc')
       .offset(offset)
@@ -171,23 +168,19 @@ app.post('/api/admin/users', verifyAdminToken, async (req, res) => {
   try {
     const { name, phone, email, password, initialPoints = 0 } = req.body;
 
-    // التحقق من الحقول المطلوبة
     if (!name || !phone || !email || !password) {
       return res.status(400).json({ error: 'جميع الحقول مطلوبة' });
     }
 
-    // التحقق من صحة البريد الإلكتروني
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ error: 'البريد الإلكتروني غير صحيح' });
     }
 
-    // التحقق من قوة كلمة المرور
     if (password.length < 6) {
       return res.status(400).json({ error: 'كلمة المرور يجب أن تكون 6 أحرف على الأقل' });
     }
 
-    // التحقق من عدم وجود البريد الإلكتروني مسبقاً
     const existingUser = await db.collection('users')
       .where('email', '==', email)
       .get();
@@ -196,7 +189,6 @@ app.post('/api/admin/users', verifyAdminToken, async (req, res) => {
       return res.status(400).json({ error: 'البريد الإلكتروني مستخدم بالفعل' });
     }
 
-    // إنشاء المستخدم في Firebase Authentication
     let userRecord;
     try {
       userRecord = await admin.auth().createUser({
@@ -212,7 +204,6 @@ app.post('/api/admin/users', verifyAdminToken, async (req, res) => {
       throw authError;
     }
 
-    // إنشاء وثيقة المستخدم في Firestore
     const now = admin.firestore.Timestamp.now();
     const userData = {
       name,
@@ -228,7 +219,6 @@ app.post('/api/admin/users', verifyAdminToken, async (req, res) => {
 
     await db.collection('users').doc(userRecord.uid).set(userData);
 
-    // إذا كانت النقاط الأولية أكبر من 0، إنشاء معاملة
     if (initialPoints > 0) {
       await db.collection('transactions').add({
         userId: userRecord.uid,
@@ -277,29 +267,25 @@ app.get('/api/admin/users/:id', verifyAdminToken, async (req, res) => {
 
 // ===== مسارات إدارة النقاط =====
 
-// تعديل نقاط المستخدم (إضافة/خصم)
+// تعديل نقاط المستخدم (إضافة/خصم/تعديل)
 app.patch('/api/admin/users/:id/points', verifyAdminToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { operation, points, reason } = req.body;
 
-    // التحقق من الحقول المطلوبة
     if (!operation || points === undefined || !reason) {
       return res.status(400).json({ error: 'جميع الحقول مطلوبة (operation, points, reason)' });
     }
 
-    // التحقق من صحة العملية
     if (!['add', 'remove', 'edit'].includes(operation)) {
       return res.status(400).json({ error: 'عملية غير صحيحة' });
     }
 
-    // التحقق من أن النقاط عدد صحيح
     const pointsInt = parseInt(points);
     if (isNaN(pointsInt) || pointsInt < 0) {
       return res.status(400).json({ error: 'يجب أن تكون النقاط عدداً صحيحاً غير سالب' });
     }
 
-    // جلب بيانات المستخدم الحالية
     const userRef = db.collection('users').doc(id);
     const userDoc = await userRef.get();
 
@@ -316,7 +302,6 @@ app.patch('/api/admin/users/:id/points', verifyAdminToken, async (req, res) => {
     let newPoints = currentPoints;
     let transactionType = '';
 
-    // تنفيذ العملية المطلوبة
     switch (operation) {
       case 'add':
         newPoints = currentPoints + pointsInt;
@@ -342,13 +327,11 @@ app.patch('/api/admin/users/:id/points', verifyAdminToken, async (req, res) => {
         break;
     }
 
-    // تحديث النقاط في Firestore
     await userRef.update({
       points: newPoints,
       updatedAt: admin.firestore.Timestamp.now(),
     });
 
-    // إنشاء سجل المعاملة
     const now = admin.firestore.Timestamp.now();
     await db.collection('transactions').add({
       userId: id,
@@ -361,7 +344,6 @@ app.patch('/api/admin/users/:id/points', verifyAdminToken, async (req, res) => {
       createdAt: now,
     });
 
-    // جلب البيانات المحدثة
     const updatedDoc = await userRef.get();
     const updatedData = updatedDoc.data();
 
@@ -384,7 +366,6 @@ app.post('/api/admin/users/:id/reset-points', verifyAdminToken, async (req, res)
     const { id } = req.params;
     const { reason = 'تم تصفير النقاط بواسطة الأدمن' } = req.body;
 
-    // جلب بيانات المستخدم الحالية
     const userRef = db.collection('users').doc(id);
     const userDoc = await userRef.get();
 
@@ -399,13 +380,11 @@ app.post('/api/admin/users/:id/reset-points', verifyAdminToken, async (req, res)
 
     const currentPoints = userData.points || 0;
 
-    // تصفير النقاط
     await userRef.update({
       points: 0,
       updatedAt: admin.firestore.Timestamp.now(),
     });
 
-    // إنشاء سجل المعاملة
     const now = admin.firestore.Timestamp.now();
     await db.collection('transactions').add({
       userId: id,
@@ -456,17 +435,14 @@ app.get('/api/admin/users/:id/transactions', verifyAdminToken, async (req, res) 
 
 // ===== مسارات إحصاءات لوحة التحكم =====
 
-// الحصول على إحصاءات لوحة التحكم
 app.get('/api/admin/stats', verifyAdminToken, async (req, res) => {
   try {
-    // إجمالي المرضى
     const patientsSnapshot = await db.collection('users')
       .where('role', '==', 'patient')
       .count()
       .get();
     const totalPatients = patientsSnapshot.data().count;
 
-    // إجمالي النقاط
     const allPatients = await db.collection('users')
       .where('role', '==', 'patient')
       .get();
@@ -475,7 +451,6 @@ app.get('/api/admin/stats', verifyAdminToken, async (req, res) => {
       totalPoints += doc.data().points || 0;
     });
 
-    // عمليات اليوم (المعاملات التي تمت اليوم)
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayTimestamp = admin.firestore.Timestamp.fromDate(today);
@@ -486,7 +461,6 @@ app.get('/api/admin/stats', verifyAdminToken, async (req, res) => {
       .get();
     const todayOperations = todayTransactions.data().count;
 
-    // العملاء الجدد (اليوم)
     const newPatientsToday = await db.collection('users')
       .where('role', '==', 'patient')
       .where('createdAt', '>=', todayTimestamp)
@@ -506,9 +480,8 @@ app.get('/api/admin/stats', verifyAdminToken, async (req, res) => {
   }
 });
 
-// ===== مسار إضافي للمريض (للحصول على بياناته) =====
+// ===== مسار إضافي للمريض =====
 
-// الحصول على بيانات المريض عن طريق Firebase UID (للعميل)
 app.get('/api/patient/profile/:uid', async (req, res) => {
   try {
     const { uid } = req.params;
@@ -523,7 +496,6 @@ app.get('/api/patient/profile/:uid', async (req, res) => {
       return res.status(403).json({ error: 'هذا المستخدم ليس مريضاً' });
     }
 
-    // جلب آخر 10 معاملات
     const transactionsSnapshot = await db.collection('transactions')
       .where('userId', '==', uid)
       .orderBy('createdAt', 'desc')
@@ -559,5 +531,4 @@ app.listen(PORT, () => {
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
-// تصدير التطبيق لـ Vercel
 module.exports = app;
