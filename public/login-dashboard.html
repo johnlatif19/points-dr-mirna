@@ -1,362 +1,472 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>دخول الإدارة - Points Dr.Mirna</title>
-  <style>
-    /* ===== CSS Reset & Base ===== */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دخول الإدارة - نقاط د. ميرنا</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #0d5c3e;
+            --primary-dark: #0a452e;
+            --primary-light: #1a7a55;
+            --emerald: #2ecc71;
+            --mint-light: #d5f5e3;
+            --white: #ffffff;
+            --gray-50: #f8faf9;
+            --gray-100: #f1f4f2;
+            --gray-200: #e8ece9;
+            --gray-300: #d1d8d4;
+            --gray-600: #6b7a73;
+            --gray-800: #2d3a33;
+            --gray-900: #1a241e;
+            --shadow-md: 0 4px 20px rgba(13, 92, 62, 0.12);
+            --shadow-lg: 0 8px 40px rgba(13, 92, 62, 0.16);
+            --radius: 12px;
+            --radius-lg: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0f7f0;
-      color: #1a2e1a;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    a {
-      text-decoration: none;
-      color: #0d7a3b;
-    }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a241e 0%, var(--primary-dark) 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+        }
 
-    /* ===== Auth Container ===== */
-    .auth-container {
-      background: #ffffff;
-      border-radius: 20px;
-      box-shadow: 0 20px 60px rgba(0, 40, 0, 0.12);
-      padding: 48px 40px;
-      width: 100%;
-      max-width: 440px;
-      border: 1px solid #e0ece0;
-    }
+        .auth-container {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 48px 40px;
+            max-width: 440px;
+            width: 100%;
+        }
 
-    .auth-header {
-      text-align: center;
-      margin-bottom: 32px;
-    }
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+        }
 
-    .auth-header img {
-      height: 56px;
-      width: auto;
-      margin-bottom: 12px;
-    }
+        .auth-logo img {
+            height: 48px;
+            width: auto;
+            border-radius: 8px;
+        }
 
-    .auth-header h1 {
-      font-size: 24px;
-      font-weight: 700;
-      color: #0d3b0d;
-    }
+        .auth-logo span {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+        }
 
-    .auth-header p {
-      color: #4a6a4a;
-      font-size: 14px;
-      margin-top: 4px;
-    }
+        .auth-title {
+            text-align: center;
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 4px;
+        }
 
-    /* ===== Form ===== */
-    .form-group {
-      margin-bottom: 18px;
-    }
+        .auth-subtitle {
+            text-align: center;
+            color: var(--gray-600);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
 
-    .form-group label {
-      display: block;
-      font-weight: 600;
-      font-size: 14px;
-      color: #1a3a1a;
-      margin-bottom: 5px;
-    }
+        .admin-badge {
+            display: inline-block;
+            background: var(--gray-800);
+            color: var(--white);
+            padding: 2px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
 
-    .form-group input {
-      width: 100%;
-      padding: 12px 16px;
-      border: 2px solid #dce8dc;
-      border-radius: 10px;
-      font-size: 15px;
-      transition: border-color 0.2s ease;
-      background: #fafcfa;
-      font-family: inherit;
-    }
+        .form-group {
+            margin-bottom: 20px;
+        }
 
-    .form-group input:focus {
-      outline: none;
-      border-color: #0d7a3b;
-      box-shadow: 0 0 0 3px rgba(13, 122, 59, 0.1);
-    }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
 
-    .form-group input.error {
-      border-color: #d32f2f;
-    }
+        .form-group .input-wrapper {
+            position: relative;
+        }
 
-    .form-group .error-msg {
-      color: #d32f2f;
-      font-size: 13px;
-      margin-top: 4px;
-      display: none;
-    }
+        .form-group .input-wrapper i {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-300);
+            font-size: 16px;
+            transition: var(--transition);
+        }
 
-    .form-group .error-msg.show {
-      display: block;
-    }
+        .form-group input {
+            width: 100%;
+            padding: 12px 44px 12px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius);
+            font-size: 15px;
+            transition: var(--transition);
+            background: var(--gray-50);
+            color: var(--gray-900);
+        }
 
-    .btn-submit {
-      width: 100%;
-      padding: 14px;
-      background: #1a3a2a;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 8px;
-    }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
+            background: var(--white);
+        }
 
-    .btn-submit:hover {
-      background: #0f2a1a;
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(26, 58, 42, 0.25);
-    }
+        .form-group input.error {
+            border-color: #e74c3c;
+        }
 
-    .btn-submit:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-    }
+        .form-group .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 4px;
+            display: none;
+        }
 
-    /* ===== Links ===== */
-    .auth-footer {
-      text-align: center;
-      margin-top: 22px;
-      font-size: 14px;
-      color: #4a6a4a;
-    }
+        .form-group .error-message.visible {
+            display: block;
+        }
 
-    .auth-footer a:hover {
-      text-decoration: underline;
-    }
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background: var(--gray-800);
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
 
-    .back-link {
-      display: inline-block;
-      margin-top: 10px;
-      color: #4a6a4a;
-    }
+        .btn-submit:hover {
+            background: var(--gray-900);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
 
-    .back-link:hover {
-      color: #0d3b0d;
-    }
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
 
-    /* ===== Toast ===== */
-    .toast {
-      position: fixed;
-      top: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #d32f2f;
-      color: #fff;
-      padding: 14px 28px;
-      border-radius: 10px;
-      font-weight: 600;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      text-align: center;
-      max-width: 90%;
-      font-size: 15px;
-    }
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--gray-600);
+            font-size: 14px;
+        }
 
-    .toast.show {
-      opacity: 1;
-    }
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            transition: var(--transition);
+        }
 
-    .toast.success {
-      background: #0d7a3b;
-    }
+        .auth-footer a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
 
-    /* ===== Admin Badge ===== */
-    .admin-badge {
-      display: inline-block;
-      background: #1a3a2a;
-      color: #e8f0e8;
-      font-size: 12px;
-      padding: 2px 12px;
-      border-radius: 20px;
-      font-weight: 600;
-      margin-top: 4px;
-    }
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 90%;
+        }
 
-    /* ===== Responsive ===== */
-    @media (max-width: 480px) {
-      .auth-container {
-        padding: 32px 20px;
-      }
-      .auth-header h1 {
-        font-size: 20px;
-      }
-    }
-  </style>
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: #c0392b;
+        }
+
+        .toast.success {
+            background: var(--primary);
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .security-note {
+            background: var(--gray-50);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--gray-600);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .security-note i {
+            color: var(--primary);
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 32px 20px;
+            }
+
+            .auth-title {
+                font-size: 22px;
+            }
+
+            .auth-logo span {
+                font-size: 18px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-  <!-- ===== TOAST ===== -->
-  <div id="toast" class="toast"></div>
-
-  <!-- ===== AUTH FORM ===== -->
-  <div class="auth-container">
-    <div class="auth-header">
-      <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="Points Dr.Mirna" />
-      <h1>Points Dr.Mirna Admin</h1>
-      <p>دخول لوحة التحكم</p>
-      <span class="admin-badge">إدارة</span>
+    <!-- ===== إشعار ===== -->
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage">الرسالة</span>
     </div>
 
-    <form id="adminLoginForm" novalidate>
-      <div class="form-group">
-        <label for="adminUsername">اسم المستخدم</label>
-        <input type="text" id="adminUsername" placeholder="أدخل اسم المستخدم" required />
-        <div class="error-msg" id="adminUsernameError">يرجى إدخال اسم المستخدم</div>
-      </div>
+    <!-- ===== نموذج دخول الأدمن ===== -->
+    <div class="auth-container">
+        <div class="auth-logo">
+            <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
+            <span>نقاط د. ميرنا</span>
+        </div>
 
-      <div class="form-group">
-        <label for="adminPassword">كلمة المرور</label>
-        <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" required />
-        <div class="error-msg" id="adminPasswordError">يرجى إدخال كلمة المرور</div>
-      </div>
+        <div style="text-align: center;">
+            <span class="admin-badge"><i class="fas fa-user-shield"></i> لوحة الإدارة</span>
+        </div>
 
-      <button type="submit" class="btn-submit" id="adminLoginBtn">دخول لوحة التحكم</button>
-    </form>
+        <h1 class="auth-title">دخول الإدارة</h1>
+        <p class="auth-subtitle">الرجاء إدخال بيانات الاعتماد للوصول إلى لوحة التحكم</p>
 
-    <div class="auth-footer">
-      <a href="/" class="back-link">← العودة للرئيسية</a>
+        <form id="adminLoginForm" novalidate>
+            <div class="form-group">
+                <label>اسم المستخدم</label>
+                <div class="input-wrapper">
+                    <input type="text" id="adminUsername" placeholder="أدخل اسم المستخدم" required>
+                    <i class="fas fa-user-cog"></i>
+                </div>
+                <div class="error-message" id="adminUsernameError">الرجاء إدخال اسم المستخدم</div>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <div class="input-wrapper">
+                    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+                <div class="error-message" id="adminPasswordError">الرجاء إدخال كلمة المرور</div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="adminLoginBtn">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>دخول لوحة التحكم</span>
+            </button>
+        </form>
+
+        <div class="security-note">
+            <i class="fas fa-shield-alt"></i>
+            <span>بيانات الدخول مشفرة ومحمية. يتم التحقق من الصلاحيات على الخادم.</span>
+        </div>
+
+        <div class="auth-footer">
+            <a href="/">العودة للرئيسية</a>
+        </div>
     </div>
-  </div>
 
-  <script>
-    // ===== DOM Elements =====
-    const form = document.getElementById('adminLoginForm');
-    const username = document.getElementById('adminUsername');
-    const password = document.getElementById('adminPassword');
-    const submitBtn = document.getElementById('adminLoginBtn');
-    const toast = document.getElementById('toast');
+    <script>
+        // ===== عناصر DOM =====
+        const form = document.getElementById('adminLoginForm');
+        const username = document.getElementById('adminUsername');
+        const password = document.getElementById('adminPassword');
+        const submitBtn = document.getElementById('adminLoginBtn');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
 
-    // ===== Toast Functions =====
-    function showToast(message, type = 'error') {
-      toast.textContent = message;
-      toast.className = 'toast show ' + type;
-      clearTimeout(toast._hideTimer);
-      toast._hideTimer = setTimeout(() => {
-        toast.classList.remove('show');
-      }, 4000);
-    }
+        // ===== دالة عرض الإشعار =====
+        function showToast(message, type = 'info') {
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
 
-    function hideToast() {
-      toast.classList.remove('show');
-    }
-
-    // ===== Validation =====
-    function validateForm() {
-      let isValid = true;
-
-      if (!username.value.trim()) {
-        document.getElementById('adminUsernameError').classList.add('show');
-        username.classList.add('error');
-        isValid = false;
-      } else {
-        document.getElementById('adminUsernameError').classList.remove('show');
-        username.classList.remove('error');
-      }
-
-      if (!password.value.trim()) {
-        document.getElementById('adminPasswordError').classList.add('show');
-        password.classList.add('error');
-        isValid = false;
-      } else {
-        document.getElementById('adminPasswordError').classList.remove('show');
-        password.classList.remove('error');
-      }
-
-      return isValid;
-    }
-
-    // ===== Clear errors on input =====
-    username.addEventListener('input', () => {
-      document.getElementById('adminUsernameError').classList.remove('show');
-      username.classList.remove('error');
-      hideToast();
-    });
-
-    password.addEventListener('input', () => {
-      document.getElementById('adminPasswordError').classList.remove('show');
-      password.classList.remove('error');
-      hideToast();
-    });
-
-    // ===== Admin Login =====
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      hideToast();
-
-      if (!validateForm()) {
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'جاري تسجيل الدخول...';
-
-      try {
-        const response = await fetch('/api/admin/login', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            username: username.value.trim(),
-            password: password.value.trim()
-          })
+        // ===== التحقق من الحقول =====
+        username.addEventListener('blur', () => {
+            const errorEl = document.getElementById('adminUsernameError');
+            if (username.value.trim().length === 0) {
+                username.classList.add('error');
+                errorEl.classList.add('visible');
+            } else {
+                username.classList.remove('error');
+                errorEl.classList.remove('visible');
+            }
         });
 
-        const data = await response.json();
+        password.addEventListener('blur', () => {
+            const errorEl = document.getElementById('adminPasswordError');
+            if (password.value.length === 0) {
+                password.classList.add('error');
+                errorEl.classList.add('visible');
+            } else {
+                password.classList.remove('error');
+                errorEl.classList.remove('visible');
+            }
+        });
 
-        if (response.ok && data.success) {
-          showToast('تم تسجيل الدخول بنجاح! جاري التوجيه...', 'success');
-          setTimeout(() => {
-            window.location.href = 'dashboard';
-          }, 1000);
-        } else {
-          showToast(data.error || 'اسم المستخدم أو كلمة المرور غير صحيحة');
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'دخول لوحة التحكم';
+        // ===== تقديم النموذج =====
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            // التحقق
+            let isValid = true;
+            const userError = document.getElementById('adminUsernameError');
+            const passError = document.getElementById('adminPasswordError');
+
+            if (username.value.trim().length === 0) {
+                username.classList.add('error');
+                userError.classList.add('visible');
+                isValid = false;
+            } else {
+                username.classList.remove('error');
+                userError.classList.remove('visible');
+            }
+
+            if (password.value.length === 0) {
+                password.classList.add('error');
+                passError.classList.add('visible');
+                isValid = false;
+            } else {
+                password.classList.remove('error');
+                passError.classList.remove('visible');
+            }
+
+            if (!isValid) return;
+
+            // تعطيل الزر
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> جاري التحقق...';
+
+            try {
+                // إرسال طلب إلى الخادم
+                const response = await fetch('/api/admin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: username.value.trim(),
+                        password: password.value
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showToast('تم تسجيل الدخول بنجاح، جارٍ التحويل...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    showToast(data.error || 'بيانات الدخول غير صحيحة', 'error');
+                }
+            } catch (error) {
+                console.error('Admin login error:', error);
+                showToast('حدث خطأ في الاتصال بالخادم', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول لوحة التحكم';
+            }
+        });
+
+        // ===== التحقق من وجود جلسة نشطة =====
+        async function checkAdminSession() {
+            try {
+                const response = await fetch('/api/admin/me', {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+
+                if (response.ok) {
+                    // إذا كانت الجلسة نشطة، انتقل مباشرة إلى لوحة التحكم
+                    window.location.href = '/dashboard';
+                }
+            } catch (error) {
+                // لا يوجد جلسة نشطة، ابق في صفحة الدخول
+                console.log('No active admin session');
+            }
         }
-      } catch (error) {
-        console.error('Admin login error:', error);
-        showToast('حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى.');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'دخول لوحة التحكم';
-      }
-    });
 
-    // ===== Check for existing admin session =====
-    (async function checkAdminSession() {
-      try {
-        const response = await fetch('/api/admin/me');
-        if (response.ok) {
-          window.location.href = 'dashboard';
-        }
-      } catch (e) {
-        // Not authenticated, stay on page
-      }
-    })();
-  </script>
-
+        // التحقق عند التحميل
+        checkAdminSession();
+    </script>
 </body>
 </html>
