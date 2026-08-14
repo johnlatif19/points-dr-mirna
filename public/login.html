@@ -241,7 +241,6 @@
             to { transform: rotate(360deg); }
         }
 
-        /* ===== لوحة تحكم المريض ===== */
         .dashboard-container {
             display: none;
             background: var(--white);
@@ -463,13 +462,11 @@
     </style>
 </head>
 <body>
-    <!-- ===== إشعار ===== -->
     <div id="toast" class="toast">
         <i class="fas fa-info-circle"></i>
         <span id="toastMessage">الرسالة</span>
     </div>
 
-    <!-- ===== نموذج الدخول ===== -->
     <div class="auth-container" id="loginFormContainer">
         <div class="auth-logo">
             <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
@@ -511,7 +508,6 @@
         </div>
     </div>
 
-    <!-- ===== لوحة تحكم المريض ===== -->
     <div class="dashboard-container" id="patientDashboard">
         <div class="dashboard-header">
             <div class="user-info">
@@ -558,21 +554,19 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // ===== تهيئة Firebase =====
         const firebaseConfig = {
             apiKey: "AIzaSyC2eOxT5SNqWQK89ctAPNvyvWmo5ZvTTy8",
             authDomain: "pointsdrmirna.firebaseapp.com",
             projectId: "pointsdrmirna",
             storageBucket: "pointsdrmirna.firebasestorage.app",
             messagingSenderId: "68032281955",
-            appId: "1:68032281955:web:5ce818fdcc9ea65c576756",
+            appId: "1:68032281955:web:5ce818fdcc9ea65c576756"
         };
 
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // ===== عناصر DOM =====
         const loginContainer = document.getElementById('loginFormContainer');
         const dashboard = document.getElementById('patientDashboard');
         const loginForm = document.getElementById('loginForm');
@@ -593,7 +587,6 @@
 
         let currentUserData = null;
 
-        // ===== دالة عرض الإشعار =====
         function showToast(message, type = 'info') {
             toast.className = 'toast ' + type;
             toastMessage.textContent = message;
@@ -604,7 +597,6 @@
             }, 5000);
         }
 
-        // ===== التحقق من صحة البريد =====
         loginEmail.addEventListener('blur', () => {
             const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail.value.trim());
             const errorEl = document.getElementById('loginEmailError');
@@ -628,15 +620,12 @@
             }
         });
 
-        // ===== عرض لوحة تحكم المريض =====
         function showPatientDashboard(user, userDoc) {
             currentUserData = { ...userDoc, uid: user.uid };
             
-            // إظهار اللوحة وإخفاء نموذج الدخول
             loginContainer.style.display = 'none';
             dashboard.classList.add('active');
 
-            // ملء البيانات
             const name = userDoc.name || user.displayName || 'مريض';
             userName.textContent = name;
             userEmail.textContent = user.email;
@@ -645,17 +634,14 @@
             const points = userDoc.points || 0;
             userPoints.textContent = points;
 
-            // تحديث شريط التقدم (نفترض أن المكافأة عند 1000 نقطة)
             const target = 1000;
             const percentage = Math.min((points / target) * 100, 100);
             progressFill.style.width = percentage + '%';
             progressText.textContent = Math.round(percentage) + '%';
 
-            // جلب المعاملات
             loadTransactions(user.uid);
         }
 
-        // ===== جلب المعاملات =====
         async function loadTransactions(uid) {
             try {
                 const snapshot = await db.collection('transactions')
@@ -730,14 +716,12 @@
             }
         }
 
-        // ===== تقديم نموذج الدخول =====
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const email = loginEmail.value.trim();
             const password = loginPassword.value;
 
-            // التحقق
             let isValid = true;
             const emailError = document.getElementById('loginEmailError');
             const passError = document.getElementById('loginPasswordError');
@@ -766,11 +750,9 @@
             loginBtn.innerHTML = '<span class="spinner"></span> جاري الدخول...';
 
             try {
-                // 1. تسجيل الدخول
                 const userCredential = await auth.signInWithEmailAndPassword(email, password);
                 const user = userCredential.user;
 
-                // 2. جلب بيانات المستخدم من Firestore
                 const userDoc = await db.collection('users').doc(user.uid).get();
 
                 if (!userDoc.exists) {
@@ -780,7 +762,6 @@
 
                 const userData = userDoc.data();
 
-                // 3. التحقق من أن المستخدم مريض
                 if (userData.role !== 'patient') {
                     showToast('هذا الحساب ليس حساب مريض', 'error');
                     await auth.signOut();
@@ -793,7 +774,6 @@
                     return;
                 }
 
-                // 4. عرض لوحة التحكم
                 showPatientDashboard(user, userData);
                 showToast('مرحباً بك ' + (userData.name || ''), 'success');
 
@@ -826,7 +806,6 @@
             }
         });
 
-        // ===== تسجيل الخروج =====
         logoutBtn.addEventListener('click', async () => {
             try {
                 await auth.signOut();
@@ -841,7 +820,6 @@
             }
         });
 
-        // ===== التحقق من حالة المستخدم عند التحميل =====
         auth.onAuthStateChanged(async (user) => {
             if (user) {
                 try {
@@ -853,13 +831,11 @@
                             return;
                         }
                     }
-                    // إذا لم يكن مريضاً أو غير نشط، سجل الخروج
                     await auth.signOut();
                 } catch (error) {
                     console.error('Auth state check error:', error);
                 }
             }
-            // إذا لم يكن هناك مستخدم، أظهر نموذج الدخول
             loginContainer.style.display = 'block';
             dashboard.classList.remove('active');
         });
