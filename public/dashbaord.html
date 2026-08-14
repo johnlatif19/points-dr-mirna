@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم - Points Dr.Mirna</title>
+  <style>
+    /* ===== CSS Reset & Base ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f7f0;
+      color: #1a2e1a;
+    }
+
+    /* ===== Navigation ===== */
+    .navbar {
+      background: #ffffff;
+      padding: 12px 0;
+      box-shadow: 0 2px 12px rgba(0, 40, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .navbar .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-brand img {
+      height: 40px;
+      width: auto;
+    }
+
+    .nav-brand span {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0d3b0d;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-right .admin-name {
+      font-weight: 600;
+      color: #0d3b0d;
+    }
+
+    .nav-right .admin-badge {
+      background: #1a3a2a;
+      color: #e8f0e8;
+      font-size: 11px;
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+    }
+
+    .logout-btn {
+      background: #d32f2f;
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: #b71c1c;
+    }
+
+    /* ===== Main Layout ===== */
+    .main-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px;
+    }
+
+    .page-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0d3b0d;
+      margin-bottom: 24px;
+    }
+
+    /* ===== Stats ===== */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: #ffffff;
+      padding: 20px 24px;
+      border-radius: 14px;
+      box-shadow: 0 2px 8px rgba(0, 40, 0, 0.06);
+      border: 1px solid #e0ece0;
+    }
+
+    .stat-card .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: #0d7a3b;
+    }
+
+    .stat-card .stat-label {
+      color: #4a6a4a;
+      font-size: 14px;
+      margin-top: 2px;
+    }
+
+    /* ===== Toolbar ===== */
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+
+    .toolbar .search-input {
+      flex: 1;
+      min-width: 200px;
+      padding: 10px 16px;
+      border: 2px solid #dce8dc;
+      border-radius: 10px;
+      font-size: 14px;
+      background: #ffffff;
+      font-family: inherit;
+    }
+
+    .toolbar .search-input:focus {
+      outline: none;
+      border-color: #0d7a3b;
+    }
+
+    .toolbar .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: #0d7a3b;
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      background: #0a5f2e;
+    }
+
+    .btn-secondary {
+      background: #e0ece0;
+      color: #1a3a1a;
+    }
+
+    .btn-secondary:hover {
+      background: #d0e0d0;
+    }
+
+    .btn-danger {
+      background: #d32f2f;
+      color: #fff;
+    }
+
+    .btn-danger:hover {
+      background: #b71c1c;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 2px solid #0d7a3b;
+      color: #0d7a3b;
+    }
+
+    .btn-outline:hover {
+      background: #0d7a3b;
+      color: #fff;
+    }
+
+    /* ===== Table ===== */
+    .table-container {
+      background: #ffffff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0, 40, 0, 0.06);
+      border: 1px solid #e0ece0;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    thead {
+      background: #f5faf5;
+      border-bottom: 2px solid #dce8dc;
+    }
+
+    th {
+      padding: 14px 16px;
+      text-align: right;
+      font-weight: 600;
+      color: #1a3a1a;
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #e8f0e8;
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: #f8fcf8;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: #d4edda;
+      color: #0d7a3b;
+    }
+
+    .status-inactive {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .action-btn {
+      padding: 4px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 12px;
+      transition: all 0.2s;
+      margin: 0 2px;
+    }
+
+    .action-btn.view {
+      background: #d4edda;
+      color: #0d7a3b;
+    }
+
+    .action-btn.view:hover {
+      background: #c3e6cb;
+    }
+
+    .action-btn.add {
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .action-btn.add:hover {
+      background: #b8d4f0;
+    }
+
+    .action-btn.remove {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .action-btn.remove:hover {
+      background: #f1c0c5;
+    }
+
+    .action-btn.reset {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .action-btn.reset:hover {
+      background: #f0e3b0;
+    }
+
+    /* ===== Pagination ===== */
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .pagination .info {
+      color: #4a6a4a;
+      font-size: 14px;
+    }
+
+    .pagination .controls {
+      display: flex;
+      gap: 8px;
+    }
+
+    .pagination .controls button {
+      padding: 6px 14px;
+      border: 1px solid #dce8dc;
+      border-radius: 6px;
+      background: #ffffff;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .pagination .controls button:hover {
+      background: #f0f7f0;
+    }
+
+    .pagination .controls button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ===== Modal ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 20, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 32px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal h2 {
+      font-size: 22px;
+      color: #0d3b0d;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal .close-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: #4a6a4a;
+      margin-right: auto;
+    }
+
+    .modal .form-group {
+      margin-bottom: 16px;
+    }
+
+    .modal .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a3a1a;
+      margin-bottom: 4px;
+    }
+
+    .modal .form-group input,
+    .modal .form-group select,
+    .modal .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #dce8dc;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background: #fafcfa;
+    }
+
+    .modal .form-group input:focus,
+    .modal .form-group select:focus,
+    .modal .form-group textarea:focus {
+      outline: none;
+      border-color: #0d7a3b;
+    }
+
+    .modal .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .modal .form-actions .btn {
+      flex: 1;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.2s;
+    }
+
+    .modal .form-actions .btn-cancel {
+      background: #e0ece0;
+      color: #1a3a1a;
+    }
+
+    .modal .form-actions .btn-cancel:hover {
+      background: #d0e0d0;
+    }
+
+    .modal .form-actions .btn-confirm {
+      background: #0d7a3b;
+      color: #fff;
+    }
+
+    .modal .form-actions .btn-confirm:hover {
+      background: #0a5f2e;
+    }
+
+    .modal .form-actions .btn-danger {
+      background: #d32f2f;
+      color: #fff;
+    }
+
+    .modal .form-actions .btn-danger:hover {
+      background: #b71c1c;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #d32f2f;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      z-index: 2000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-align: center;
+      max-width: 90%;
+      font-size: 15px;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .toast.success {
+      background: #0d7a3b;
+    }
+
+    /* ===== Loading ===== */
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid #e0ece0;
+      border-top-color: #0d7a3b;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ===== Empty State ===== */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #4a6a4a;
+    }
+
+    .empty-state .icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 768px) {
+      .navbar .container {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-right {
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .stat-card .stat-value {
+        font-size: 22px;
+      }
+      .toolbar {
+        flex-direction: column;
+      }
+      .toolbar .search-input {
+        width: 100%;
+      }
+      th,
+      td {
+        padding: 8px 10px;
+        font-size: 12px;
+      }
+      .modal {
+        padding: 24px 16px;
+      }
+      .pagination {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .pagination .controls {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .stat-card {
+        padding: 14px 16px;
+      }
+      .stat-card .stat-value {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast"></div>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="Points Dr.Mirna" />
+        <span>Points Dr.Mirna</span>
+      </div>
+      <div class="nav-right">
+        <span class="admin-badge">إدارة</span>
+        <span class="admin-name" id="adminName">المدير</span>
+        <button class="logout-btn" id="logoutBtn">تسجيل الخروج</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <div class="main-container">
+    <h1 class="page-title">لوحة التحكم</h1>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid">
+      <div class="stat-card">
+        <div class="stat-value" id="totalPatients">-</div>
+        <div class="stat-label">إجمالي المرضى</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalPoints">-</div>
+        <div class="stat-label">إجمالي النقاط</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="todayTransactions">-</div>
+        <div class="stat-label">عمليات اليوم</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="newPatients">-</div>
+        <div class="stat-label">العملاء الجدد</div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <input type="text" class="search-input" id="searchInput" placeholder="بحث بالاسم، الهاتف، أو البريد الإلكتروني..." />
+      <button class="btn btn-primary" id="addPatientBtn">+ إضافة مريض</button>
+      <button class="btn btn-secondary" id="refreshBtn">تحديث</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>الاسم</th>
+            <th>الهاتف</th>
+            <th>البريد الإلكتروني</th>
+            <th>النقاط</th>
+            <th>تاريخ التسجيل</th>
+            <th>الحالة</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody id="patientsBody">
+          <tr>
+            <td colspan="7" style="text-align:center; padding:30px; color:#4a6a4a;">
+              <span class="loading-spinner"></span> جاري التحميل...
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="pagination">
+        <span class="info" id="paginationInfo">عرض 0 من 0</span>
+        <div class="controls">
+          <button id="prevPage" disabled>السابق</button>
+          <span style="padding:6px 12px; font-weight:600;" id="pageIndicator">1</span>
+          <button id="nextPage">التالي</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: Add Patient ===== -->
+  <div class="modal-overlay" id="addPatientModal">
+    <div class="modal">
+      <h2>
+        إضافة مريض جديد
+        <button class="close-btn" id="closeAddModal">&times;</button>
+      </h2>
+      <form id="addPatientForm">
+        <div class="form-group">
+          <label>الاسم الكامل</label>
+          <input type="text" id="addName" required />
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف</label>
+          <input type="tel" id="addPhone" required />
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="addEmail" required />
+        </div>
+        <div class="form-group">
+          <label>كلمة المرور</label>
+          <input type="password" id="addPassword" required minlength="6" />
+        </div>
+        <div class="form-group">
+          <label>النقاط الابتدائية</label>
+          <input type="number" id="addPoints" value="0" min="0" />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-cancel" id="cancelAdd">إلغاء</button>
+          <button type="submit" class="btn btn-confirm">إنشاء الحساب</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: Patient Details ===== -->
+  <div class="modal-overlay" id="patientDetailsModal">
+    <div class="modal" style="max-width: 680px;">
+      <h2>
+        تفاصيل المريض
+        <button class="close-btn" id="closeDetailsModal">&times;</button>
+      </h2>
+      <div id="patientDetailsContent">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px 16px; margin-bottom:16px;">
+          <div><strong>الاسم:</strong> <span id="detailName">-</span></div>
+          <div><strong>الهاتف:</strong> <span id="detailPhone">-</span></div>
+          <div><strong>البريد الإلكتروني:</strong> <span id="detailEmail">-</span></div>
+          <div><strong>الحالة:</strong> <span id="detailStatus">-</span></div>
+          <div><strong>تاريخ التسجيل:</strong> <span id="detailDate">-</span></div>
+          <div><strong>النقاط الحالية:</strong> <span id="detailPoints" style="font-weight:700; color:#0d7a3b; font-size:20px;">0</span></div>
+        </div>
+
+        <div style="display:flex; gap:8px; flex-wrap:wrap; margin:16px 0;">
+          <button class="action-btn add" id="detailAddPoints">+ إضافة نقاط</button>
+          <button class="action-btn remove" id="detailRemovePoints">- خصم نقاط</button>
+          <button class="action-btn view" id="detailEditPoints">تعديل النقاط</button>
+          <button class="action-btn reset" id="detailResetPoints">تصفير النقاط</button>
+        </div>
+
+        <h3 style="margin-top:20px; font-size:16px; color:#0d3b0d;">سجل المعاملات</h3>
+        <div id="detailTransactions" style="max-height:200px; overflow-y:auto; border:1px solid #e0ece0; border-radius:8px; padding:8px;">
+          <div style="color:#4a6a4a; text-align:center; padding:12px;">جاري التحميل...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: Point Operation ===== -->
+  <div class="modal-overlay" id="pointModal">
+    <div class="modal">
+      <h2 id="pointModalTitle">إدارة النقاط</h2>
+      <form id="pointForm">
+        <input type="hidden" id="pointOperation" />
+        <div class="form-group">
+          <label id="pointLabel">عدد النقاط</label>
+          <input type="number" id="pointAmount" min="1" required />
+        </div>
+        <div class="form-group">
+          <label>السبب</label>
+          <input type="text" id="pointReason" placeholder="سبب العملية..." />
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn btn-cancel" id="cancelPoint">إلغاء</button>
+          <button type="submit" class="btn btn-confirm" id="pointSubmitBtn">تأكيد</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== MODAL: Confirmation ===== -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal">
+      <h2 id="confirmTitle">تأكيد العملية</h2>
+      <p id="confirmMessage" style="font-size:16px; color:#1a3a1a; margin:16px 0;"></p>
+      <div class="form-actions">
+        <button class="btn btn-cancel" id="confirmCancel">إلغاء</button>
+        <button class="btn btn-danger" id="confirmOk">تأكيد</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ===== State =====
+    let currentPage = 1;
+    const limit = 20;
+    let totalPatients = 0;
+    let patients = [];
+    let selectedPatientId = null;
+    let pendingAction = null;
+
+    // ===== Toast =====
+    function showToast(message, type = 'error') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      clearTimeout(toast._hideTimer);
+      toast._hideTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+
+    function hideToast() {
+      document.getElementById('toast').classList.remove('show');
+    }
+
+    // ===== API Helpers =====
+    async function apiFetch(url, options = {}) {
+      const response = await fetch(url, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.headers || {})
+        },
+        credentials: 'include'
+      });
+
+      if (response.status === 401) {
+        window.location.href = 'login-dashboard.html';
+        throw new Error('Unauthorized');
+      }
+
+      return response;
+    }
+
+    // ===== Load Dashboard =====
+    async function loadDashboard() {
+      try {
+        await loadStats();
+        await loadPatients();
+      } catch (error) {
+        console.error('Load dashboard error:', error);
+        if (error.message !== 'Unauthorized') {
+          showToast('حدث خطأ في تحميل البيانات');
+        }
+      }
+    }
+
+    // ===== Load Stats =====
+    async function loadStats() {
+      try {
+        const response = await apiFetch('/api/admin/stats');
+        const data = await response.json();
+
+        document.getElementById('totalPatients').textContent = data.totalPatients || 0;
+        document.getElementById('totalPoints').textContent = data.totalPoints || 0;
+        document.getElementById('todayTransactions').textContent = data.todayTransactions || 0;
+        document.getElementById('newPatients').textContent = data.newPatients || 0;
+      } catch (error) {
+        console.error('Load stats error:', error);
+      }
+    }
+
+    // ===== Load Patients =====
+    async function loadPatients(search = '') {
+      const body = document.getElementById('patientsBody');
+      body.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align:center; padding:30px; color:#4a6a4a;">
+            <span class="loading-spinner"></span> جاري التحميل...
+          </td>
+        </tr>
+      `;
+
+      try {
+        const offset = (currentPage - 1) * limit;
+        let url = `/api/admin/users?limit=${limit}&offset=${offset}`;
+        if (search) {
+          url += `&search=${encodeURIComponent(search)}`;
+        }
+
+        const response = await apiFetch(url);
+        const data = await response.json();
+
+        patients = data.users || [];
+        totalPatients = data.total || 0;
+
+        renderPatients(patients);
+        updatePagination();
+      } catch (error) {
+        console.error('Load patients error:', error);
+        if (error.message !== 'Unauthorized') {
+          body.innerHTML = `
+            <tr>
+              <td colspan="7" style="text-align:center; padding:30px; color:#d32f2f;">
+                حدث خطأ في تحميل المرضى
+              </td>
+            </tr>
+          `;
+        }
+      }
+    }
+
+    // ===== Render Patients =====
+    function renderPatients(patientsList) {
+      const body = document.getElementById('patientsBody');
+
+      if (!patientsList || patientsList.length === 0) {
+        body.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align:center; padding:40px 20px; color:#4a6a4a;">
+              <span style="font-size:40px; display:block; margin-bottom:8px;">●</span>
+              لا يوجد مرضى مسجلين
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      let html = '';
+      patientsList.forEach(p => {
+        const statusClass = p.status === 'active' ? 'status-active' : 'status-inactive';
+        const statusLabel = p.status === 'active' ? 'نشط' : 'غير نشط';
+        const dateStr = p.createdAt ? new Date(p.createdAt).toLocaleDateString('ar-EG') : '-';
+
+        html += `
+          <tr>
+            <td><strong>${p.name || '-'}</strong></td>
+            <td>${p.phone || '-'}</td>
+            <td>${p.email || '-'}</td>
+            <td style="font-weight:700; color:#0d7a3b;">${p.points || 0}</td>
+            <td>${dateStr}</td>
+            <td><span class="status-badge ${statusClass}">${statusLabel}</span></td>
+            <td>
+              <button class="action-btn view" onclick="viewPatient('${p.id}')">عرض</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      body.innerHTML = html;
+    }
+
+    // ===== Pagination =====
+    function updatePagination() {
+      const totalPages = Math.ceil(totalPatients / limit);
+      document.getElementById('paginationInfo').textContent =
+        `عرض ${patients.length} من ${totalPatients}`;
+      document.getElementById('pageIndicator').textContent = currentPage;
+      document.getElementById('prevPage').disabled = currentPage <= 1;
+      document.getElementById('nextPage').disabled = currentPage >= totalPages;
+    }
+
+    document.getElementById('prevPage').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        const search = document.getElementById('searchInput').value.trim();
+        loadPatients(search);
+      }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => {
+      const totalPages = Math.ceil(totalPatients / limit);
+      if (currentPage < totalPages) {
+        currentPage++;
+        const search = document.getElementById('searchInput').value.trim();
+        loadPatients(search);
+      }
+    });
+
+    // ===== Search =====
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        currentPage = 1;
+        loadPatients(e.target.value.trim());
+      }, 400);
+    });
+
+    // ===== Refresh =====
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      const search = document.getElementById('searchInput').value.trim();
+      loadPatients(search);
+      loadStats();
+      showToast('تم تحديث البيانات', 'success');
+    });
+
+    // ===== View Patient =====
+    async function viewPatient(id) {
+      selectedPatientId = id;
+      const modal = document.getElementById('patientDetailsModal');
+      modal.classList.add('active');
+
+      document.getElementById('detailName').textContent = '-';
+      document.getElementById('detailPhone').textContent = '-';
+      document.getElementById('detailEmail').textContent = '-';
+      document.getElementById('detailStatus').textContent = '-';
+      document.getElementById('detailDate').textContent = '-';
+      document.getElementById('detailPoints').textContent = '0';
+      document.getElementById('detailTransactions').innerHTML = '<div style="color:#4a6a4a; text-align:center; padding:12px;">جاري التحميل...</div>';
+
+      try {
+        const response = await apiFetch(`/api/admin/users/${id}`);
+        const user = await response.json();
+
+        document.getElementById('detailName').textContent = user.name || '-';
+        document.getElementById('detailPhone').textContent = user.phone || '-';
+        document.getElementById('detailEmail').textContent = user.email || '-';
+        document.getElementById('detailStatus').textContent = user.status === 'active' ? 'نشط' : 'غير نشط';
+        document.getElementById('detailDate').textContent = user.createdAt ? new Date(user.createdAt).toLocaleDateString('ar-EG') : '-';
+        document.getElementById('detailPoints').textContent = user.points || 0;
+
+        // Load transactions
+        await loadTransactions(id);
+      } catch (error) {
+        console.error('View patient error:', error);
+        document.getElementById('detailTransactions').innerHTML =
+          '<div style="color:#d32f2f; text-align:center; padding:12px;">حدث خطأ في تحميل المعاملات</div>';
+      }
+    }
+
+    // ===== Load Transactions =====
+    async function loadTransactions(id) {
+      try {
+        const response = await apiFetch(`/api/admin/users/${id}/transactions?limit=30`);
+        const data = await response.json();
+
+        const container = document.getElementById('detailTransactions');
+
+        if (!data.transactions || data.transactions.length === 0) {
+          container.innerHTML = '<div style="color:#4a6a4a; text-align:center; padding:12px;">لا توجد معاملات</div>';
+          return;
+        }
+
+        let html = '';
+        const typeMap = {
+          'admin_add': 'إضافة نقاط',
+          'admin_remove': 'خصم نقاط',
+          'manual_adjustment': 'تعديل نقاط',
+          'reset': 'تصفير نقاط',
+          'redeem': 'استبدال نقاط',
+          'signup': 'إنشاء حساب'
+        };
+
+        data.transactions.forEach(tx => {
+          const typeLabel = typeMap[tx.type] || tx.type;
+          const dateStr = tx.createdAt ? new Date(tx.createdAt).toLocaleString('ar-EG') : '';
+          const pointsClass = tx.points > 0 ? 'points-positive' : (tx.points < 0 ? 'points-negative' : 'points-neutral');
+          const sign = tx.points > 0 ? '+' : '';
+
+          html += `
+            <div style="display:flex; justify-content:space-between; padding:6px 0; border-bottom:1px solid #e8f0e8; font-size:13px;">
+              <span>${typeLabel}</span>
+              <span>
+                <span style="font-weight:600; color:${tx.points > 0 ? '#0d7a3b' : (tx.points < 0 ? '#d32f2f' : '#4a6a4a')}">
+                  ${sign}${tx.points}
+                </span>
+                <span style="color:#4a6a4a; font-size:11px;">${dateStr}</span>
+              </span>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      } catch (error) {
+        console.error('Load transactions error:', error);
+        document.getElementById('detailTransactions').innerHTML =
+          '<div style="color:#d32f2f; text-align:center; padding:12px;">حدث خطأ في تحميل المعاملات</div>';
+      }
+    }
+
+    // ===== Close Details Modal =====
+    document.getElementById('closeDetailsModal').addEventListener('click', () => {
+      document.getElementById('patientDetailsModal').classList.remove('active');
+    });
+
+    // Click outside modal to close
+    document.getElementById('patientDetailsModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        document.getElementById('patientDetailsModal').classList.remove('active');
+      }
+    });
+
+    // ===== Point Operations =====
+    document.getElementById('detailAddPoints').addEventListener('click', () => {
+      document.getElementById('pointModalTitle').textContent = 'إضافة نقاط';
+      document.getElementById('pointLabel').textContent = 'عدد النقاط المراد إضافتها';
+      document.getElementById('pointOperation').value = 'add';
+      document.getElementById('pointAmount').value = '';
+      document.getElementById('pointReason').value = '';
+      document.getElementById('pointSubmitBtn').textContent = 'إضافة';
+      document.getElementById('pointModal').classList.add('active');
+    });
+
+    document.getElementById('detailRemovePoints').addEventListener('click', () => {
+      document.getElementById('pointModalTitle').textContent = 'خصم نقاط';
+      document.getElementById('pointLabel').textContent = 'عدد النقاط المراد خصمها';
+      document.getElementById('pointOperation').value = 'remove';
+      document.getElementById('pointAmount').value = '';
+      document.getElementById('pointReason').value = '';
+      document.getElementById('pointSubmitBtn').textContent = 'خصم';
+      document.getElementById('pointModal').classList.add('active');
+    });
+
+    document.getElementById('detailEditPoints').addEventListener('click', () => {
+      document.getElementById('pointModalTitle').textContent = 'تعديل النقاط';
+      document.getElementById('pointLabel').textContent = 'الرصيد الجديد';
+      document.getElementById('pointOperation').value = 'set';
+      document.getElementById('pointAmount').value = '';
+      document.getElementById('pointReason').value = '';
+      document.getElementById('pointSubmitBtn').textContent = 'تعديل';
+      document.getElementById('pointModal').classList.add('active');
+    });
+
+    document.getElementById('detailResetPoints').addEventListener('click', () => {
+      document.getElementById('confirmTitle').textContent = 'تصفير النقاط';
+      document.getElementById('confirmMessage').textContent = 'هل أنت متأكد من تصفير نقاط هذا العميل؟';
+      pendingAction = 'reset';
+      document.getElementById('confirmModal').classList.add('active');
+    });
+
+    // ===== Close Point Modal =====
+    document.getElementById('cancelPoint').addEventListener('click', () => {
+      document.getElementById('pointModal').classList.remove('active');
+    });
+
+    document.getElementById('pointModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        document.getElementById('pointModal').classList.remove('active');
+      }
+    });
+
+    // ===== Submit Point Operation =====
+    document.getElementById('pointForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const operation = document.getElementById('pointOperation').value;
+      const amount = parseInt(document.getElementById('pointAmount').value);
+      const reason = document.getElementById('pointReason').value.trim() || '';
+
+      if (!amount || amount <= 0) {
+        showToast('يرجى إدخال عدد نقاط صحيح');
+        return;
+      }
+
+      const submitBtn = document.getElementById('pointSubmitBtn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'جاري...';
+
+      try {
+        const response = await apiFetch(`/api/admin/users/${selectedPatientId}/points`, {
+          method: 'PATCH',
+          body: JSON.stringify({
+            operation,
+            amount,
+            reason
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showToast(data.message || 'تم تحديث النقاط بنجاح', 'success');
+          document.getElementById('pointModal').classList.remove('active');
+          // Refresh patient details
+          await viewPatient(selectedPatientId);
+          // Refresh table and stats
+          const search = document.getElementById('searchInput').value.trim();
+          await loadPatients(search);
+          await loadStats();
+        } else {
+          showToast(data.error || 'حدث خطأ في تحديث النقاط');
+        }
+      } catch (error) {
+        console.error('Point operation error:', error);
+        showToast('حدث خطأ في تحديث النقاط');
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = operation === 'add' ? 'إضافة' : (operation === 'remove' ? 'خصم' : 'تعديل');
+    });
+
+    // ===== Confirm Modal =====
+    document.getElementById('confirmCancel').addEventListener('click', () => {
+      document.getElementById('confirmModal').classList.remove('active');
+      pendingAction = null;
+    });
+
+    document.getElementById('confirmModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        document.getElementById('confirmModal').classList.remove('active');
+        pendingAction = null;
+      }
+    });
+
+    document.getElementById('confirmOk').addEventListener('click', async () => {
+      if (pendingAction === 'reset') {
+        const confirmBtn = document.getElementById('confirmOk');
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = 'جاري...';
+
+        try {
+          const response = await apiFetch(`/api/admin/users/${selectedPatientId}/reset-points`, {
+            method: 'POST'
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            showToast(data.message || 'تم تصفير النقاط بنجاح', 'success');
+            document.getElementById('confirmModal').classList.remove('active');
+            await viewPatient(selectedPatientId);
+            const search = document.getElementById('searchInput').value.trim();
+            await loadPatients(search);
+            await loadStats();
+          } else {
+            showToast(data.error || 'حدث خطأ في تصفير النقاط');
+          }
+        } catch (error) {
+          console.error('Reset error:', error);
+          showToast('حدث خطأ في تصفير النقاط');
+        }
+
+        confirmBtn.disabled = false;
+        confirmBtn.textContent = 'تأكيد';
+        pendingAction = null;
+      }
+    });
+
+    // ===== Add Patient =====
+    document.getElementById('addPatientBtn').addEventListener('click', () => {
+      document.getElementById('addPatientModal').classList.add('active');
+      document.getElementById('addPatientForm').reset();
+      document.getElementById('addPoints').value = 0;
+    });
+
+    document.getElementById('closeAddModal').addEventListener('click', () => {
+      document.getElementById('addPatientModal').classList.remove('active');
+    });
+
+    document.getElementById('cancelAdd').addEventListener('click', () => {
+      document.getElementById('addPatientModal').classList.remove('active');
+    });
+
+    document.getElementById('addPatientModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        document.getElementById('addPatientModal').classList.remove('active');
+      }
+    });
+
+    document.getElementById('addPatientForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('addName').value.trim();
+      const phone = document.getElementById('addPhone').value.trim();
+      const email = document.getElementById('addEmail').value.trim();
+      const password = document.getElementById('addPassword').value;
+      const points = parseInt(document.getElementById('addPoints').value) || 0;
+
+      if (!name || !phone || !email || !password) {
+        showToast('يرجى ملء جميع الحقول');
+        return;
+      }
+
+      if (password.length < 6) {
+        showToast('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+        return;
+      }
+
+      const submitBtn = document.querySelector('#addPatientForm .btn-confirm');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'جاري...';
+
+      try {
+        const response = await apiFetch('/api/admin/users', {
+          method: 'POST',
+          body: JSON.stringify({
+            name,
+            phone,
+            email,
+            password,
+            initialPoints: points
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          showToast(data.message || 'تم إنشاء الحساب بنجاح', 'success');
+          document.getElementById('addPatientModal').classList.remove('active');
+          const search = document.getElementById('searchInput').value.trim();
+          await loadPatients(search);
+          await loadStats();
+        } else {
+          showToast(data.error || 'حدث خطأ في إنشاء الحساب');
+        }
+      } catch (error) {
+        console.error('Add patient error:', error);
+        showToast('حدث خطأ في إنشاء الحساب');
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'إنشاء الحساب';
+    });
+
+    // ===== Logout =====
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      try {
+        const response = await apiFetch('/api/admin/logout', {
+          method: 'POST'
+        });
+
+        if (response.ok) {
+          window.location.href = 'login-dashboard.html';
+        } else {
+          showToast('حدث خطأ أثناء تسجيل الخروج');
+        }
+      } catch (error) {
+        console.error('Logout error:', error);
+        window.location.href = 'login-dashboard.html';
+      }
+    });
+
+    // ===== Check Admin Session =====
+    (async function checkSession() {
+      try {
+        const response = await apiFetch('/api/admin/me');
+        if (response.ok) {
+          const data = await response.json();
+          document.getElementById('adminName').textContent = data.username || 'المدير';
+          loadDashboard();
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+        window.location.href = 'login-dashboard.html';
+      }
+    })();
+  </script>
+
+</body>
+</html>
