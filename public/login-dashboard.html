@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>دخول الإدارة - Points Dr.Mirna</title>
+  <style>
+    /* ===== CSS Reset & Base ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f7f0;
+      color: #1a2e1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    a {
+      text-decoration: none;
+      color: #0d7a3b;
+    }
+
+    /* ===== Auth Container ===== */
+    .auth-container {
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 40, 0, 0.12);
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 440px;
+      border: 1px solid #e0ece0;
+    }
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    .auth-header img {
+      height: 56px;
+      width: auto;
+      margin-bottom: 12px;
+    }
+
+    .auth-header h1 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0d3b0d;
+    }
+
+    .auth-header p {
+      color: #4a6a4a;
+      font-size: 14px;
+      margin-top: 4px;
+    }
+
+    /* ===== Form ===== */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      font-size: 14px;
+      color: #1a3a1a;
+      margin-bottom: 5px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #dce8dc;
+      border-radius: 10px;
+      font-size: 15px;
+      transition: border-color 0.2s ease;
+      background: #fafcfa;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #0d7a3b;
+      box-shadow: 0 0 0 3px rgba(13, 122, 59, 0.1);
+    }
+
+    .form-group input.error {
+      border-color: #d32f2f;
+    }
+
+    .form-group .error-msg {
+      color: #d32f2f;
+      font-size: 13px;
+      margin-top: 4px;
+      display: none;
+    }
+
+    .form-group .error-msg.show {
+      display: block;
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #1a3a2a;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 8px;
+    }
+
+    .btn-submit:hover {
+      background: #0f2a1a;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(26, 58, 42, 0.25);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ===== Links ===== */
+    .auth-footer {
+      text-align: center;
+      margin-top: 22px;
+      font-size: 14px;
+      color: #4a6a4a;
+    }
+
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 10px;
+      color: #4a6a4a;
+    }
+
+    .back-link:hover {
+      color: #0d3b0d;
+    }
+
+    /* ===== Toast ===== */
+    .toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #d32f2f;
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 10px;
+      font-weight: 600;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      text-align: center;
+      max-width: 90%;
+      font-size: 15px;
+    }
+
+    .toast.show {
+      opacity: 1;
+    }
+
+    .toast.success {
+      background: #0d7a3b;
+    }
+
+    /* ===== Admin Badge ===== */
+    .admin-badge {
+      display: inline-block;
+      background: #1a3a2a;
+      color: #e8f0e8;
+      font-size: 12px;
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* ===== Responsive ===== */
+    @media (max-width: 480px) {
+      .auth-container {
+        padding: 32px 20px;
+      }
+      .auth-header h1 {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== TOAST ===== -->
+  <div id="toast" class="toast"></div>
+
+  <!-- ===== AUTH FORM ===== -->
+  <div class="auth-container">
+    <div class="auth-header">
+      <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="Points Dr.Mirna" />
+      <h1>Points Dr.Mirna Admin</h1>
+      <p>دخول لوحة التحكم</p>
+      <span class="admin-badge">إدارة</span>
+    </div>
+
+    <form id="adminLoginForm" novalidate>
+      <div class="form-group">
+        <label for="adminUsername">اسم المستخدم</label>
+        <input type="text" id="adminUsername" placeholder="أدخل اسم المستخدم" required />
+        <div class="error-msg" id="adminUsernameError">يرجى إدخال اسم المستخدم</div>
+      </div>
+
+      <div class="form-group">
+        <label for="adminPassword">كلمة المرور</label>
+        <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" required />
+        <div class="error-msg" id="adminPasswordError">يرجى إدخال كلمة المرور</div>
+      </div>
+
+      <button type="submit" class="btn-submit" id="adminLoginBtn">دخول لوحة التحكم</button>
+    </form>
+
+    <div class="auth-footer">
+      <a href="index" class="back-link">← العودة للرئيسية</a>
+    </div>
+  </div>
+
+  <script>
+    // ===== DOM Elements =====
+    const form = document.getElementById('adminLoginForm');
+    const username = document.getElementById('adminUsername');
+    const password = document.getElementById('adminPassword');
+    const submitBtn = document.getElementById('adminLoginBtn');
+    const toast = document.getElementById('toast');
+
+    // ===== Toast Functions =====
+    function showToast(message, type = 'error') {
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      clearTimeout(toast._hideTimer);
+      toast._hideTimer = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 4000);
+    }
+
+    function hideToast() {
+      toast.classList.remove('show');
+    }
+
+    // ===== Validation =====
+    function validateForm() {
+      let isValid = true;
+
+      if (!username.value.trim()) {
+        document.getElementById('adminUsernameError').classList.add('show');
+        username.classList.add('error');
+        isValid = false;
+      } else {
+        document.getElementById('adminUsernameError').classList.remove('show');
+        username.classList.remove('error');
+      }
+
+      if (!password.value.trim()) {
+        document.getElementById('adminPasswordError').classList.add('show');
+        password.classList.add('error');
+        isValid = false;
+      } else {
+        document.getElementById('adminPasswordError').classList.remove('show');
+        password.classList.remove('error');
+      }
+
+      return isValid;
+    }
+
+    // ===== Clear errors on input =====
+    username.addEventListener('input', () => {
+      document.getElementById('adminUsernameError').classList.remove('show');
+      username.classList.remove('error');
+      hideToast();
+    });
+
+    password.addEventListener('input', () => {
+      document.getElementById('adminPasswordError').classList.remove('show');
+      password.classList.remove('error');
+      hideToast();
+    });
+
+    // ===== Admin Login =====
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideToast();
+
+      if (!validateForm()) {
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'جاري تسجيل الدخول...';
+
+      try {
+        const response = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            username: username.value.trim(),
+            password: password.value.trim()
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          showToast('تم تسجيل الدخول بنجاح! جاري التوجيه...', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard';
+          }, 1000);
+        } else {
+          showToast(data.error || 'اسم المستخدم أو كلمة المرور غير صحيحة');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'دخول لوحة التحكم';
+        }
+      } catch (error) {
+        console.error('Admin login error:', error);
+        showToast('حدث خطأ أثناء تسجيل الدخول. حاول مرة أخرى.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'دخول لوحة التحكم';
+      }
+    });
+
+    // ===== Check for existing admin session =====
+    (async function checkAdminSession() {
+      try {
+        const response = await fetch('/api/admin/me');
+        if (response.ok) {
+          window.location.href = 'dashboard';
+        }
+      } catch (e) {
+        // Not authenticated, stay on page
+      }
+    })();
+  </script>
+
+</body>
+</html>
