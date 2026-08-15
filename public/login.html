@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نقاط د. ميرنا - نظام نقاط الولاء</title>
+    <title>تسجيل الدخول - نقاط د. ميرنا</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -11,7 +11,6 @@
             --primary-dark: #0a452e;
             --primary-light: #1a7a55;
             --emerald: #2ecc71;
-            --mint: #a8e6cf;
             --mint-light: #d5f5e3;
             --white: #ffffff;
             --gray-50: #f8faf9;
@@ -21,20 +20,22 @@
             --gray-600: #6b7a73;
             --gray-800: #2d3a33;
             --gray-900: #1a241e;
-            --shadow-sm: 0 2px 8px rgba(13, 92, 62, 0.08);
             --shadow-md: 0 4px 20px rgba(13, 92, 62, 0.12);
             --shadow-lg: 0 8px 40px rgba(13, 92, 62, 0.16);
             --radius: 12px;
             --radius-lg: 20px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --bg-body: var(--gray-50);
-            --bg-white: var(--white);
-            --bg-hero: linear-gradient(135deg, var(--mint-light) 0%, var(--white) 100%);
-            --bg-footer: var(--gray-900);
+            --bg-body: linear-gradient(135deg, var(--mint-light) 0%, var(--white) 100%);
+            --bg-container: var(--white);
             --text-color: var(--gray-900);
             --text-muted: var(--gray-600);
             --border-color: var(--gray-200);
-            --shadow-color: rgba(13, 92, 62, 0.08);
+            --input-bg: var(--gray-50);
+            --input-border: var(--gray-200);
+            --badge-bg: var(--gray-800);
+            --badge-text: var(--white);
+            --security-bg: var(--gray-50);
+            --security-text: var(--gray-600);
         }
 
         /* ===== دارك مود ===== */
@@ -43,7 +44,6 @@
             --primary-dark: #27ae60;
             --primary-light: #1a7a55;
             --emerald: #2ecc71;
-            --mint: #1a4a3a;
             --mint-light: #1a3a2e;
             --white: #1a241e;
             --gray-50: #0f1814;
@@ -53,96 +53,123 @@
             --gray-600: #9aaba2;
             --gray-800: #d5e0da;
             --gray-900: #f0f5f2;
-            --bg-body: #0a120e;
-            --bg-white: #1a241e;
-            --bg-hero: linear-gradient(135deg, #0f1814 0%, #1a241e 100%);
-            --bg-footer: #0a120e;
+            --bg-body: linear-gradient(135deg, #0a120e 0%, #0d5c3e 100%);
+            --bg-container: #1a241e;
             --text-color: #f0f5f2;
             --text-muted: #9aaba2;
             --border-color: #2d3a33;
-            --shadow-color: rgba(0, 0, 0, 0.4);
+            --input-bg: #0f1814;
+            --input-border: #2d3a33;
+            --badge-bg: #2d3a33;
+            --badge-text: #f0f5f2;
+            --security-bg: #0f1814;
+            --security-text: #9aaba2;
         }
 
-        [data-theme="dark"] .header {
-            background: #1a241e;
-            border-bottom: 1px solid #2d3a33;
+        [data-theme="dark"] .auth-container {
+            border: 1px solid var(--border-color);
         }
 
-        [data-theme="dark"] .feature-card {
-            background: #0f1814;
-            border-color: #2d3a33;
+        [data-theme="dark"] .input-wrapper input {
+            color: var(--text-color);
         }
 
-        [data-theme="dark"] .feature-card:hover {
+        [data-theme="dark"] .input-wrapper input::placeholder {
+            color: var(--gray-300);
+        }
+
+        [data-theme="dark"] .input-wrapper input:focus {
+            background: var(--bg-container);
+        }
+
+        [data-theme="dark"] .dashboard-container {
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .points-card {
+            background: linear-gradient(135deg, #1a7a55 0%, #0d5c3e 100%);
+        }
+
+        [data-theme="dark"] .btn-dark-mode {
+            background: var(--gray-200);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .btn-dark-mode:hover {
             border-color: var(--primary);
         }
 
-        [data-theme="dark"] .how-it-works {
-            background: #0f1814;
-        }
-
-        [data-theme="dark"] .hero {
-            background: var(--bg-hero);
-        }
-
-        [data-theme="dark"] .nav a:hover {
-            background: #2d3a33;
+        [data-theme="dark"] .badge-add {
+            background: #1a3a2e;
             color: var(--primary);
         }
 
-        [data-theme="dark"] .btn-outline {
-            color: var(--primary);
-            border-color: var(--primary);
+        [data-theme="dark"] .badge-remove {
+            background: #3a1a1a;
+            color: #ef4444;
         }
 
-        [data-theme="dark"] .btn-outline:hover {
-            background: #2d3a33;
+        [data-theme="dark"] .badge-reset {
+            background: #3a3a1a;
+            color: #fbbf24;
         }
 
-        [data-theme="dark"] .btn-admin {
-            background: #2d3a33;
+        [data-theme="dark"] .badge-default {
+            background: var(--gray-200);
+            color: var(--text-muted);
+        }
+
+        [data-theme="dark"] .badge-redeem {
+            background: #1a2a4a;
+            color: #60a5fa;
+        }
+
+        [data-theme="dark"] .transaction-item {
+            border-bottom-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .dashboard-header {
+            border-bottom-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .progress-bar {
+            background: var(--gray-200);
+        }
+
+        [data-theme="dark"] .toast {
+            background: var(--gray-800);
+            color: var(--gray-900);
+        }
+
+        [data-theme="dark"] .toast.error {
+            background: #c0392b;
             color: var(--white);
         }
 
-        [data-theme="dark"] .btn-admin:hover {
-            background: #3a4a42;
-        }
-
-        [data-theme="dark"] .step-number {
+        [data-theme="dark"] .toast.success {
             background: var(--primary);
-        }
-
-        [data-theme="dark"] .footer {
-            background: #0a120e;
-            border-top: 1px solid #2d3a33;
-        }
-
-        [data-theme="dark"] .footer .logo {
             color: var(--white);
         }
 
-        [data-theme="dark"] .hero-content h1 {
-            color: #f0f5f2;
+        [data-theme="dark"] .section-title-sm {
+            color: var(--text-color);
         }
 
-        [data-theme="dark"] .section-title {
-            color: #f0f5f2;
+        [data-theme="dark"] .empty-state {
+            color: var(--text-muted);
         }
 
-        [data-theme="dark"] .feature-card h3 {
-            color: #f0f5f2;
+        [data-theme="dark"] .empty-state i {
+            color: var(--gray-300);
         }
 
-        [data-theme="dark"] .step h4 {
-            color: #f0f5f2;
-        }
-
-        [data-theme="dark"] .logo {
+        [data-theme="dark"] .auth-footer a {
             color: var(--primary);
         }
 
-        [data-theme="dark"] .logo span {
-            color: var(--primary);
+        [data-theme="dark"] .auth-footer a:hover {
+            color: var(--primary-dark);
         }
 
         /* ===== نهاية دارك مود ===== */
@@ -156,140 +183,154 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg-body);
-            color: var(--text-color);
-            line-height: 1.6;
             min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        button {
-            cursor: pointer;
-            font-family: inherit;
-            border: none;
-            outline: none;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
-        }
-
-        .header {
-            background: var(--bg-white);
-            box-shadow: var(--shadow-sm);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 16px 0;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .header .container {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
+            justify-content: center;
+            padding: 24px;
+            transition: background 0.3s ease;
         }
 
-        .logo {
+        .auth-container {
+            background: var(--bg-container);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 48px 40px;
+            max-width: 480px;
+            width: 100%;
+            transition: background 0.3s ease, border 0.3s ease;
+        }
+
+        .auth-logo {
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 12px;
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--primary);
-            transition: color 0.3s ease;
+            margin-bottom: 32px;
         }
 
-        .logo img {
+        .auth-logo img {
             height: 48px;
             width: auto;
             border-radius: 8px;
         }
 
-        .nav {
+        .auth-logo span {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary);
+            transition: color 0.3s ease;
+        }
+
+        .auth-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            font-size: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 6px;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .input-wrapper {
+            position: relative;
             display: flex;
             align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
         }
 
-        .nav a {
-            padding: 8px 18px;
+        .input-wrapper input {
+            width: 100%;
+            padding: 12px 44px 12px 14px;
+            border: 2px solid var(--input-border);
             border-radius: var(--radius);
-            font-weight: 500;
-            font-size: 14px;
+            font-size: 15px;
             transition: var(--transition);
-            color: var(--text-muted);
+            background: var(--input-bg);
+            color: var(--gray-900);
+            padding-left: 48px;
         }
 
-        .nav a:hover {
-            background: var(--mint-light);
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
+            background: var(--white);
+        }
+
+        .input-wrapper input.error {
+            border-color: #e74c3c;
+        }
+
+        .input-wrapper .input-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-300);
+            font-size: 16px;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .input-wrapper input:focus + .input-icon {
             color: var(--primary);
         }
 
-        .btn {
-            display: inline-flex;
+        .input-wrapper .toggle-password {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            padding: 4px;
+            z-index: 2;
+            display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 10px 24px;
-            border-radius: var(--radius);
-            font-weight: 600;
-            font-size: 14px;
-            transition: var(--transition);
-            border: 2px solid transparent;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: var(--white);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-outline {
-            background: transparent;
+        .input-wrapper .toggle-password:hover {
             color: var(--primary);
-            border-color: var(--primary);
         }
 
-        .btn-outline:hover {
-            background: var(--mint-light);
-            transform: translateY(-2px);
+        .input-wrapper .toggle-password:focus {
+            outline: none;
         }
 
-        .btn-emerald {
-            background: var(--emerald);
-            color: var(--white);
+        .form-group .error-message {
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 4px;
+            display: none;
         }
 
-        .btn-emerald:hover {
-            background: #27ae60;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-admin {
-            background: var(--gray-800);
-            color: var(--white);
-        }
-
-        .btn-admin:hover {
-            background: var(--gray-900);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+        .form-group .error-message.visible {
+            display: block;
         }
 
         /* ===== زر دارك مود ===== */
@@ -304,6 +345,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
         }
 
         .btn-dark-mode:hover {
@@ -329,279 +371,378 @@
 
         /* ===== نهاية زر دارك مود ===== */
 
-        .hero {
-            padding: 80px 0 60px;
-            background: var(--bg-hero);
-            min-height: 70vh;
-            display: flex;
-            align-items: center;
-            transition: background 0.3s ease;
-        }
-
-        .hero .container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
-            align-items: center;
-        }
-
-        .hero-content h1 {
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--primary-dark);
-            line-height: 1.2;
-            margin-bottom: 16px;
-            transition: color 0.3s ease;
-        }
-
-        .hero-content h1 span {
-            color: var(--emerald);
-        }
-
-        .hero-content p {
-            font-size: 20px;
-            color: var(--text-muted);
-            margin-bottom: 32px;
-            line-height: 1.8;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-
-        .hero-buttons .btn {
-            padding: 14px 32px;
-            font-size: 16px;
-        }
-
-        .hero-image {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hero-image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .features {
-            padding: 80px 0;
-            background: var(--bg-white);
-            transition: background 0.3s ease;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--primary-dark);
-            margin-bottom: 12px;
-            transition: color 0.3s ease;
-        }
-
-        .section-subtitle {
-            text-align: center;
-            font-size: 18px;
-            color: var(--text-muted);
-            margin-bottom: 48px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 32px;
-        }
-
-        .feature-card {
-            background: var(--gray-50);
-            padding: 32px 24px;
-            border-radius: var(--radius-lg);
-            text-align: center;
-            transition: var(--transition);
-            border: 1px solid var(--border-color);
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-lg);
-            border-color: var(--primary);
-        }
-
-        .feature-card .icon {
-            width: 72px;
-            height: 72px;
-            background: var(--mint-light);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 32px;
-            color: var(--primary);
-            transition: background 0.3s ease;
-        }
-
-        .feature-card h3 {
-            font-size: 20px;
-            color: var(--primary-dark);
-            margin-bottom: 8px;
-            transition: color 0.3s ease;
-        }
-
-        .feature-card p {
-            color: var(--text-muted);
-            font-size: 15px;
-        }
-
-        .how-it-works {
-            padding: 80px 0;
-            background: var(--gray-50);
-            transition: background 0.3s ease;
-        }
-
-        .steps {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 32px;
-            margin-top: 48px;
-        }
-
-        .step {
-            text-align: center;
-            position: relative;
-        }
-
-        .step-number {
-            width: 60px;
-            height: 60px;
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
             background: var(--primary);
             color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-size: 16px;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            color: var(--text-muted);
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .auth-footer a {
+            color: var(--primary);
+            font-weight: 600;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .auth-footer a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .toast {
+            position: fixed;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--gray-900);
+            color: var(--white);
+            padding: 16px 32px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-lg);
+            z-index: 9999;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .toast.error {
+            background: #c0392b;
+        }
+
+        .toast.success {
+            background: var(--primary);
+        }
+
+        .toast i {
+            font-size: 20px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .dashboard-container {
+            display: none;
+            background: var(--bg-container);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 40px;
+            max-width: 720px;
+            width: 100%;
+            transition: background 0.3s ease, border 0.3s ease;
+        }
+
+        .dashboard-container.active {
+            display: block;
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--gray-100);
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .dashboard-header .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dashboard-header .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--primary);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            color: var(--white);
             font-weight: 700;
-            margin: 0 auto 16px;
+            font-size: 20px;
+        }
+
+        .dashboard-header .user-name {
+            font-weight: 700;
+            font-size: 18px;
+            color: var(--gray-800);
+            transition: color 0.3s ease;
+        }
+
+        .dashboard-header .user-email {
+            font-size: 14px;
+            color: var(--text-muted);
+            transition: color 0.3s ease;
+        }
+
+        .btn-logout {
+            padding: 8px 20px;
+            background: #e74c3c;
+            color: var(--white);
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-logout:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        .points-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            border-radius: var(--radius);
+            padding: 32px;
+            color: var(--white);
+            margin-bottom: 24px;
+            text-align: center;
             transition: background 0.3s ease;
         }
 
-        .step h4 {
-            font-size: 18px;
-            color: var(--primary-dark);
+        .points-card .points-number {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1;
+            margin: 8px 0;
+        }
+
+        .points-card .points-label {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .progress-section {
+            margin-bottom: 24px;
+        }
+
+        .progress-section .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 14px;
+            color: var(--text-muted);
             margin-bottom: 8px;
             transition: color 0.3s ease;
         }
 
-        .step p {
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            transition: background 0.3s ease;
+        }
+
+        .progress-bar .fill {
+            height: 100%;
+            background: var(--emerald);
+            border-radius: 4px;
+            transition: width 0.6s ease;
+            width: 0%;
+        }
+
+        .section-title-sm {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 16px;
+            transition: color 0.3s ease;
+        }
+
+        .transaction-list {
+            list-style: none;
+        }
+
+        .transaction-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-100);
+            flex-wrap: wrap;
+            gap: 8px;
+            transition: border-color 0.3s ease;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item .type {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .transaction-item .type .badge {
+            padding: 2px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-add { background: var(--mint-light); color: var(--primary); }
+        .badge-remove { background: #fde8e8; color: #c0392b; }
+        .badge-reset { background: #fff3cd; color: #856404; }
+        .badge-default { background: var(--gray-200); color: var(--gray-600); }
+        .badge-redeem { background: #e8f0fe; color: #1a73e8; }
+
+        .transaction-item .points-change {
+            font-weight: 700;
+        }
+
+        .transaction-item .points-change.positive { color: var(--primary); }
+        .transaction-item .points-change.negative { color: #e74c3c; }
+
+        .transaction-item .date {
+            font-size: 13px;
             color: var(--text-muted);
-            font-size: 14px;
         }
 
-        .footer {
-            background: var(--bg-footer);
-            color: var(--gray-300);
-            padding: 40px 0;
+        .transaction-item .reason-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .empty-state {
             text-align: center;
-            transition: background 0.3s ease, color 0.3s ease;
+            padding: 32px 0;
+            color: var(--text-muted);
         }
 
-        .footer .logo {
-            color: var(--white);
-            justify-content: center;
+        .empty-state i {
+            font-size: 48px;
+            color: var(--gray-300);
             margin-bottom: 16px;
         }
 
-        .footer p {
-            font-size: 14px;
-            color: var(--gray-300);
+        .security-note {
+            background: var(--security-bg);
+            border-radius: var(--radius);
+            padding: 12px 16px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--security-text);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border-color);
+            transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
-        @media (max-width: 992px) {
-            .hero .container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-
-            .hero-content h1 {
-                font-size: 36px;
-            }
-
-            .hero-buttons {
-                justify-content: center;
-            }
-
-            .hero-image {
-                order: -1;
-            }
-
-            .hero-image img {
-                max-width: 80%;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header .container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .nav {
-                justify-content: center;
-            }
-
-            .hero {
-                padding: 40px 0;
-            }
-
-            .hero-content h1 {
-                font-size: 28px;
-            }
-
-            .hero-content p {
-                font-size: 16px;
-            }
-
-            .hero-buttons .btn {
-                padding: 10px 20px;
-                font-size: 14px;
-                width: 100%;
-            }
-
-            .section-title {
-                font-size: 28px;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .steps {
-                grid-template-columns: 1fr;
-            }
+        .security-note i {
+            color: var(--primary);
         }
 
         @media (max-width: 480px) {
-            .container {
-                padding: 0 16px;
+            .auth-container, .dashboard-container {
+                padding: 24px 16px;
             }
 
-            .nav a {
-                padding: 6px 12px;
-                font-size: 12px;
+            .auth-title {
+                font-size: 22px;
             }
 
-            .logo {
-                font-size: 16px;
+            .points-card .points-number {
+                font-size: 40px;
             }
 
-            .logo img {
-                height: 36px;
+            .dashboard-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .dashboard-header .user-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .btn-logout {
+                justify-content: center;
+            }
+
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .transaction-item .reason-text {
+                max-width: 100%;
+            }
+
+            .input-wrapper input {
+                padding-left: 40px;
+                font-size: 14px;
+            }
+
+            .input-wrapper .toggle-password {
+                left: 8px;
+                font-size: 14px;
             }
 
             .btn-dark-mode {
@@ -612,106 +753,111 @@
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <a href="/" class="logo">
-                <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
-                <span>نقاط د. ميرنا</span>
-            </a>
-            <nav class="nav">
-                <a href="#features">المميزات</a>
-                <a href="#how-it-works">كيف يعمل</a>
+    <div id="toast" class="toast">
+        <i class="fas fa-info-circle"></i>
+        <span id="toastMessage">الرسالة</span>
+    </div>
+
+    <div class="auth-container" id="loginFormContainer">
+        <div class="auth-logo">
+            <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
+            <span>نقاط د. ميرنا</span>
+        </div>
+
+        <h1 class="auth-title">تسجيل الدخول</h1>
+        <p class="auth-subtitle">مرحباً بك في نظام نقاط الولاء</p>
+
+        <form id="loginForm" novalidate>
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <div class="input-wrapper">
+                    <input type="email" id="loginEmail" placeholder="البريد الالكتروني" required>
+                    <i class="fas fa-envelope input-icon"></i>
+                </div>
+                <div class="error-message" id="loginEmailError">الرجاء إدخال بريد إلكتروني صحيح</div>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <div class="input-wrapper">
+                    <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required>
+                    <i class="fas fa-lock input-icon" id="passwordIcon"></i>
+                    <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', 'passwordIcon')" aria-label="إظهار/إخفاء كلمة المرور">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <div class="error-message" id="loginPasswordError">الرجاء إدخال كلمة المرور</div>
+            </div>
+
+            <button type="submit" class="btn-submit" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>دخول</span>
+            </button>
+        </form>
+
+        <div class="security-note">
+            <i class="fas fa-shield-alt"></i>
+            <span>بياناتك آمنة ومشفرة</span>
+        </div>
+
+        <div class="auth-footer">
+            ليس لديك حساب؟ <a href="/sign-in">إنشاء حساب جديد</a>
+            <br>
+            <a href="/">العودة للرئيسية</a>
+        </div>
+    </div>
+
+    <div class="dashboard-container" id="patientDashboard">
+        <div class="dashboard-header">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">م</div>
+                <div>
+                    <div class="user-name" id="userName">مريض</div>
+                    <div class="user-email" id="userEmail">patient@email.com</div>
+                </div>
+            </div>
+            <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                 <button class="btn-dark-mode" id="darkModeToggle" aria-label="تبديل الوضع المظلم">
                     <i class="fas fa-moon icon-moon"></i>
                     <i class="fas fa-sun icon-sun"></i>
                     <span id="darkModeText">داكن</span>
                 </button>
-            </nav>
+                <button class="btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                </button>
+            </div>
         </div>
-    </header>
 
-    <section class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>اجمع نقاطك <span>واستمتع بمكافآتك</span></h1>
-                <p>كل زيارة للصيدلية تقربك أكثر من مكافأتك القادمة. نظام نقاط الولاء الخاص بصيدلية د. ميرنا.</p>
-                <div class="hero-buttons">
-                    <a href="/login" class="btn btn-primary">
-                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
-                    </a>
-                    <a href="/sign-in" class="btn btn-emerald">
-                        <i class="fas fa-user-plus"></i> إنشاء حساب
-                    </a>
-                </div>
-            </div>
-            <div class="hero-image">
-                <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا">
-            </div>
+        <div class="points-card">
+            <div class="points-label">رصيد نقاطك الحالي</div>
+            <div class="points-number" id="userPoints">0</div>
+            <div class="points-label">نقطة</div>
         </div>
-    </section>
 
-    <section class="features" id="features">
-        <div class="container">
-            <h2 class="section-title">لماذا نقاط د. ميرنا؟</h2>
-            <p class="section-subtitle">نظام متكامل لإدارة نقاط الولاء لعملائنا الأعزاء</p>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="icon"><i class="fas fa-gift"></i></div>
-                    <h3>مكافآت يومية</h3>
-                    <p>اجمع النقاط مع كل عملية شراء واستبدلها بمكافآت قيمة في صيدليتنا.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="icon"><i class="fas fa-chart-line"></i></div>
-                    <h3>تتبع النقاط</h3>
-                    <p>تابع رصيد نقاطك وسجل معاملاتك بكل سهولة وشفافية.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="icon"><i class="fas fa-mobile-alt"></i></div>
-                    <h3>سهولة الاستخدام</h3>
-                    <p>واجهة بسيطة وسهلة الاستخدام تناسب جميع الأعمار.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="icon"><i class="fas fa-shield-alt"></i></div>
-                    <h3>آمن وموثوق</h3>
-                    <p>نظام آمن يحمي بياناتك ونقاطك باستخدام أحدث تقنيات الأمان.</p>
-                </div>
+        <div class="progress-section">
+            <div class="progress-label">
+                <span>التقدم نحو المكافأة التالية</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="fill" id="progressFill"></div>
             </div>
         </div>
-    </section>
 
-    <section class="how-it-works" id="how-it-works">
-        <div class="container">
-            <h2 class="section-title">كيف يعمل النظام؟</h2>
-            <p class="section-subtitle">ثلاث خطوات بسيطة للاستفادة من نقاط الولاء</p>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">١</div>
-                    <h4>إنشاء حساب</h4>
-                    <p>سجل حسابك الجديد في النظام ببياناتك الأساسية.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">٢</div>
-                    <h4>جمع النقاط</h4>
-                    <p>احصل على نقاط مع كل عملية شراء من صيدليتنا.</p>
-                </div>
-                <div class="step">
-                    <div class="step-number">٣</div>
-                    <h4>استبدال المكافآت</h4>
-                    <p>استبدل نقاطك بمكافآت وعروض حصرية في صيدلية د. ميرنا.</p>
-                </div>
-            </div>
+        <div>
+            <h3 class="section-title-sm">آخر المعاملات</h3>
+            <ul class="transaction-list" id="transactionList">
+                <li class="empty-state">
+                    <i class="fas fa-inbox"></i>
+                    <p>لا توجد معاملات حتى الآن</p>
+                </li>
+            </ul>
         </div>
-    </section>
+    </div>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="logo">
-                <img src="https://i.postimg.cc/KvNnTfQx/Points-Dr-Mirna.jpg" alt="نقاط د. ميرنا" style="height:36px;">
-                <span>نقاط د. ميرنا</span>
-            </div>
-            <p>&copy; 2026 جميع الحقوق محفوظة - صيدلية د. ميرنا</p>
-        </div>
-    </footer>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
 
     <script>
         // ===== دارك مود =====
@@ -720,7 +866,6 @@
             const toggleBtn = document.getElementById('darkModeToggle');
             const darkModeText = document.getElementById('darkModeText');
 
-            // التحقق من التفضيل المخزن
             const savedTheme = localStorage.getItem('theme');
             const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
@@ -732,21 +877,442 @@
                 if (darkModeText) darkModeText.textContent = 'داكن';
             }
 
-            // تبديل الوضع
-            toggleBtn.addEventListener('click', function() {
-                const isDark = html.getAttribute('data-theme') === 'dark';
-                
-                if (isDark) {
-                    html.removeAttribute('data-theme');
-                    localStorage.setItem('theme', 'light');
-                    if (darkModeText) darkModeText.textContent = 'داكن';
-                } else {
-                    html.setAttribute('data-theme', 'dark');
-                    localStorage.setItem('theme', 'dark');
-                    if (darkModeText) darkModeText.textContent = 'فاتح';
-                }
-            });
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', function() {
+                    const isDark = html.getAttribute('data-theme') === 'dark';
+                    
+                    if (isDark) {
+                        html.removeAttribute('data-theme');
+                        localStorage.setItem('theme', 'light');
+                        if (darkModeText) darkModeText.textContent = 'داكن';
+                    } else {
+                        html.setAttribute('data-theme', 'dark');
+                        localStorage.setItem('theme', 'dark');
+                        if (darkModeText) darkModeText.textContent = 'فاتح';
+                    }
+                });
+            }
         })();
+
+        // ===== إظهار/إخفاء كلمة المرور =====
+        function togglePassword(inputId, iconId = null) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            
+            const btn = input.parentElement.querySelector('.toggle-password i');
+            if (btn) {
+                btn.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            }
+            
+            if (iconId) {
+                const icon = document.getElementById(iconId);
+                if (icon) {
+                    icon.className = type === 'password' ? 'fas fa-lock input-icon' : 'fas fa-lock-open input-icon';
+                }
+            }
+        }
+
+        // ===== تهيئة Firebase =====
+        const firebaseConfig = {
+            apiKey: "AIzaSyC2eOxT5SNqWQK89ctAPNvyvWmo5ZvTTy8",
+            authDomain: "pointsdrmirna.firebaseapp.com",
+            projectId: "pointsdrmirna",
+            storageBucket: "pointsdrmirna.firebasestorage.app",
+            messagingSenderId: "68032281955",
+            appId: "1:68032281955:web:5ce818fdcc9ea65c576756"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ===== عناصر DOM =====
+        const loginContainer = document.getElementById('loginFormContainer');
+        const dashboard = document.getElementById('patientDashboard');
+        const loginForm = document.getElementById('loginForm');
+        const loginEmail = document.getElementById('loginEmail');
+        const loginPassword = document.getElementById('loginPassword');
+        const loginBtn = document.getElementById('loginBtn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+
+        const userName = document.getElementById('userName');
+        const userEmail = document.getElementById('userEmail');
+        const userAvatar = document.getElementById('userAvatar');
+        const userPoints = document.getElementById('userPoints');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const transactionList = document.getElementById('transactionList');
+
+        let currentUserData = null;
+        let refreshInterval = null;
+
+        // ===== دالة تنسيق التاريخ =====
+        function formatDate(timestamp) {
+            if (!timestamp) return '-';
+            
+            try {
+                let date;
+                if (timestamp.toDate) {
+                    date = timestamp.toDate();
+                } else if (timestamp.seconds !== undefined) {
+                    date = new Date(timestamp.seconds * 1000);
+                } else if (timestamp._seconds !== undefined) {
+                    date = new Date(timestamp._seconds * 1000);
+                } else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+                    date = new Date(timestamp);
+                } else {
+                    return '-';
+                }
+                
+                if (isNaN(date.getTime())) return '-';
+                
+                return date.toLocaleDateString('ar-EG') + ' ' + 
+                    date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+                return '-';
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            toast.className = 'toast ' + type;
+            toastMessage.textContent = message;
+            toast.classList.add('show');
+            clearTimeout(toast._timeout);
+            toast._timeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 5000);
+        }
+
+        // ===== تحديث تلقائي كل 3 ثواني =====
+        function startAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            refreshInterval = setInterval(() => {
+                if (currentUserData && currentUserData.uid) {
+                    db.collection('users').doc(currentUserData.uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                const data = doc.data();
+                                currentUserData = { ...data, uid: currentUserData.uid };
+                                userPoints.textContent = data.points || 0;
+                                
+                                const target = 1000;
+                                const percentage = Math.min((data.points / target) * 100, 100);
+                                progressFill.style.width = percentage + '%';
+                                progressText.textContent = Math.round(percentage) + '%';
+                            }
+                        })
+                        .catch(err => console.error('Auto refresh error:', err));
+                    
+                    loadTransactions(currentUserData.uid);
+                }
+            }, 3000);
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+
+        // ===== التحقق من الحقول =====
+        loginEmail.addEventListener('blur', () => {
+            const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginEmail.value.trim());
+            const errorEl = document.getElementById('loginEmailError');
+            if (!isValid && loginEmail.value.trim().length > 0) {
+                loginEmail.classList.add('error');
+                errorEl.classList.add('visible');
+            } else {
+                loginEmail.classList.remove('error');
+                errorEl.classList.remove('visible');
+            }
+        });
+
+        loginPassword.addEventListener('blur', () => {
+            const errorEl = document.getElementById('loginPasswordError');
+            if (loginPassword.value.length === 0) {
+                loginPassword.classList.add('error');
+                errorEl.classList.add('visible');
+            } else {
+                loginPassword.classList.remove('error');
+                errorEl.classList.remove('visible');
+            }
+        });
+
+        // ===== عرض لوحة المريض =====
+        function showPatientDashboard(user, userDoc) {
+            currentUserData = { ...userDoc, uid: user.uid };
+            
+            loginContainer.style.display = 'none';
+            dashboard.classList.add('active');
+
+            const name = userDoc.name || user.displayName || 'مريض';
+            userName.textContent = name;
+            userEmail.textContent = user.email;
+            userAvatar.textContent = name.charAt(0);
+
+            const points = userDoc.points || 0;
+            userPoints.textContent = points;
+
+            const target = 1000;
+            const percentage = Math.min((points / target) * 100, 100);
+            progressFill.style.width = percentage + '%';
+            progressText.textContent = Math.round(percentage) + '%';
+
+            loadTransactions(user.uid);
+            startAutoRefresh();
+        }
+
+        // ===== تحميل المعاملات =====
+        async function loadTransactions(uid) {
+            try {
+                let snapshot;
+                try {
+                    snapshot = await db.collection('transactions')
+                        .where('userId', '==', uid)
+                        .orderBy('createdAt', 'desc')
+                        .limit(20)
+                        .get();
+                } catch (indexError) {
+                    console.warn('⚠️ Index missing, fetching without orderBy');
+                    snapshot = await db.collection('transactions')
+                        .where('userId', '==', uid)
+                        .limit(30)
+                        .get();
+                }
+
+                transactionList.innerHTML = '';
+
+                if (snapshot.empty) {
+                    transactionList.innerHTML = `
+                        <li class="empty-state">
+                            <i class="fas fa-inbox"></i>
+                            <p>لا توجد معاملات حتى الآن</p>
+                        </li>
+                    `;
+                    return;
+                }
+
+                const typeMap = {
+                    'admin_add': 'إضافة',
+                    'admin_remove': 'خصم',
+                    'manual_adjustment': 'تعديل يدوي',
+                    'reset': 'تصفير',
+                    'signup': 'ترحيب',
+                    'redeem': 'استبدال'
+                };
+
+                const typeClassMap = {
+                    'admin_add': 'badge-add',
+                    'signup': 'badge-add',
+                    'admin_remove': 'badge-remove',
+                    'reset': 'badge-reset',
+                    'manual_adjustment': 'badge-default',
+                    'redeem': 'badge-redeem'
+                };
+
+                let transactions = [];
+                snapshot.forEach(doc => {
+                    transactions.push({ id: doc.id, ...doc.data() });
+                });
+
+                transactions.sort((a, b) => {
+                    const dateA = a.createdAt?.toMillis?.() || 0;
+                    const dateB = b.createdAt?.toMillis?.() || 0;
+                    return dateB - dateA;
+                });
+
+                transactions = transactions.slice(0, 20);
+
+                transactions.forEach(data => {
+                    const li = document.createElement('li');
+                    li.className = 'transaction-item';
+
+                    const typeName = typeMap[data.type] || data.type;
+                    const typeClass = typeClassMap[data.type] || 'badge-default';
+                    
+                    const previousBalance = data.previousBalance || 0;
+                    const newBalance = data.newBalance || 0;
+                    const change = newBalance - previousBalance;
+                    
+                    const isPositive = change >= 0;
+
+                    let reasonText = data.reason || '';
+                    if (data.type === 'signup' && !reasonText) {
+                        reasonText = 'نقاط الترحيب';
+                    } else if (data.type === 'reset' && !reasonText) {
+                        reasonText = 'تم تصفير النقاط';
+                    }
+
+                    li.innerHTML = `
+                        <div class="type">
+                            <span class="badge ${typeClass}">${typeName}</span>
+                            <span class="reason-text">${reasonText}</span>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                            <span class="points-change ${isPositive ? 'positive' : 'negative'}">
+                                ${isPositive ? '+' : ''}${change}
+                            </span>
+                            <span class="date">${formatDate(data.createdAt)}</span>
+                        </div>
+                    `;
+
+                    transactionList.appendChild(li);
+                });
+
+            } catch (error) {
+                console.error('Load transactions error:', error);
+                transactionList.innerHTML = `
+                    <li class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>حدث خطأ أثناء تحميل المعاملات</p>
+                    </li>
+                `;
+            }
+        }
+
+        // ===== تسجيل الدخول =====
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = loginEmail.value.trim();
+            const password = loginPassword.value;
+
+            let isValid = true;
+            const emailError = document.getElementById('loginEmailError');
+            const passError = document.getElementById('loginPasswordError');
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                loginEmail.classList.add('error');
+                emailError.classList.add('visible');
+                isValid = false;
+            } else {
+                loginEmail.classList.remove('error');
+                emailError.classList.remove('visible');
+            }
+
+            if (password.length === 0) {
+                loginPassword.classList.add('error');
+                passError.classList.add('visible');
+                isValid = false;
+            } else {
+                loginPassword.classList.remove('error');
+                passError.classList.remove('visible');
+            }
+
+            if (!isValid) return;
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="spinner"></span> جاري الدخول...';
+
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+
+                const userDoc = await db.collection('users').doc(user.uid).get();
+
+                if (!userDoc.exists) {
+                    showToast('بيانات المستخدم غير موجودة', 'error');
+                    await auth.signOut();
+                    return;
+                }
+
+                const userData = userDoc.data();
+
+                if (userData.role !== 'patient') {
+                    showToast('هذا الحساب ليس حساب مريض', 'error');
+                    await auth.signOut();
+                    return;
+                }
+
+                if (userData.status !== 'active') {
+                    showToast('الحساب غير نشط، يرجى التواصل مع الإدارة', 'error');
+                    await auth.signOut();
+                    return;
+                }
+
+                showPatientDashboard(user, userData);
+                showToast('مرحباً بك ' + (userData.name || ''), 'success');
+
+            } catch (error) {
+                console.error('Login error:', error);
+                let message = 'حدث خطأ أثناء تسجيل الدخول';
+                
+                switch (error.code) {
+                    case 'auth/user-not-found':
+                    case 'auth/wrong-password':
+                    case 'auth/invalid-credential':
+                        message = '❌ البريد الإلكتروني أو كلمة المرور غير صحيحة';
+                        break;
+                    case 'auth/invalid-email':
+                        message = '❌ البريد الإلكتروني غير صحيح';
+                        break;
+                    case 'auth/too-many-requests':
+                        message = '⚠️ تم تعطيل الحساب مؤقتاً بسبب محاولات فاشلة كثيرة، يرجى المحاولة لاحقاً';
+                        break;
+                    case 'auth/network-request-failed':
+                        message = '⚠️ خطأ في الاتصال بالشبكة، تأكد من اتصالك بالإنترنت';
+                        break;
+                    case 'auth/user-disabled':
+                        message = '⚠️ الحساب معطل، يرجى التواصل مع الإدارة';
+                        break;
+                    default:
+                        message = '❌ ' + (error.message || 'حدث خطأ غير متوقع');
+                }
+                
+                showToast(message, 'error');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> دخول';
+            }
+        });
+
+        // ===== تسجيل الخروج =====
+        logoutBtn.addEventListener('click', async () => {
+            stopAutoRefresh();
+            try {
+                await auth.signOut();
+                dashboard.classList.remove('active');
+                loginContainer.style.display = 'block';
+                loginEmail.value = '';
+                loginPassword.value = '';
+                showToast('تم تسجيل الخروج بنجاح', 'success');
+            } catch (error) {
+                console.error('Logout error:', error);
+                showToast('حدث خطأ أثناء تسجيل الخروج', 'error');
+            }
+        });
+
+        // ===== التحقق من حالة المصادقة =====
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        if (userData.role === 'patient' && userData.status === 'active') {
+                            showPatientDashboard(user, userData);
+                            return;
+                        }
+                    }
+                    await auth.signOut();
+                } catch (error) {
+                    console.error('Auth state check error:', error);
+                }
+            }
+            loginContainer.style.display = 'block';
+            dashboard.classList.remove('active');
+        });
+
+        // ===== إغلاق الـ Toast =====
+        toast.addEventListener('click', () => {
+            toast.classList.remove('show');
+        });
     </script>
 </body>
 </html>
