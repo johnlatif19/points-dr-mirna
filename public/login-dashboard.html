@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,24 +7,36 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #0d5c3e;
-            --primary-dark: #0a452e;
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
             --primary-light: #1a7a55;
             --emerald: #2ecc71;
-            --mint-light: #d5f5e3;
-            --white: #ffffff;
-            --gray-50: #f8faf9;
-            --gray-100: #f1f4f2;
-            --gray-200: #e8ece9;
-            --gray-300: #d1d8d4;
-            --gray-600: #6b7a73;
-            --gray-800: #2d3a33;
-            --gray-900: #1a241e;
-            --shadow-md: 0 4px 20px rgba(13, 92, 62, 0.12);
-            --shadow-lg: 0 8px 40px rgba(13, 92, 62, 0.16);
+            --mint-light: #1a3a2e;
+            --white: #1a241e;
+            --gray-50: #0f1814;
+            --gray-100: #1a241e;
+            --gray-200: #2d3a33;
+            --gray-300: #4a5a52;
+            --gray-600: #9aaba2;
+            --gray-800: #d5e0da;
+            --gray-900: #f0f5f2;
+            --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
             --radius: 12px;
             --radius-lg: 20px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-body: linear-gradient(135deg, #0a120e 0%, #0d5c3e 100%);
+            --bg-container: #1a241e;
+            --text-color: #f0f5f2;
+            --text-muted: #9aaba2;
+            --border-color: #2d3a33;
+            --input-bg: #0f1814;
+            --input-border: #2d3a33;
+            --input-focus: #2ecc71;
+            --badge-bg: #2d3a33;
+            --badge-text: #f0f5f2;
+            --security-bg: #0f1814;
+            --security-text: #9aaba2;
         }
 
         * {
@@ -35,7 +47,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a241e 0%, var(--primary-dark) 100%);
+            background: var(--bg-body);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -44,12 +56,13 @@
         }
 
         .auth-container {
-            background: var(--white);
+            background: var(--bg-container);
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow-lg);
             padding: 48px 40px;
             max-width: 440px;
             width: 100%;
+            border: 1px solid var(--border-color);
         }
 
         .auth-logo {
@@ -76,26 +89,30 @@
             text-align: center;
             font-size: 26px;
             font-weight: 700;
-            color: var(--primary-dark);
+            color: var(--text-color);
             margin-bottom: 4px;
         }
 
         .auth-subtitle {
             text-align: center;
-            color: var(--gray-600);
+            color: var(--text-muted);
             margin-bottom: 32px;
             font-size: 14px;
         }
 
         .admin-badge {
             display: inline-block;
-            background: var(--gray-800);
-            color: var(--white);
+            background: var(--badge-bg);
+            color: var(--badge-text);
             padding: 2px 14px;
             border-radius: 20px;
             font-size: 12px;
             font-weight: 600;
             margin-bottom: 16px;
+        }
+
+        .admin-badge i {
+            color: var(--primary);
         }
 
         .form-group {
@@ -105,7 +122,7 @@
         .form-group label {
             display: block;
             font-weight: 600;
-            color: var(--gray-800);
+            color: var(--text-color);
             margin-bottom: 6px;
             font-size: 14px;
         }
@@ -127,19 +144,23 @@
         .form-group input {
             width: 100%;
             padding: 12px 44px 12px 14px;
-            border: 2px solid var(--gray-200);
+            border: 2px solid var(--input-border);
             border-radius: var(--radius);
             font-size: 15px;
             transition: var(--transition);
-            background: var(--gray-50);
-            color: var(--gray-900);
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .form-group input::placeholder {
+            color: var(--gray-300);
         }
 
         .form-group input:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
-            background: var(--white);
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 4px rgba(46, 204, 113, 0.15);
+            background: var(--bg-container);
         }
 
         .form-group input.error {
@@ -160,7 +181,7 @@
         .btn-submit {
             width: 100%;
             padding: 14px;
-            background: var(--gray-800);
+            background: var(--primary);
             color: var(--white);
             border: none;
             border-radius: var(--radius);
@@ -171,10 +192,11 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            cursor: pointer;
         }
 
         .btn-submit:hover {
-            background: var(--gray-900);
+            background: var(--primary-dark);
             transform: translateY(-2px);
             box-shadow: var(--shadow-md);
         }
@@ -188,7 +210,7 @@
         .auth-footer {
             text-align: center;
             margin-top: 24px;
-            color: var(--gray-600);
+            color: var(--text-muted);
             font-size: 14px;
         }
 
@@ -196,6 +218,7 @@
             color: var(--primary);
             font-weight: 600;
             transition: var(--transition);
+            text-decoration: none;
         }
 
         .auth-footer a:hover {
@@ -208,8 +231,8 @@
             top: 24px;
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
-            background: var(--gray-900);
-            color: var(--white);
+            background: var(--gray-800);
+            color: var(--gray-900);
             padding: 16px 32px;
             border-radius: var(--radius);
             box-shadow: var(--shadow-lg);
@@ -228,10 +251,12 @@
 
         .toast.error {
             background: #c0392b;
+            color: var(--white);
         }
 
         .toast.success {
             background: var(--primary);
+            color: var(--white);
         }
 
         .toast i {
@@ -253,15 +278,16 @@
         }
 
         .security-note {
-            background: var(--gray-50);
+            background: var(--security-bg);
             border-radius: var(--radius);
             padding: 12px 16px;
             margin-top: 16px;
             font-size: 13px;
-            color: var(--gray-600);
+            color: var(--security-text);
             display: flex;
             align-items: center;
             gap: 8px;
+            border: 1px solid var(--border-color);
         }
 
         .security-note i {
@@ -306,7 +332,7 @@
             <div class="form-group">
                 <label>اسم المستخدم</label>
                 <div class="input-wrapper">
-                    <input type="text" id="adminUsername" placeholder="أدخل اسم المستخدم" required>
+                    <input type="text" id="adminUsername" placeholder="أدخل اسم المستخدم" required autocomplete="username">
                     <i class="fas fa-user-cog"></i>
                 </div>
                 <div class="error-message" id="adminUsernameError">الرجاء إدخال اسم المستخدم</div>
@@ -315,7 +341,7 @@
             <div class="form-group">
                 <label>كلمة المرور</label>
                 <div class="input-wrapper">
-                    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" required>
+                    <input type="password" id="adminPassword" placeholder="أدخل كلمة المرور" required autocomplete="current-password">
                     <i class="fas fa-lock"></i>
                 </div>
                 <div class="error-message" id="adminPasswordError">الرجاء إدخال كلمة المرور</div>
@@ -327,8 +353,13 @@
             </button>
         </form>
 
+        <div class="security-note">
+            <i class="fas fa-shield-alt"></i>
+            <span>هذه الصفحة مخصصة للمسؤولين فقط</span>
+        </div>
+
         <div class="auth-footer">
-            <a href="/">العودة للرئيسية</a>
+            <a href="/">← العودة للرئيسية</a>
         </div>
     </div>
 
@@ -448,7 +479,13 @@
             }
         }
 
+        // التحقق من الجلسة عند تحميل الصفحة
         checkAdminSession();
+
+        // إغلاق الـ Toast عند الضغط عليه
+        toast.addEventListener('click', () => {
+            toast.classList.remove('show');
+        });
     </script>
 </body>
 </html>
