@@ -53,8 +53,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // ===== التوثيق والصلاحيات =====
 const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-key-change-this';
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'password123';
 
 // ===== Middleware للتحقق من JWT =====
 const verifyAdminToken = async (req, res, next) => {
@@ -69,7 +67,14 @@ const verifyAdminToken = async (req, res, next) => {
       return res.status(403).json({ error: 'صلاحيات غير كافية' });
     }
 
+    // التحقق من أن الأدمن لا يزال موجوداً في قاعدة البيانات
+    const adminDoc = await db.collection('admins').doc(decoded.uid).get();
+    if (!adminDoc.exists) {
+      return res.status(401).json({ error: 'حساب الأدمن غير موجود' });
+    }
+
     req.adminUser = decoded;
+    req.adminData = adminDoc.data();
     next();
   } catch (error) {
     return res.status(401).json({ error: 'جلسة غير صالحة' });
@@ -78,6 +83,7 @@ const verifyAdminToken = async (req, res, next) => {
 
 // ===== مسارات التوثيق =====
 
+// تسجيل دخول الأدمن
 app.post('/api/admin/login', async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -86,12 +92,24 @@ app.post('/api/admin/login', async (req, res) => {
       return res.status(400).json({ error: 'الرجاء إدخال اسم المستخدم وكلمة المرور' });
     }
 
-    if (username !== ADMIN_USERNAME || password !== ADMIN_PASSWORD) {
+    // جلب بيانات الأدمن من Firestore
+    const adminSnapshot = await db.collection('admins')
+      .where('username', '==', username)
+      .where('password', '==', password) // استخدم bcrypt في الإنتاج
+      .limit(1)
+      .get();
+
+    if (adminSnapshot.empty) {
       return res.status(401).json({ error: 'اسم المستخدم أو كلمة المرور غير صحيحة' });
     }
 
+    const adminDoc = adminSnapshot.docs[0];
+    const adminData = adminDoc.data();
+    const adminUid = adminDoc.id;
+
+    // إنشاء توكن يحتوي على uid وليس username
     const token = jwt.sign(
-      { username, role: 'admin' },
+      { uid: adminUid, role: 'admin' },
       JWT_SECRET,
       { expiresIn: '24h' }
     );
@@ -103,24 +121,48 @@ app.post('/api/admin/login', async (req, res) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
 
-    res.json({ success: true, message: 'تم تسجيل الدخول بنجاح' });
+    res.json({ 
+      success: true, 
+      message: 'تم تسجيل الدخول بنجاح',
+      admin: { name: adminData.name, username: adminData.username }
+    });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'حدث خطأ أثناء تسجيل الدخول' });
   }
 });
 
+// تسجيل خروج الأدمن
 app.post('/api/admin/logout', (req, res) => {
   res.clearCookie('admin_token');
   res.json({ success: true, message: 'تم تسجيل الخروج' });
 });
 
-app.get('/api/admin/me', verifyAdminToken, (req, res) => {
-  res.json({ username: req.adminUser.username });
+// الحصول على معلومات الأدمن الحالي
+app.get('/api/admin/me', verifyAdminToken, async (req, res) => {
+  try {
+    const adminUid = req.adminUser.uid;
+    
+    const adminDoc = await db.collection('admins').doc(adminUid).get();
+    
+    if (!adminDoc.exists) {
+      return res.status(404).json({ error: 'الأدمن غير موجود' });
+    }
+    
+    const adminData = adminDoc.data();
+    res.json({ 
+      username: adminData.name || adminData.username || 'الأدمن',
+      uid: adminUid 
+    });
+  } catch (error) {
+    console.error('Get admin error:', error);
+    res.status(500).json({ error: 'حدث خطأ' });
+  }
 });
 
 // ===== مسارات إدارة المستخدمين =====
 
+// الحصول على جميع المستخدمين (مع إمكانية البحث والترتيب)
 app.get('/api/admin/users', verifyAdminToken, async (req, res) => {
   try {
     const { search, page = 1, limit = 10 } = req.query;
@@ -193,6 +235,7 @@ app.get('/api/admin/users', verifyAdminToken, async (req, res) => {
   }
 });
 
+// إنشاء مستخدم جديد (عن طريق الأدمن)
 app.post('/api/admin/users', verifyAdminToken, async (req, res) => {
   try {
     const { name, phone, email, password, initialPoints = 0 } = req.body;
@@ -272,6 +315,7 @@ app.post('/api/admin/users', verifyAdminToken, async (req, res) => {
   }
 });
 
+// الحصول على مستخدم محدد
 app.get('/api/admin/users/:id', verifyAdminToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -372,6 +416,7 @@ app.delete('/api/admin/users/:id', verifyAdminToken, async (req, res) => {
 
 // ===== مسارات إدارة النقاط =====
 
+// تعديل نقاط المستخدم (إضافة/خصم/تعديل)
 app.patch('/api/admin/users/:id/points', verifyAdminToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -464,6 +509,7 @@ app.patch('/api/admin/users/:id/points', verifyAdminToken, async (req, res) => {
   }
 });
 
+// تصفير نقاط المستخدم
 app.post('/api/admin/users/:id/reset-points', verifyAdminToken, async (req, res) => {
   try {
     const { id } = req.params;
@@ -512,6 +558,7 @@ app.post('/api/admin/users/:id/reset-points', verifyAdminToken, async (req, res)
   }
 });
 
+// الحصول على معاملات مستخدم معين (مع دعم الفهارس)
 app.get('/api/admin/users/:id/transactions', verifyAdminToken, async (req, res) => {
   try {
     const { id } = req.params;
