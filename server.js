@@ -8,7 +8,19 @@ const path = require('path');
 const { FieldValue } = require('firebase-admin/firestore');
 
 // ===== تهيئة Firebase Admin =====
-const firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
+// معالجة أفضل لخطأ JSON
+let firebaseConfig;
+try {
+  firebaseConfig = JSON.parse(process.env.FIREBASE_CONFIG);
+} catch (error) {
+  console.error('❌ Error parsing FIREBASE_CONFIG:', error.message);
+  console.error('📝 Please make sure FIREBASE_CONFIG is a valid JSON string');
+  // استخدام قيمة افتراضية للتجربة (لن تعمل ولكن تمنع الكراش)
+  firebaseConfig = {
+    projectId: process.env.FIREBASE_PROJECT_ID || 'pointsdrmirna'
+  };
+}
+
 admin.initializeApp({
   credential: admin.credential.cert(firebaseConfig),
 });
@@ -22,18 +34,31 @@ const PORT = process.env.PORT || 3000;
 // ===== Middleware =====
 app.use(express.json());
 app.use(cookieParser());
+
+// CORS - دعم أكثر من دومين
+const allowedOrigins = process.env.NODE_ENV === 'production' 
+  ? ['https://points-dr-mirna.vercel.app', 'https://your-domain.vercel.app'] 
+  : ['http://localhost:3000', 'http://127.0.0.1:3000'];
+
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://your-domain.vercel.app'] 
-    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: function (origin, callback) {
+    // السماح للطلبات بدون origin (مثل Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
 }));
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ===== التوثيق والصلاحيات =====
-const JWT_SECRET = process.env.JWT_SECRET;
-const ADMIN_USERNAME = process.env.ADMIN_USERNAME;
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
+const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-key-change-this';
+const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin';
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'password123';
 
 // ===== Middleware للتحقق من JWT =====
 const verifyAdminToken = async (req, res, next) => {
@@ -79,7 +104,7 @@ app.post('/api/admin/login', async (req, res) => {
     res.cookie('admin_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax', // تغيير من strict إلى lax لتحسين التوافق
       maxAge: 24 * 60 * 60 * 1000,
     });
 
@@ -137,14 +162,32 @@ app.get('/api/admin/users', verifyAdminToken, async (req, res) => {
       });
     }
 
-    usersSnapshot = await query
-      .orderBy('createdAt', 'desc')
-      .offset(offset)
-      .limit(parseInt(limit))
-      .get();
+    // محاولة جلب المستخدمين مع الترتيب
+    try {
+      usersSnapshot = await query
+        .orderBy('createdAt', 'desc')
+        .offset(offset)
+        .limit(parseInt(limit))
+        .get();
+    } catch (indexError) {
+      // إذا فشل بسبب نقص الفهرس، جلب بدون ترتيب
+      console.warn('⚠️ Index missing, fetching without orderBy:', indexError.message);
+      usersSnapshot = await query
+        .offset(offset)
+        .limit(parseInt(limit))
+        .get();
+    }
 
-    const totalSnapshot = await query.count().get();
-    const total = totalSnapshot.data().count;
+    // جلب العدد الإجمالي
+    let total;
+    try {
+      const totalSnapshot = await query.count().get();
+      total = totalSnapshot.data().count;
+    } catch (countError) {
+      // إذا فشل count، نجلب يدوياً
+      const allDocs = await query.get();
+      total = allDocs.size;
+    }
 
     const users = [];
     usersSnapshot.forEach(doc => {
@@ -409,44 +452,73 @@ app.post('/api/admin/users/:id/reset-points', verifyAdminToken, async (req, res)
   }
 });
 
-// الحصول على معاملات مستخدم معين
+// الحصول على معاملات مستخدم معين (مع دعم الفهارس)
 app.get('/api/admin/users/:id/transactions', verifyAdminToken, async (req, res) => {
   try {
     const { id } = req.params;
     const { limit = 20 } = req.query;
 
-    // جلب المعاملات بدون ترتيب أولاً
+    let transactions = [];
     let query = db.collection('transactions').where('userId', '==', id);
-    const transactionsSnapshot = await query.get();
-    
-    // ثم ترتيبها في الذاكرة
-    const transactions = [];
-    transactionsSnapshot.forEach(doc => {
-      transactions.push({ id: doc.id, ...doc.data() });
-    });
-    
-    // ترتيب يدوي (من الأحدث إلى الأقدم)
-    transactions.sort((a, b) => {
-      const dateA = a.createdAt?.toMillis?.() || 0;
-      const dateB = b.createdAt?.toMillis?.() || 0;
-      return dateB - dateA;
-    });
-    
-    // تطبيق الحد الأقصى
-    const limitedTransactions = transactions.slice(0, parseInt(limit) || 20);
 
-    res.json(limitedTransactions);
+    try {
+      // محاولة جلب مع الترتيب
+      const transactionsSnapshot = await query
+        .orderBy('createdAt', 'desc')
+        .limit(parseInt(limit))
+        .get();
+
+      transactionsSnapshot.forEach(doc => {
+        transactions.push({ id: doc.id, ...doc.data() });
+      });
+    } catch (indexError) {
+      // إذا فشل بسبب نقص الفهرس، جلب بدون ترتيب ثم ترتيب يدوياً
+      console.warn('⚠️ Transactions index missing, fetching without orderBy:', indexError.message);
+      const transactionsSnapshot = await query.limit(parseInt(limit) * 2).get();
+      
+      transactionsSnapshot.forEach(doc => {
+        transactions.push({ id: doc.id, ...doc.data() });
+      });
+      
+      // ترتيب يدوي (من الأحدث إلى الأقدم)
+      transactions.sort((a, b) => {
+        const dateA = a.createdAt?.toMillis?.() || 0;
+        const dateB = b.createdAt?.toMillis?.() || 0;
+        return dateB - dateA;
+      });
+      
+      // تطبيق الحد الأقصى
+      transactions = transactions.slice(0, parseInt(limit));
+    }
+
+    res.json(transactions);
+  } catch (error) {
+    console.error('Get transactions error:', error);
+    res.status(500).json({ error: 'حدث خطأ أثناء جلب المعاملات' });
+  }
+});
 
 // ===== مسارات إحصاءات لوحة التحكم =====
 
 app.get('/api/admin/stats', verifyAdminToken, async (req, res) => {
   try {
-    const patientsSnapshot = await db.collection('users')
-      .where('role', '==', 'patient')
-      .count()
-      .get();
-    const totalPatients = patientsSnapshot.data().count;
+    // جلب عدد المرضى
+    let totalPatients = 0;
+    try {
+      const patientsSnapshot = await db.collection('users')
+        .where('role', '==', 'patient')
+        .count()
+        .get();
+      totalPatients = patientsSnapshot.data().count;
+    } catch (countError) {
+      console.warn('⚠️ Count failed, fetching manually:', countError.message);
+      const allPatients = await db.collection('users')
+        .where('role', '==', 'patient')
+        .get();
+      totalPatients = allPatients.size;
+    }
 
+    // جلب مجموع النقاط
     const allPatients = await db.collection('users')
       .where('role', '==', 'patient')
       .get();
@@ -455,22 +527,43 @@ app.get('/api/admin/stats', verifyAdminToken, async (req, res) => {
       totalPoints += doc.data().points || 0;
     });
 
+    // عمليات اليوم
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const todayTimestamp = admin.firestore.Timestamp.fromDate(today);
 
-    const todayTransactions = await db.collection('transactions')
-      .where('createdAt', '>=', todayTimestamp)
-      .count()
-      .get();
-    const todayOperations = todayTransactions.data().count;
+    let todayOperations = 0;
+    try {
+      const todayTransactions = await db.collection('transactions')
+        .where('createdAt', '>=', todayTimestamp)
+        .count()
+        .get();
+      todayOperations = todayTransactions.data().count;
+    } catch (countError) {
+      console.warn('⚠️ Today transactions count failed:', countError.message);
+      const txns = await db.collection('transactions')
+        .where('createdAt', '>=', todayTimestamp)
+        .get();
+      todayOperations = txns.size;
+    }
 
-    const newPatientsToday = await db.collection('users')
-      .where('role', '==', 'patient')
-      .where('createdAt', '>=', todayTimestamp)
-      .count()
-      .get();
-    const newPatients = newPatientsToday.data().count;
+    // المرضى الجدد اليوم
+    let newPatients = 0;
+    try {
+      const newPatientsToday = await db.collection('users')
+        .where('role', '==', 'patient')
+        .where('createdAt', '>=', todayTimestamp)
+        .count()
+        .get();
+      newPatients = newPatientsToday.data().count;
+    } catch (countError) {
+      console.warn('⚠️ New patients count failed:', countError.message);
+      const newPatientsDocs = await db.collection('users')
+        .where('role', '==', 'patient')
+        .where('createdAt', '>=', todayTimestamp)
+        .get();
+      newPatients = newPatientsDocs.size;
+    }
 
     res.json({
       totalPatients,
@@ -500,16 +593,36 @@ app.get('/api/patient/profile/:uid', async (req, res) => {
       return res.status(403).json({ error: 'هذا المستخدم ليس مريضاً' });
     }
 
-    const transactionsSnapshot = await db.collection('transactions')
-      .where('userId', '==', uid)
-      .orderBy('createdAt', 'desc')
-      .limit(10)
-      .get();
+    let transactions = [];
+    try {
+      const transactionsSnapshot = await db.collection('transactions')
+        .where('userId', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .limit(10)
+        .get();
 
-    const transactions = [];
-    transactionsSnapshot.forEach(doc => {
-      transactions.push({ id: doc.id, ...doc.data() });
-    });
+      transactionsSnapshot.forEach(doc => {
+        transactions.push({ id: doc.id, ...doc.data() });
+      });
+    } catch (indexError) {
+      console.warn('⚠️ Patient transactions index missing:', indexError.message);
+      const transactionsSnapshot = await db.collection('transactions')
+        .where('userId', '==', uid)
+        .limit(20)
+        .get();
+      
+      transactionsSnapshot.forEach(doc => {
+        transactions.push({ id: doc.id, ...doc.data() });
+      });
+      
+      transactions.sort((a, b) => {
+        const dateA = a.createdAt?.toMillis?.() || 0;
+        const dateB = b.createdAt?.toMillis?.() || 0;
+        return dateB - dateA;
+      });
+      
+      transactions = transactions.slice(0, 10);
+    }
 
     res.json({
       profile: { id: uid, ...userData },
@@ -519,6 +632,15 @@ app.get('/api/patient/profile/:uid', async (req, res) => {
     console.error('Get patient profile error:', error);
     res.status(500).json({ error: 'حدث خطأ أثناء جلب بيانات المريض' });
   }
+});
+
+// ===== مسار اختبار الاتصال =====
+app.get('/api/test', (req, res) => {
+  res.json({ 
+    status: 'ok', 
+    message: 'Server is running',
+    environment: process.env.NODE_ENV || 'development'
+  });
 });
 
 // ===== معالجة الأخطاء =====
@@ -531,8 +653,8 @@ app.use((err, req, res, next) => {
 // ===== تشغيل الخادم =====
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`✅ Server running on port ${PORT}`);
+  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 module.exports = app;
