@@ -160,6 +160,7 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            cursor: pointer;
         }
 
         .btn-submit:hover {
@@ -185,6 +186,7 @@
             color: var(--primary);
             font-weight: 600;
             transition: var(--transition);
+            text-decoration: none;
         }
 
         .auth-footer a:hover {
@@ -308,6 +310,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            cursor: pointer;
         }
 
         .btn-logout:hover {
@@ -407,6 +410,7 @@
         .badge-remove { background: #fde8e8; color: #c0392b; }
         .badge-reset { background: #fff3cd; color: #856404; }
         .badge-default { background: var(--gray-200); color: var(--gray-600); }
+        .badge-redeem { background: #e8f0fe; color: #1a73e8; }
 
         .transaction-item .points-change {
             font-weight: 700;
@@ -418,6 +422,15 @@
         .transaction-item .date {
             font-size: 13px;
             color: var(--gray-600);
+        }
+
+        .transaction-item .reason-text {
+            font-size: 13px;
+            color: var(--gray-600);
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
 
         .empty-state {
@@ -458,6 +471,16 @@
             .btn-logout {
                 justify-content: center;
             }
+
+            .transaction-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+            }
+
+            .transaction-item .reason-text {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -480,7 +503,7 @@
             <div class="form-group">
                 <label>البريد الإلكتروني</label>
                 <div class="input-wrapper">
-                    <input type="email" id="loginEmail" placeholder="example@email.com" required>
+                    <input type="email" id="loginEmail" placeholder="البريد الالكتروني" required>
                     <i class="fas fa-envelope"></i>
                 </div>
                 <div class="error-message" id="loginEmailError">الرجاء إدخال بريد إلكتروني صحيح</div>
@@ -586,6 +609,34 @@
         const transactionList = document.getElementById('transactionList');
 
         let currentUserData = null;
+        let refreshInterval = null;
+
+        // ===== دالة تنسيق التاريخ =====
+        function formatDate(timestamp) {
+            if (!timestamp) return '-';
+            
+            try {
+                let date;
+                if (timestamp.toDate) {
+                    date = timestamp.toDate();
+                } else if (timestamp.seconds !== undefined) {
+                    date = new Date(timestamp.seconds * 1000);
+                } else if (timestamp._seconds !== undefined) {
+                    date = new Date(timestamp._seconds * 1000);
+                } else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+                    date = new Date(timestamp);
+                } else {
+                    return '-';
+                }
+                
+                if (isNaN(date.getTime())) return '-';
+                
+                return date.toLocaleDateString('ar-EG') + ' ' + 
+                    date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            } catch (e) {
+                return '-';
+            }
+        }
 
         function showToast(message, type = 'info') {
             toast.className = 'toast ' + type;
@@ -595,6 +646,42 @@
             toast._timeout = setTimeout(() => {
                 toast.classList.remove('show');
             }, 5000);
+        }
+
+        // ===== تحديث تلقائي كل 3 ثواني =====
+        function startAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+            }
+            refreshInterval = setInterval(() => {
+                if (currentUserData && currentUserData.uid) {
+                    // تحديث النقاط
+                    db.collection('users').doc(currentUserData.uid).get()
+                        .then(doc => {
+                            if (doc.exists) {
+                                const data = doc.data();
+                                currentUserData = { ...data, uid: currentUserData.uid };
+                                userPoints.textContent = data.points || 0;
+                                
+                                const target = 1000;
+                                const percentage = Math.min((data.points / target) * 100, 100);
+                                progressFill.style.width = percentage + '%';
+                                progressText.textContent = Math.round(percentage) + '%';
+                            }
+                        })
+                        .catch(err => console.error('Auto refresh error:', err));
+                    
+                    // تحديث المعاملات
+                    loadTransactions(currentUserData.uid);
+                }
+            }, 3000);
+        }
+
+        function stopAutoRefresh() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
         }
 
         loginEmail.addEventListener('blur', () => {
@@ -640,15 +727,30 @@
             progressText.textContent = Math.round(percentage) + '%';
 
             loadTransactions(user.uid);
+            
+            // بدء التحديث التلقائي
+            startAutoRefresh();
         }
 
+        // ===== تحميل المعاملات مع الأسباب =====
         async function loadTransactions(uid) {
             try {
-                const snapshot = await db.collection('transactions')
-                    .where('userId', '==', uid)
-                    .orderBy('createdAt', 'desc')
-                    .limit(20)
-                    .get();
+                // محاولة جلب مع الترتيب
+                let snapshot;
+                try {
+                    snapshot = await db.collection('transactions')
+                        .where('userId', '==', uid)
+                        .orderBy('createdAt', 'desc')
+                        .limit(20)
+                        .get();
+                } catch (indexError) {
+                    // إذا فشل بسبب نقص الفهرس، جلب بدون ترتيب
+                    console.warn('⚠️ Index missing, fetching without orderBy');
+                    snapshot = await db.collection('transactions')
+                        .where('userId', '==', uid)
+                        .limit(30)
+                        .get();
+                }
 
                 transactionList.innerHTML = '';
 
@@ -662,57 +764,83 @@
                     return;
                 }
 
+                const typeMap = {
+                    'admin_add': 'إضافة',
+                    'admin_remove': 'خصم',
+                    'manual_adjustment': 'تعديل يدوي',
+                    'reset': 'تصفير',
+                    'signup': 'ترحيب',
+                    'redeem': 'استبدال'
+                };
+
+                const typeClassMap = {
+                    'admin_add': 'badge-add',
+                    'signup': 'badge-add',
+                    'admin_remove': 'badge-remove',
+                    'reset': 'badge-reset',
+                    'manual_adjustment': 'badge-default',
+                    'redeem': 'badge-redeem'
+                };
+
+                let transactions = [];
                 snapshot.forEach(doc => {
-                    const data = doc.data();
+                    transactions.push({ id: doc.id, ...doc.data() });
+                });
+
+                // ترتيب يدوي إذا لم يكن هناك orderBy
+                transactions.sort((a, b) => {
+                    const dateA = a.createdAt?.toMillis?.() || 0;
+                    const dateB = b.createdAt?.toMillis?.() || 0;
+                    return dateB - dateA;
+                });
+
+                // أخذ أول 20
+                transactions = transactions.slice(0, 20);
+
+                transactions.forEach(data => {
                     const li = document.createElement('li');
                     li.className = 'transaction-item';
 
-                    const typeMap = {
-                        'admin_add': 'إضافة',
-                        'admin_remove': 'خصم',
-                        'manual_adjustment': 'تعديل',
-                        'reset': 'تصفير',
-                        'signup': 'ترحيب',
-                        'redeem': 'استبدال'
-                    };
-
-                    const typeClassMap = {
-                        'admin_add': 'badge-add',
-                        'signup': 'badge-add',
-                        'admin_remove': 'badge-remove',
-                        'reset': 'badge-reset',
-                        'manual_adjustment': 'badge-default',
-                        'redeem': 'badge-default'
-                    };
-
                     const typeName = typeMap[data.type] || data.type;
                     const typeClass = typeClassMap[data.type] || 'badge-default';
-                    const isPositive = data.type === 'admin_add' || data.type === 'signup';
-                    const change = data.newBalance - data.previousBalance;
+                    
+                    const previousBalance = data.previousBalance || 0;
+                    const newBalance = data.newBalance || 0;
+                    const change = newBalance - previousBalance;
+                    
+                    const isPositive = change >= 0;
 
-                    let dateStr = '';
-                    if (data.createdAt && data.createdAt.toDate) {
-                        const d = data.createdAt.toDate();
-                        dateStr = d.toLocaleDateString('ar-EG') + ' ' + d.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+                    let reasonText = data.reason || '';
+                    if (data.type === 'signup' && !reasonText) {
+                        reasonText = 'نقاط الترحيب';
+                    } else if (data.type === 'reset' && !reasonText) {
+                        reasonText = 'تم تصفير النقاط';
                     }
 
                     li.innerHTML = `
                         <div class="type">
                             <span class="badge ${typeClass}">${typeName}</span>
-                            <span>${data.reason || ''}</span>
+                            <span class="reason-text">${reasonText}</span>
                         </div>
-                        <div>
+                        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                             <span class="points-change ${isPositive ? 'positive' : 'negative'}">
                                 ${isPositive ? '+' : ''}${change}
                             </span>
-                            <span class="date">${dateStr}</span>
+                            <span class="date">${formatDate(data.createdAt)}</span>
                         </div>
                     `;
 
                     transactionList.appendChild(li);
                 });
+
             } catch (error) {
                 console.error('Load transactions error:', error);
+                transactionList.innerHTML = `
+                    <li class="empty-state">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <p>حدث خطأ أثناء تحميل المعاملات</p>
+                    </li>
+                `;
             }
         }
 
@@ -807,6 +935,7 @@
         });
 
         logoutBtn.addEventListener('click', async () => {
+            stopAutoRefresh();
             try {
                 await auth.signOut();
                 dashboard.classList.remove('active');
