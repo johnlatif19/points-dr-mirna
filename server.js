@@ -415,23 +415,27 @@ app.get('/api/admin/users/:id/transactions', verifyAdminToken, async (req, res) 
     const { id } = req.params;
     const { limit = 20 } = req.query;
 
-    const transactionsSnapshot = await db.collection('transactions')
-      .where('userId', '==', id)
-      .orderBy('createdAt', 'desc')
-      .limit(parseInt(limit))
-      .get();
-
+    // جلب المعاملات بدون ترتيب أولاً
+    let query = db.collection('transactions').where('userId', '==', id);
+    const transactionsSnapshot = await query.get();
+    
+    // ثم ترتيبها في الذاكرة
     const transactions = [];
     transactionsSnapshot.forEach(doc => {
       transactions.push({ id: doc.id, ...doc.data() });
     });
+    
+    // ترتيب يدوي (من الأحدث إلى الأقدم)
+    transactions.sort((a, b) => {
+      const dateA = a.createdAt?.toMillis?.() || 0;
+      const dateB = b.createdAt?.toMillis?.() || 0;
+      return dateB - dateA;
+    });
+    
+    // تطبيق الحد الأقصى
+    const limitedTransactions = transactions.slice(0, parseInt(limit) || 20);
 
-    res.json(transactions);
-  } catch (error) {
-    console.error('Get transactions error:', error);
-    res.status(500).json({ error: 'حدث خطأ أثناء جلب المعاملات' });
-  }
-});
+    res.json(limitedTransactions);
 
 // ===== مسارات إحصاءات لوحة التحكم =====
 
