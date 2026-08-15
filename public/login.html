@@ -99,21 +99,13 @@
             font-size: 14px;
         }
 
-        .form-group .input-wrapper {
+        .input-wrapper {
             position: relative;
+            display: flex;
+            align-items: center;
         }
 
-        .form-group .input-wrapper i {
-            position: absolute;
-            right: 14px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-300);
-            font-size: 16px;
-            transition: var(--transition);
-        }
-
-        .form-group input {
+        .input-wrapper input {
             width: 100%;
             padding: 12px 44px 12px 14px;
             border: 2px solid var(--gray-200);
@@ -122,17 +114,59 @@
             transition: var(--transition);
             background: var(--gray-50);
             color: var(--gray-900);
+            padding-left: 48px;
         }
 
-        .form-group input:focus {
+        .input-wrapper input:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
             background: var(--white);
         }
 
-        .form-group input.error {
+        .input-wrapper input.error {
             border-color: #e74c3c;
+        }
+
+        .input-wrapper .input-icon {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-300);
+            font-size: 16px;
+            transition: var(--transition);
+            pointer-events: none;
+        }
+
+        .input-wrapper input:focus + .input-icon {
+            color: var(--primary);
+        }
+
+        .input-wrapper .toggle-password {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gray-400);
+            cursor: pointer;
+            font-size: 16px;
+            transition: var(--transition);
+            padding: 4px;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-wrapper .toggle-password:hover {
+            color: var(--primary);
+        }
+
+        .input-wrapper .toggle-password:focus {
+            outline: none;
         }
 
         .form-group .error-message {
@@ -481,6 +515,16 @@
             .transaction-item .reason-text {
                 max-width: 100%;
             }
+
+            .input-wrapper input {
+                padding-left: 40px;
+                font-size: 14px;
+            }
+
+            .input-wrapper .toggle-password {
+                left: 8px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -504,7 +548,7 @@
                 <label>البريد الإلكتروني</label>
                 <div class="input-wrapper">
                     <input type="email" id="loginEmail" placeholder="البريد الالكتروني" required>
-                    <i class="fas fa-envelope"></i>
+                    <i class="fas fa-envelope input-icon"></i>
                 </div>
                 <div class="error-message" id="loginEmailError">الرجاء إدخال بريد إلكتروني صحيح</div>
             </div>
@@ -513,7 +557,10 @@
                 <label>كلمة المرور</label>
                 <div class="input-wrapper">
                     <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" required>
-                    <i class="fas fa-lock"></i>
+                    <i class="fas fa-lock input-icon" id="passwordIcon"></i>
+                    <button type="button" class="toggle-password" onclick="togglePassword('loginPassword', 'passwordIcon')" aria-label="إظهار/إخفاء كلمة المرور">
+                        <i class="fas fa-eye"></i>
+                    </button>
                 </div>
                 <div class="error-message" id="loginPasswordError">الرجاء إدخال كلمة المرور</div>
             </div>
@@ -610,6 +657,27 @@
 
         let currentUserData = null;
         let refreshInterval = null;
+
+        // ===== إظهار/إخفاء كلمة المرور =====
+        function togglePassword(inputId, iconId = null) {
+            const input = document.getElementById(inputId);
+            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+            input.setAttribute('type', type);
+            
+            // تغيير أيقونة العين
+            const btn = input.parentElement.querySelector('.toggle-password i');
+            if (btn) {
+                btn.className = type === 'password' ? 'fas fa-eye' : 'fas fa-eye-slash';
+            }
+            
+            // تغيير أيقونة القفل إذا كانت موجودة
+            if (iconId) {
+                const icon = document.getElementById(iconId);
+                if (icon) {
+                    icon.className = type === 'password' ? 'fas fa-lock input-icon' : 'fas fa-lock-open input-icon';
+                }
+            }
+        }
 
         // ===== دالة تنسيق التاريخ =====
         function formatDate(timestamp) {
