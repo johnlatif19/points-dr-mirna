@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" id="htmlRoot">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +26,278 @@
             --radius: 12px;
             --radius-lg: 20px;
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --bg-body: var(--gray-50);
+            --bg-white: var(--white);
+            --bg-header: var(--white);
+            --bg-toolbar: var(--white);
+            --bg-table: var(--white);
+            --bg-modal: var(--white);
+            --text-color: var(--gray-900);
+            --text-muted: var(--gray-600);
+            --border-color: var(--gray-200);
+            --shadow-color: rgba(13, 92, 62, 0.08);
         }
+
+        /* ===== دارك مود ===== */
+        [data-theme="dark"] {
+            --primary: #2ecc71;
+            --primary-dark: #27ae60;
+            --primary-light: #1a7a55;
+            --emerald: #2ecc71;
+            --mint-light: #1a3a2e;
+            --white: #1a241e;
+            --gray-50: #0f1814;
+            --gray-100: #1a241e;
+            --gray-200: #2d3a33;
+            --gray-300: #4a5a52;
+            --gray-600: #9aaba2;
+            --gray-800: #d5e0da;
+            --gray-900: #f0f5f2;
+            --bg-body: #0a120e;
+            --bg-white: #1a241e;
+            --bg-header: #1a241e;
+            --bg-toolbar: #1a241e;
+            --bg-table: #1a241e;
+            --bg-modal: #1a241e;
+            --text-color: #f0f5f2;
+            --text-muted: #9aaba2;
+            --border-color: #2d3a33;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+        }
+
+        [data-theme="dark"] .header {
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .stat-card {
+            background: var(--bg-white);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .stat-card .stat-number {
+            color: var(--primary);
+        }
+
+        [data-theme="dark"] .toolbar {
+            background: var(--bg-toolbar);
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .toolbar .search-wrapper input {
+            background: var(--gray-50);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .toolbar .search-wrapper input:focus {
+            border-color: var(--primary);
+        }
+
+        [data-theme="dark"] .table-container {
+            background: var(--bg-table);
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] thead {
+            background: var(--gray-50);
+        }
+
+        [data-theme="dark"] th {
+            color: var(--text-muted);
+            border-bottom-color: var(--border-color);
+        }
+
+        [data-theme="dark"] td {
+            border-bottom-color: var(--border-color);
+        }
+
+        [data-theme="dark"] tr:hover td {
+            background: var(--gray-50);
+        }
+
+        [data-theme="dark"] .modal {
+            background: var(--bg-modal);
+            border: 1px solid var(--border-color);
+        }
+
+        [data-theme="dark"] .modal .form-group input,
+        [data-theme="dark"] .modal .form-group select,
+        [data-theme="dark"] .modal .form-group textarea {
+            background: var(--gray-50);
+            color: var(--text-color);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .modal .form-group input:focus,
+        [data-theme="dark"] .modal .form-group select:focus,
+        [data-theme="dark"] .modal .form-group textarea:focus {
+            border-color: var(--primary);
+        }
+
+        [data-theme="dark"] .modal .form-group input:disabled,
+        [data-theme="dark"] .modal .form-group input[readonly] {
+            background: var(--gray-200);
+            color: var(--text-muted);
+        }
+
+        [data-theme="dark"] .modal-header h2 {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .modal .form-group label {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .modal-close {
+            color: var(--text-muted);
+        }
+
+        [data-theme="dark"] .modal-close:hover {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .patient-detail-grid .detail-item {
+            background: var(--gray-50);
+        }
+
+        [data-theme="dark"] .patient-detail-grid .detail-item .value {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .status-active {
+            background: #1a3a2e;
+            color: var(--primary);
+        }
+
+        [data-theme="dark"] .status-inactive {
+            background: #3a1a1a;
+            color: #ef4444;
+        }
+
+        [data-theme="dark"] .btn-outline {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        [data-theme="dark"] .btn-outline:hover {
+            background: var(--mint-light);
+        }
+
+        [data-theme="dark"] .btn-action.view {
+            background: var(--gray-200);
+            color: var(--text-muted);
+        }
+
+        [data-theme="dark"] .btn-action.view:hover {
+            background: var(--gray-300);
+        }
+
+        [data-theme="dark"] .btn-action.edit {
+            background: #1a3a2e;
+            color: var(--primary);
+        }
+
+        [data-theme="dark"] .btn-action.edit:hover {
+            background: #2a4a3e;
+        }
+
+        [data-theme="dark"] .btn-action.delete {
+            background: #3a1a1a;
+            color: #ef4444;
+        }
+
+        [data-theme="dark"] .btn-action.delete:hover {
+            background: #4a2a2a;
+        }
+
+        [data-theme="dark"] .pagination .buttons button {
+            background: var(--bg-white);
+            color: var(--text-muted);
+            border-color: var(--border-color);
+        }
+
+        [data-theme="dark"] .pagination .buttons button:hover:not(:disabled) {
+            background: var(--gray-50);
+            border-color: var(--primary);
+        }
+
+        [data-theme="dark"] .pagination .buttons button.active {
+            background: var(--primary);
+            color: var(--white);
+            border-color: var(--primary);
+        }
+
+        [data-theme="dark"] .pagination .info {
+            color: var(--text-muted);
+        }
+
+        [data-theme="dark"] .btn-secondary {
+            background: var(--gray-200);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .btn-secondary:hover {
+            background: var(--gray-300);
+        }
+
+        [data-theme="dark"] .btn-danger {
+            background: #dc2626;
+            color: var(--white);
+        }
+
+        [data-theme="dark"] .btn-danger:hover {
+            background: #b91c1c;
+        }
+
+        [data-theme="dark"] .btn {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .btn-primary {
+            color: var(--white);
+        }
+
+        [data-theme="dark"] .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        [data-theme="dark"] .header-actions .admin-name {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .logo {
+            color: var(--primary);
+        }
+
+        [data-theme="dark"] .page-title {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .stat-card .stat-label {
+            color: var(--text-muted);
+        }
+
+        [data-theme="dark"] .stat-card .stat-icon {
+            color: var(--gray-300);
+        }
+
+        [data-theme="dark"] .toast {
+            background: var(--gray-800);
+            color: var(--gray-900);
+        }
+
+        [data-theme="dark"] .toast.error {
+            background: #c0392b;
+            color: var(--white);
+        }
+
+        [data-theme="dark"] .toast.success {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* ===== نهاية دارك مود ===== */
 
         * {
             margin: 0;
@@ -36,18 +307,20 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--gray-50);
-            color: var(--gray-900);
+            background: var(--bg-body);
+            color: var(--text-color);
             min-height: 100vh;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .header {
-            background: var(--white);
+            background: var(--bg-header);
             box-shadow: var(--shadow-sm);
             position: sticky;
             top: 0;
             z-index: 100;
             padding: 12px 0;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .header .container {
@@ -87,6 +360,7 @@
             font-weight: 600;
             color: var(--gray-800);
             font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         .btn-logout {
@@ -109,6 +383,44 @@
             transform: translateY(-1px);
         }
 
+        /* ===== زر دارك مود ===== */
+        .btn-dark-mode {
+            background: var(--gray-200);
+            color: var(--text-color);
+            border: 2px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: var(--radius);
+            font-size: 16px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .btn-dark-mode:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        .btn-dark-mode .icon-sun {
+            display: none;
+        }
+
+        .btn-dark-mode .icon-moon {
+            display: inline;
+        }
+
+        [data-theme="dark"] .btn-dark-mode .icon-sun {
+            display: inline;
+        }
+
+        [data-theme="dark"] .btn-dark-mode .icon-moon {
+            display: none;
+        }
+
+        /* ===== نهاية زر دارك مود ===== */
+
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -120,6 +432,7 @@
             font-weight: 700;
             color: var(--gray-800);
             margin-bottom: 24px;
+            transition: color 0.3s ease;
         }
 
         .stats-grid {
@@ -130,7 +443,7 @@
         }
 
         .stat-card {
-            background: var(--white);
+            background: var(--bg-white);
             border-radius: var(--radius);
             padding: 20px 24px;
             box-shadow: var(--shadow-sm);
@@ -148,18 +461,21 @@
             font-weight: 800;
             color: var(--primary-dark);
             line-height: 1.2;
+            transition: color 0.3s ease;
         }
 
         .stat-card .stat-label {
             font-size: 14px;
             color: var(--gray-600);
             margin-top: 4px;
+            transition: color 0.3s ease;
         }
 
         .stat-card .stat-icon {
             float: left;
             font-size: 28px;
             color: var(--gray-300);
+            transition: color 0.3s ease;
         }
 
         .toolbar {
@@ -167,11 +483,12 @@
             flex-wrap: wrap;
             gap: 12px;
             margin-bottom: 20px;
-            background: var(--white);
+            background: var(--bg-toolbar);
             padding: 16px 20px;
             border-radius: var(--radius);
             box-shadow: var(--shadow-sm);
             align-items: center;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .toolbar .search-wrapper {
@@ -188,6 +505,7 @@
             font-size: 14px;
             transition: var(--transition);
             background: var(--gray-50);
+            color: var(--text-color);
         }
 
         .toolbar .search-wrapper input:focus {
@@ -249,10 +567,11 @@
         }
 
         .table-container {
-            background: var(--white);
+            background: var(--bg-table);
             border-radius: var(--radius);
             box-shadow: var(--shadow-sm);
             overflow: hidden;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         .table-wrapper {
@@ -267,6 +586,7 @@
 
         thead {
             background: var(--gray-50);
+            transition: background 0.3s ease;
         }
 
         th {
@@ -278,12 +598,14 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             border-bottom: 2px solid var(--gray-200);
+            transition: color 0.3s ease, border-color 0.3s ease;
         }
 
         td {
             padding: 14px 16px;
             border-bottom: 1px solid var(--gray-100);
             vertical-align: middle;
+            transition: border-color 0.3s ease;
         }
 
         tr:hover td {
@@ -358,11 +680,13 @@
             flex-wrap: wrap;
             gap: 12px;
             border-top: 1px solid var(--gray-200);
+            transition: border-color 0.3s ease;
         }
 
         .pagination .info {
             color: var(--gray-600);
             font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         .pagination .buttons {
@@ -374,7 +698,7 @@
             padding: 6px 14px;
             border: 1px solid var(--gray-200);
             border-radius: 6px;
-            background: var(--white);
+            background: var(--bg-white);
             color: var(--gray-600);
             font-weight: 500;
             transition: var(--transition);
@@ -416,7 +740,7 @@
         }
 
         .modal {
-            background: var(--white);
+            background: var(--bg-modal);
             border-radius: var(--radius-lg);
             max-width: 560px;
             width: 100%;
@@ -425,6 +749,7 @@
             padding: 32px;
             box-shadow: var(--shadow-lg);
             animation: modalIn 0.3s ease;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
         }
 
         @keyframes modalIn {
@@ -449,6 +774,7 @@
             font-size: 22px;
             font-weight: 700;
             color: var(--gray-800);
+            transition: color 0.3s ease;
         }
 
         .modal-close {
@@ -474,6 +800,7 @@
             color: var(--gray-800);
             margin-bottom: 4px;
             font-size: 14px;
+            transition: color 0.3s ease;
         }
 
         .modal .form-group input,
@@ -487,6 +814,7 @@
             transition: var(--transition);
             background: var(--gray-50);
             font-family: inherit;
+            color: var(--text-color);
         }
 
         .modal .form-group input:focus,
@@ -495,7 +823,7 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
-            background: var(--white);
+            background: var(--bg-white);
         }
 
         .modal .form-group input:disabled,
@@ -581,18 +909,21 @@
             padding: 12px 16px;
             background: var(--gray-50);
             border-radius: var(--radius);
+            transition: background 0.3s ease;
         }
 
         .patient-detail-grid .detail-item .label {
             font-size: 12px;
             color: var(--gray-600);
             font-weight: 600;
+            transition: color 0.3s ease;
         }
 
         .patient-detail-grid .detail-item .value {
             font-size: 18px;
             font-weight: 700;
             color: var(--gray-800);
+            transition: color 0.3s ease;
         }
 
         .toast {
@@ -713,6 +1044,11 @@
             .stat-card .stat-number {
                 font-size: 24px;
             }
+
+            .btn-dark-mode {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -729,7 +1065,12 @@
                 <span>نقاط د. ميرنا</span>
             </a>
             <div class="header-actions">
-                <span class="admin-name" id="adminName"><i class="fas fa-user-shield"></i> الأدمن</span>
+                <span class="admin-name" id="adminName"><i class="fas fa-user-shield"></i>Points Dr.Mirna</span>
+                <button class="btn-dark-mode" id="darkModeToggle" aria-label="تبديل الوضع المظلم">
+                    <i class="fas fa-moon icon-moon"></i>
+                    <i class="fas fa-sun icon-sun"></i>
+                    <span id="darkModeText">داكن</span>
+                </button>
                 <button class="btn-logout" id="logoutBtn">
                     <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
                 </button>
@@ -980,6 +1321,39 @@
     </div>
 
     <script>
+        // ===== دارك مود =====
+        (function() {
+            const html = document.getElementById('htmlRoot');
+            const toggleBtn = document.getElementById('darkModeToggle');
+            const darkModeText = document.getElementById('darkModeText');
+
+            const savedTheme = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+            if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+                html.setAttribute('data-theme', 'dark');
+                if (darkModeText) darkModeText.textContent = 'فاتح';
+            } else {
+                html.removeAttribute('data-theme');
+                if (darkModeText) darkModeText.textContent = 'داكن';
+            }
+
+            toggleBtn.addEventListener('click', function() {
+                const isDark = html.getAttribute('data-theme') === 'dark';
+                
+                if (isDark) {
+                    html.removeAttribute('data-theme');
+                    localStorage.setItem('theme', 'light');
+                    if (darkModeText) darkModeText.textContent = 'داكن';
+                } else {
+                    html.setAttribute('data-theme', 'dark');
+                    localStorage.setItem('theme', 'dark');
+                    if (darkModeText) darkModeText.textContent = 'فاتح';
+                }
+            });
+        })();
+
+        // ===== باقي الكود =====
         let currentPage = 1;
         let currentSearch = '';
         let selectedUserId = null;
