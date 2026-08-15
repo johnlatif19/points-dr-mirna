@@ -239,6 +239,15 @@
             background: var(--mint-light);
         }
 
+        .btn-danger {
+            background: #dc2626;
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background: #b91c1c;
+        }
+
         .table-container {
             background: var(--white);
             border-radius: var(--radius);
@@ -325,7 +334,16 @@
         }
 
         .btn-action.edit:hover {
-            background: var(--mint);
+            background: #a8d5ba;
+        }
+
+        .btn-action.delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-action.delete:hover {
+            background: #fecaca;
         }
 
         .btn-action i {
@@ -478,6 +496,12 @@
             border-color: var(--primary);
             box-shadow: 0 0 0 4px rgba(13, 92, 62, 0.1);
             background: var(--white);
+        }
+
+        .modal .form-group input:disabled,
+        .modal .form-group input[readonly] {
+            background: #f3f4f6;
+            cursor: not-allowed;
         }
 
         .modal .form-group textarea {
@@ -877,6 +901,40 @@
         </div>
     </div>
 
+    <!-- ===== Modal: تعديل المريض ===== -->
+    <div class="modal-overlay" id="editPatientModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-edit"></i> تعديل بيانات المريض</h2>
+                <button class="modal-close" onclick="closeModal('editPatientModal')">&times;</button>
+            </div>
+            <form id="editPatientForm">
+                <input type="hidden" id="editUserId">
+                <div class="form-group">
+                    <label>الاسم الكامل <span style="color:#e74c3c;">*</span></label>
+                    <input type="text" id="editName" placeholder="أدخل الاسم الكامل" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>رقم الهاتف <span style="color:#e74c3c;">*</span></label>
+                        <input type="tel" id="editPhone" placeholder="رقم الهاتف" required>
+                    </div>
+                    <div class="form-group">
+                        <label>البريد الإلكتروني <span style="color:#e74c3c;">*</span></label>
+                        <input type="email" id="editEmail" placeholder="example@email.com" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>النقاط الحالية</label>
+                    <input type="number" id="editPoints" readonly style="background:#f3f4f6; cursor:not-allowed;">
+                </div>
+                <button type="submit" class="btn-submit" id="editPatientSubmit">
+                    <i class="fas fa-save"></i> حفظ التعديلات
+                </button>
+            </form>
+        </div>
+    </div>
+
     <!-- ===== Modal: إدارة النقاط ===== -->
     <div class="modal-overlay" id="pointsModal">
         <div class="modal">
@@ -939,6 +997,43 @@
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
 
+        // ===== دالة تنسيق التاريخ =====
+        function formatDate(timestamp) {
+            if (!timestamp) return '-';
+            
+            try {
+                let date;
+                
+                if (timestamp.seconds !== undefined) {
+                    date = new Date(timestamp.seconds * 1000);
+                }
+                else if (timestamp._seconds !== undefined) {
+                    date = new Date(timestamp._seconds * 1000);
+                }
+                else if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+                    date = new Date(timestamp);
+                }
+                else if (timestamp instanceof Date) {
+                    date = timestamp;
+                }
+                else {
+                    return '-';
+                }
+                
+                if (isNaN(date.getTime())) {
+                    return '-';
+                }
+                
+                return date.toLocaleDateString('ar-EG', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                });
+            } catch (e) {
+                return '-';
+            }
+        }
+
         function showToast(message, type = 'info') {
             toast.className = 'toast ' + type;
             toastMessage.textContent = message;
@@ -951,10 +1046,35 @@
 
         function openModal(id) {
             document.getElementById(id).classList.add('active');
+            stopAutoRefresh();
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
+            startAutoRefresh();
+        }
+
+        // ===== تحديث تلقائي =====
+        let autoRefreshInterval = null;
+
+        function startAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+            }
+            autoRefreshInterval = setInterval(() => {
+                const hasActiveModal = document.querySelector('.modal-overlay.active');
+                if (!hasActiveModal) {
+                    fetchPatients(currentPage, currentSearch);
+                    fetchStats();
+                }
+            }, 3000);
+        }
+
+        function stopAutoRefresh() {
+            if (autoRefreshInterval) {
+                clearInterval(autoRefreshInterval);
+                autoRefreshInterval = null;
+            }
         }
 
         async function fetchStats() {
@@ -1032,18 +1152,21 @@
                     <td>${patient.phone || '-'}</td>
                     <td>${patient.email || '-'}</td>
                     <td><strong style="color:var(--primary);">${patient.points || 0}</strong></td>
-                    <td>${patient.createdAt ? new Date(patient.createdAt.seconds * 1000).toLocaleDateString('ar-EG') : '-'}</td>
+                    <td>${formatDate(patient.createdAt)}</td>
                     <td>
                         <span class="status-badge ${patient.status === 'active' ? 'status-active' : 'status-inactive'}">
                             ${patient.status === 'active' ? 'نشط' : 'غير نشط'}
                         </span>
                     </td>
                     <td>
-                        <button class="btn-action view" onclick="viewPatient('${patient.id}')">
+                        <button class="btn-action view" onclick="viewPatient('${patient.id}')" title="عرض">
                             <i class="fas fa-eye"></i>
                         </button>
-                        <button class="btn-action edit" onclick="viewPatient('${patient.id}')">
+                        <button class="btn-action edit" onclick="editPatient('${patient.id}')" title="تعديل">
                             <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-action delete" onclick="deletePatient('${patient.id}', '${patient.name}')" title="حذف">
+                            <i class="fas fa-trash"></i>
                         </button>
                     </td>
                 </tr>
@@ -1057,6 +1180,7 @@
             currentPage = page;
         }
 
+        // ===== عرض المريض =====
         async function viewPatient(userId) {
             selectedUserId = userId;
             try {
@@ -1077,14 +1201,12 @@
                 document.getElementById('viewEmail').textContent = userData.email || '-';
                 document.getElementById('viewPoints').textContent = userData.points || 0;
 
-                // جلب المعاملات مع معالجة أفضل للخطأ
                 try {
                     const transResponse = await fetch(`/api/admin/users/${userId}/transactions`, { 
                         credentials: 'include' 
                     });
                     
                     if (!transResponse.ok) {
-                        // إذا فشل جلب المعاملات، اعرض رسالة ودية بدلاً من خطأ
                         document.getElementById('viewTransactions').innerHTML = 
                             '<p style="color:var(--gray-600); text-align:center; padding:16px 0;">⚠️ لا توجد معاملات لعرضها حالياً</p>';
                         return;
@@ -1108,7 +1230,7 @@
 
                     transContainer.innerHTML = transactions.map(t => {
                         const typeName = typeMap[t.type] || t.type;
-                        const date = t.createdAt ? new Date(t.createdAt.seconds * 1000).toLocaleString('ar-EG') : '-';
+                        const date = formatDate(t.createdAt);
                         return `
                             <div style="display:flex; justify-content:space-between; padding:8px 0; border-bottom:1px solid var(--gray-100); font-size:14px;">
                                 <span><strong>${typeName}</strong> ${t.reason || ''}</span>
@@ -1124,7 +1246,6 @@
 
                 } catch (transError) {
                     console.error('Transactions fetch error:', transError);
-                    // لا تعرض خطأ للمستخدم، فقط اعرض "لا توجد معاملات"
                     document.getElementById('viewTransactions').innerHTML = 
                         '<p style="color:var(--gray-600); text-align:center; padding:16px 0;">📭 لا توجد معاملات لعرضها</p>';
                 }
@@ -1135,6 +1256,53 @@
             }
         }
 
+        // ===== تعديل المريض =====
+        async function editPatient(userId) {
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, { credentials: 'include' });
+                if (!response.ok) throw new Error('Failed to fetch user');
+                const userData = await response.json();
+                
+                document.getElementById('editUserId').value = userId;
+                document.getElementById('editName').value = userData.name || '';
+                document.getElementById('editPhone').value = userData.phone || '';
+                document.getElementById('editEmail').value = userData.email || '';
+                document.getElementById('editPoints').value = userData.points || 0;
+                
+                openModal('editPatientModal');
+            } catch (error) {
+                console.error('Edit patient error:', error);
+                showToast('حدث خطأ أثناء جلب بيانات المريض للتعديل', 'error');
+            }
+        }
+
+        // ===== حذف المريض =====
+        async function deletePatient(userId, userName) {
+            if (!confirm(`هل أنت متأكد من حذف المريض "${userName}"؟\nهذا الإجراء لا يمكن التراجع عنه!`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'DELETE',
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error || 'Failed to delete user');
+                }
+                
+                showToast(`تم حذف المريض "${userName}" بنجاح`, 'success');
+                await fetchPatients(currentPage, currentSearch);
+                await fetchStats();
+            } catch (error) {
+                console.error('Delete patient error:', error);
+                showToast(error.message || 'حدث خطأ أثناء حذف المريض', 'error');
+            }
+        }
+
+        // ===== إدارة النقاط =====
         function openPointsModal(operation) {
             if (!selectedUserId) {
                 showToast('الرجاء اختيار مريض أولاً', 'error');
@@ -1167,6 +1335,8 @@
             closeModal('viewPatientModal');
             openModal('resetModal');
         }
+
+        // ===== Event Listeners =====
 
         document.getElementById('pointsForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -1302,6 +1472,50 @@
             }
         });
 
+        document.getElementById('editPatientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const userId = document.getElementById('editUserId').value;
+            const name = document.getElementById('editName').value.trim();
+            const phone = document.getElementById('editPhone').value.trim();
+            const email = document.getElementById('editEmail').value.trim();
+            
+            if (!name || !phone || !email) {
+                showToast('جميع الحقول مطلوبة', 'error');
+                return;
+            }
+            
+            const submitBtn = document.getElementById('editPatientSubmit');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> جاري التحديث...';
+            
+            try {
+                const response = await fetch(`/api/admin/users/${userId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                    body: JSON.stringify({ name, phone, email })
+                });
+                
+                const data = await response.json();
+                if (!response.ok) {
+                    throw new Error(data.error || 'حدث خطأ');
+                }
+                
+                showToast('تم تحديث بيانات المريض بنجاح', 'success');
+                closeModal('editPatientModal');
+                await fetchPatients(currentPage, currentSearch);
+                await fetchStats();
+                
+            } catch (error) {
+                console.error('Edit patient error:', error);
+                showToast(error.message || 'حدث خطأ أثناء تحديث البيانات', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-save"></i> حفظ التعديلات';
+            }
+        });
+
         document.getElementById('addPatientBtn').addEventListener('click', () => {
             document.getElementById('addPatientForm').reset();
             openModal('addPatientModal');
@@ -1359,12 +1573,15 @@
             await fetchPatients(1, '');
         }
 
-        init();
+        init().then(() => {
+            startAutoRefresh();
+        });
 
         document.querySelectorAll('.modal-overlay').forEach(overlay => {
             overlay.addEventListener('click', (e) => {
                 if (e.target === overlay) {
                     overlay.classList.remove('active');
+                    startAutoRefresh();
                 }
             });
         });
